@@ -1,0 +1,207 @@
+/* http://meyerweb.com/eric/tools/css/reset/ v2.0 | 20110126 License: none (public domain) */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+body {
+    line-height: 1;
+}
+ol, ul {
+    list-style: none;
+}
+blockquote, q {
+    quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: '';
+    content: none;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+/* Ende CSS reset ----------------------------------- */
+
+body{
+    background: url("../images/body-bg.png") repeat scroll 0 0 rgba(0, 0, 0, 0);
+    font-family: 'Open Sans',sans-serif;
+    height: 100%;
+    min-width: 100%;
+    position: absolute;
+}
+h2{
+    font-size: 20px;
+    font-weight: bold;
+    color: #FF4500;
+    padding: 10px 20px;
+}
+dl{
+    margin: 10px 20px;
+}
+dt{
+    font-size: 0.9em;
+    padding: 5px 0;
+    color: #FF4500;
+    cursor: pointer;
+    text-decoration: underline;
+}
+dt:hover{
+    font-weight: bold;
+}
+dd{
+    font-size: 0.8em;
+    line-height: 1.2em;
+}
+#header{
+    border-bottom: 2px solid #FF4500;
+    background: url( '../images/header-bg.png' );
+}
+.header p{
+    color: #F0F8FF;
+    font-size: 14px;
+    padding: 20px 0 5px 60px;
+}
+.header p a{
+    color: #F0F8FF;
+    font-size: 14px;
+    text-decoration: none;
+}
+.big-header{
+    font-family: 'Rufina', serif;
+    font-size: 36px;
+    font-weight: bold;
+    color: #FF4500;
+    padding-right: 30px;
+}
+#content{
+    position: absolute;
+    width: 100%;
+}
+.contentcolumns{
+    width: 475px;
+    float: left;
+}
+.welcomepanel h2{
+    font-family: 'Rufina', serif;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    color: #FF4500;
+    padding: 20px;
+}
+
+.welcomepanel p{
+    padding: 5px 10px;
+}
+.preloader{
+    width:48px;
+    height:48px;
+    position:absolute;
+    top:0;
+    left:0;
+    bottom:0;
+    right:0;
+    margin:auto;
+}
+
+.docs{
+    background: none repeat scroll 0 0 #FFFFFF;
+    -webkit-box-shadow: 1px 1px 8px 5px rgba(128,128,128,0.8);
+    box-shadow: 1px 1px 8px 5px rgba(128,128,128,0.8);
+    border-radius: 8px;
+    width: 880px;
+    padding: 10px;
+    margin: 10px auto;
+}
+.docs h2{
+    background: url("../images/header-bg.png") repeat scroll 0 0 rgba(0, 0, 0, 0);
+    border-radius: 6px;
+    color: #F0F8FF;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 15px 5px 10px 10px;
+    margin: 15px 0;
+}
+.docs ul{
+    margin: 0 0 10px 0;
+}
+.docs ul li{
+    font-size: 0.9em;
+    padding: 5px 40px;
+}
+.docs dt{
+    position: relative;
+    color: #FF4500;
+    font-size: 1em;
+    font-weight: bold;
+    padding: 5px 0;
+    text-decoration: none;
+}
+.docs dd{
+    margin-bottom: 20px;
+}
+.docs p.docs-p{
+    font-size: 0.9em;
+    padding: 5px 20px;
+    line-height: 1.2em;
+}
+.docs .bold{
+    font-weight: bold;
+}
+.docs .italic{
+    font-style: italic;
+}
+.docs .info{
+    background: none repeat scroll 0 0 #FFEEDD;
+    border: 1px solid #FF4500;
+    margin: 10px 20px;
+    padding: 10px;
+}
+
+.docs .info-float{
+    float: left;
+    width: 25%;
+}
+.docs .info-float ul li a{
+    color: #000;
+    cursor: pointer;
+}
+.docs .info-float ul li:first-of-type a{
+    color: #FF4500;
+    font-weight: bold;
+    text-decoration: underline;
+}
+.docs .info-img{
+    float: left;
+    padding: 10px;
+}
+.btn-try{
+    margin-left: 20px;
+}
+p.dlp{
+    text-align: center;
+    font-size: 1.2em;
+    cursor: pointer;
+}
