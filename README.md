@@ -16,3 +16,25 @@ The most basic way to add a jsPanel to your document is:
 	$( selector ).jsPanel();
 
 This will append a jsPanel with all the default options to the first element of the jQuery collection specified by the selector.
+
+## API ##
+| OPTIONS        | METHODS          | CALLBACK      |
+| -------------- | ---------------- | ------------- |
+| id             | title            | callback      |
+| title          | addToolbar       |               |
+| size           | close            |               |
+| position       | closeChildpanels |               |
+| overflow       | movetoFront      |               |
+| content        | minimze          |               |
+| load           | maximize         |               |
+| ajax           |                  |               |
+| contentBG      |                  |               |
+| resizable      |                  |               |
+| draggable      |                  |               |
+| toolbarContent |                  |               |
+
+### OPTIONS ###
+
+### METHODS ###
+
+### CALLBACK ###
