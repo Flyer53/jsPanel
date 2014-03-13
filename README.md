@@ -2,7 +2,7 @@
 
 A jQuery Plugin to generate configurable floating panels for use in a backend solution and other web applications.
 
-Copyright &copy; 2014 Stefan Sträßer | [stefanstraesser.eu](http://stefanstraesser.eu/)
+Copyright &copy; 2014 Stefan Sträßer | [jspanel.stefanstraesser.eu](http://jspanel.stefanstraesser.eu)
 
 ---
 
