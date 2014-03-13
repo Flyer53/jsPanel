@@ -17,7 +17,7 @@ The most basic way to add a jsPanel to your document is:
 
 This will append a jsPanel with all the default options to the first element of the jQuery collection specified by the selector.
 
-### ![API](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/api.jpg)
+### ![API](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/api.png)
 
 The function accepts two optional arguments. A **configuration object** to set all the options of the jsPanel and a **callback function**.
 
@@ -39,7 +39,7 @@ The function accepts two optional arguments. A **configuration object** to set a
 | draggable      |                  |               |
 | toolbarContent |                  |               |
 
-### ![options](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options.jpg)
+### ![options](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options.png)
 
 #### ![id](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options-id.png)
 Type: string | function
@@ -366,7 +366,7 @@ This option allows to add a toolbar to the jsPanel header. Using this option wil
 		toolbarContent: '<p>Toolbar content goes here ...</p>'
     });
 
-### ![methods](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/methods.jpg)
+### ![methods](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/methods.png)
 
 #### ![title\( \[ true | string \] \)](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-title.png)
 Gets or sets the title of an already existing jsPanel
@@ -468,7 +468,7 @@ A **minimized or maximized jsPanel** will be restored to its latest normalized s
     // execute the maximize method on the childpanel several times
     console.log( childpanel.maximize() );
 
-### ![callback](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/callback.jpg)
+### ![callback](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/callback.png)
 
 #### ![callback\( jsPanel \)](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-callback.png)
 A callback function that is executed when the jsPanel is inserted in the document. **The function receives the jsPanel as argument.**
