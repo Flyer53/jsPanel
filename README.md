@@ -368,24 +368,24 @@ This option allows to add a toolbar to the jsPanel header. Using this option wil
 
 ### ![methods](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/methods.png)
 
-#### ![title\( \[ true | string \] \)](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-title.png)
+#### ![title( [ true | string ] )](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-title.png)
 Gets or sets the title of an already existing jsPanel
 
-**title\(\)** Returns the html element containing the title text when used without an argument
+**title()** Returns the html element containing the title text when used without an argument
 
     var jspanel = $( selector ).jsPanel({
         title: 'Title of jspanel'
     });
     console.log( jspanel.title() );
 
-**title\( true \)** Returns the title text when used with one argument which is _true_
+**title( true )** Returns the title text when used with one argument which is _true_
 
     var jspanel = $( selector ).jsPanel({
         title: 'Title of jspanel'
     });
     console.log( jspanel.title( true ) );
 
-**title\( string \)** Returns the jsPanel and sets the title to string when used with one argument which is a string
+**title( string )** Returns the jsPanel and sets the title to string when used with one argument which is a string
 
     var jspanel = $( selector ).jsPanel({
         title: 'Title of jspanel'
@@ -393,7 +393,7 @@ Gets or sets the title of an already existing jsPanel
     console.log( jspanel.title( 'And this is a new title!' ) );
 
 
-#### ![addToolbar\( string \)](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-addToolbar.png)
+#### ![addToolbar( string )](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-addToolbar.png)
 Adds a toolbar to an already existing jsPanel in the same way the **option.toolbarContent** does and returns the jsPanel
 
     var jspanel = $( selector ).jsPanel({
@@ -401,7 +401,7 @@ Adds a toolbar to an already existing jsPanel in the same way the **option.toolb
     });
     console.log( jspanel.addToolbar( '<p>toolbar content ...</p>' ) );
 
-#### ![close\(\)](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-close.png)
+#### ![close()](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-close.png)
 Removes the jsPanel from the DOM and returns the the element that contained the jsPanel
 
 This method accepts no arguments
@@ -411,7 +411,7 @@ This method accepts no arguments
     });
     console.log( jspanel.close() );
 
-#### ![closeChildpanels\(\)](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-closeChildpanels.png)
+#### ![closeChildpanels()](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-closeChildpanels.png)
 Removes all childpanels of a jsPanel from the DOM and returns the jsPanel the childpanels were removed from
 
 This method accepts no arguments
@@ -429,7 +429,7 @@ This method accepts no arguments
     // remove the childpanel
     console.log( testpanel.closeChildpanels() );
 
-#### ![movetoFront\(\)](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-movetoFront.png)
+#### ![movetoFront()](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-movetoFront.png)
 Moves a jsPanels to the front by increasing the z-index and returns the jsPanel
 
 This method accepts no arguments
@@ -442,7 +442,7 @@ This method accepts no arguments
     // move testpanel1 to the front
     console.log( testpanel1.movetoFront() );
 
-#### ![minimize\(\)](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-minimize.png)
+#### ![minimize()](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-minimize.png)
 Minimizes a jsPanel to the lower left corner of the browser viewport
 
 This method accepts no arguments
@@ -453,7 +453,7 @@ This method accepts no arguments
     // minimize testpanel1
     console.log( testpanel.minimize() );
 
-#### ![maximize\(\)](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-maximize.png)
+#### ![maximize()](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-maximize.png)
 Maximizes or normalizes a jsPanels depending of the current status of the jsPanel and returns the jsPanel
 
 This method accepts no arguments
@@ -470,7 +470,7 @@ A **minimized or maximized jsPanel** will be restored to its latest normalized s
 
 ### ![callback](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/callback.png)
 
-#### ![callback\( jsPanel \)](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-callback.png)
+#### ![callback( jsPanel )](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-callback.png)
 A callback function that is executed when the jsPanel is inserted in the document. **The function receives the jsPanel as argument.**
 
 **Examples:**
