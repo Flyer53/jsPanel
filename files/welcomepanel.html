@@ -1,0 +1,37 @@
+<div class="welcomepanel">
+
+    <h2>Hey there! I'm a jsPanel !</h2>
+
+    <p>While I was writing a backend for my brother's website <a href="http://derpanoramafotograf.com/" title="">derpanoramafotograf.com</a> ,
+        I was looking for a jQuery plugin that gives me the option to accommodate various kinds of content in customizable panels.
+        As I could not find what I was looking for, I finally decided to write a plugin myself. And here is the result.</p>
+    <p>Size, position and a bunch of other options are freely configurable. You can add a toolbar and using the jQuery-UI features
+        the jsPanels are draggable and resizable, and are customizable by changing the css styles. The jsPanels can be minimized,
+        maximized or restored to their original size and position.</p>
+    <p>The contents of the jsPanels can be inserted in several ways. Even childpanels can be positioned within a
+        parentpanel.</p>
+    <p>For my purposes, the plugin works very well. And maybe it's useful to others who need a similar plugin.</p>
+
+    <p style="font-weight: bold;">And this is the code that generated this example:</p>
+
+<pre class="prettyprint linenums">
+$( '#content' ).jsPanel({
+    size: {
+        width: 600,
+        height: 'auto'
+    },
+    position: {
+        top: 50,
+        left: 'center'
+    },
+    ajax: {
+        url: 'files/welcomepanel.html'
+    }
+});
+</pre>
+
+</div>
+
+<script>
+    prettyPrint();
+</script>
