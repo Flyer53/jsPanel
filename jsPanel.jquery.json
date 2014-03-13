@@ -1,0 +1,32 @@
+{
+    "name": "jsPanel",
+    "title": "jQuery jsPanel",
+    "description": "jQuery plugin to generate configurable floating panels for use in backend solutions and other web applications.",
+    "keywords": [
+        "jsPanel",
+        "panel",
+        "ui",
+        "widget",
+        "user interface",
+        "window"
+    ],
+    "version": "1.0.0",
+    "author": {
+        "name": "Stefan Straesser",
+        "url": "http://stefanstraesser.eu/",
+        "email": "flych53g@gmail.com"
+    },
+    "licenses": [
+        {
+            "type": "GPL-3.0",
+            "url": "http://www.gnu.org/licenses/gpl.html"
+        }
+    ],
+    "homepage": "https://github.com/Flyer53/jsPanel",
+    "docs": "http://jspanel.stefanstraesser.eu/docs.html",
+    "demo": "http://jspanel.stefanstraesser.eu/",
+    "dependencies": {
+        "jquery": ">=1.7",
+        "jquery ui": ">=1.9"
+    }
+}
