@@ -244,7 +244,7 @@ The keys/values of the option.load configuration object are used in the same way
 **Examples:**
 
 	// Adding content with option.load
-    $('#options-load').jsPanel({
+    $( selector ).jsPanel({
 		load: {
 			url: 'files/example-load.html',
 			complete: function(){ console.log( "It's done!" ) }
@@ -263,13 +263,42 @@ The keys/values of the option.ajax configuration object are used in the same way
 **Examples:**
 
 	// Adding content with option.ajax
-    $( '#options-ajax' ).jsPanel({
+    $( selector ).jsPanel({
 		ajax: {
 			url: 'files/example-ajax.html'
 		}
     });
 
 #### contentBG ####
+Type: string | object
+
+Default: is set in the css file _jsPanel.css_
+
+This option will set the css properties of only the jsPanel content div.
+
++ **Passing a string** will use this string as value for the css [background](http://www.w3schools.com/cssref/css3_pr_background.asp) property like [.css( 'background', string )](http://api.jquery.com/css/)
++ **Passing an object** will use this object like [.css( object )](http://api.jquery.com/css/)
+
+**Examples:**
+
+	//Changing css background-color using a string
+	$( selector ).jsPanel({
+		contentBG: '#234567'
+    });
+	
+	// Changing more than one css background property using a string
+	$( selector ).jsPanel({
+		contentBG: 'url("background.png") repeat scroll 0 0 #567890'
+    });
+	
+	// Changing multiple css properties using an object
+	$( selector ).jsPanel({
+		contentBG: {
+			color:'#FFFFFF',
+			background:'#234567'
+		}
+    });
+
 #### resizable ####
 #### draggable ####
 #### toolbarContent ####
