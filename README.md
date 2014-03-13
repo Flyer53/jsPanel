@@ -200,7 +200,7 @@ Type: string | function | jQuery object
 
 Default: there is no default content
 
-This option is one of several ways to fill the content area of the jsPanel. It's a good way to add content if you have only a small piece of html to insert or can pass a function. Other options to add content are option.load, option.ajax and the callback function.
+This option is one of several ways to fill the content area of the jsPanel. It's a good way to add content if you have only a small piece of html to insert or can pass a function. Other options to add content are **option.load**, **option.ajax** and the **callback function**.
 
 **Examples:**
 
@@ -226,7 +226,49 @@ This option is one of several ways to fill the content area of the jsPanel. It's
     });	
 	
 #### load ####
+Type: object
+
+Default: there is no default for this option
+
+The keys/values of the option.load configuration object are used in the same way as the arguments for jQuery .load() would be used.
+
+**Possible values for url, data and complete:**
+
+
++ **url:** A string containing the URL to which the request is sent.
++ **data:** A plain object or string that is sent to the server with the request.
++ **complete:** A callback function that is executed when the request completes.
+
+**For detailed information about the jQuery .load() configuration refer to the [jQuery API](http://api.jquery.com/load/).**
+
+**Examples:**
+
+	// Adding content with option.load
+    $('#options-load').jsPanel({
+		load: {
+			url: 'files/example-load.html',
+			complete: function(){ console.log( "It's done!" ) }
+		}
+    });
+	
 #### ajax ####
+Type: object
+
+Default: there is no default for this option
+
+The keys/values of the option.ajax configuration object are used in the same way as the arguments for jQuery.ajax() would be used.
+
+**For detailed information about the jQuery.ajax() configuration refer to the [jQuery API](http://api.jquery.com/jQuery.ajax/).**
+
+**Examples:**
+
+	// Adding content with option.ajax
+    $( '#options-ajax' ).jsPanel({
+		ajax: {
+			url: 'files/example-ajax.html'
+		}
+    });
+
 #### contentBG ####
 #### resizable ####
 #### draggable ####
