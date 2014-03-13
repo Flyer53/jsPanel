@@ -22,20 +22,20 @@ The function accepts two optional arguments. A **configuration object** to set a
 	$( selector ).jsPanel( [ { options } , callback( jsPanel) ] );
 	
 
-| OPTIONS        | METHODS          | CALLBACK      |
-| -------------- | ---------------- | ------------- |
-| id             | title()          | callback()    |
-| title          | addToolbar()     |               |
-| size           | close()          |               |
-| position       | closeChildpanels() |               |
-| overflow       | movetoFront()    |               |
-| content        | minimize()       |               |
-| load           | maximize()       |               |
-| ajax           |                  |               |
-| contentBG      |                  |               |
-| resizable      |                  |               |
-| draggable      |                  |               |
-| toolbarContent |                  |               |
+| OPTIONS          | METHODS            | CALLBACK      |
+| ---------------- | ------------------ | ------------- |
+| id               | title()            | callback()    |
+| title            | addToolbar()       |               |
+| size             | close()            |               |
+| position         | closeChildpanels() |               |
+| overflow         | movetoFront()      |               |
+| content          | minimize()         |               |
+| load             | maximize()         |               |
+| ajax             |                    |               |
+| contentBG        |                    |               |
+| resizable        |                    |               |
+| draggable        |                    |               |
+| toolbarContent   |                    |               |
 
 ### ![options](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options.png)
 
