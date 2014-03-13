@@ -18,6 +18,12 @@ The most basic way to add a jsPanel to your document is:
 This will append a jsPanel with all the default options to the first element of the jQuery collection specified by the selector.
 
 ### ![API](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/api.jpg)
+
+Optionally the function accepts an options object and a callback function
+
+	$( selector ).jsPanel( [ { options } , callback( jsPanel) ] );
+	
+
 | OPTIONS        | METHODS          | CALLBACK      |
 | -------------- | ---------------- | ------------- |
 | id             | title            | callback      |
