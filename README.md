@@ -368,109 +368,13 @@ This option allows to add a toolbar to the jsPanel header. Using this option wil
 
 ### ![methods](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/methods.jpg)
 
-#### title( [ true | string ] ) ####
-Gets or sets the title of an already existing jsPanel
-
-**title()** Returns the html element containing the title text when used without an argument
-
-    var jspanel = $( selector ).jsPanel({
-        title: 'Title of jspanel'
-    });
-    console.log( jspanel.title() );
-
-**title( true )** Returns the title text when used with one argument which is _true_
-
-    var jspanel = $( selector ).jsPanel({
-        title: 'Title of jspanel'
-    });
-    console.log( jspanel.title( true ) );
-
-**title( string )** Returns the jsPanel and sets the title to string when used with one argument which is a string
-
-    var jspanel = $( selector ).jsPanel({
-        title: 'Title of jspanel'
-    });
-    console.log( jspanel.title( 'And this is a new title!' ) );
-
-
-#### addToolbar( string ) ####
-Adds a toolbar to an already existing jsPanel in the same way the **option.toolbarContent** does and returns the jsPanel
-
-    var jspanel = $( selector ).jsPanel({
-        title: 'Title of jspanel'
-    });
-    console.log( jspanel.addToolbar( '<p><img src="js/jsPanel/images/printer.png"> more toolbar content ...</p>' ) );
-
-#### close() ####
-Removes the jsPanel from the DOM and returns the the element that contained the jsPanel
-
-This method accepts no arguments
-
-    var jspanel = $( selector ).jsPanel({
-        position: { top: 70, left: 300 }
-    });
-    window.setTimeout( function(){
-        console.log( jspanel.close() );
-    }, 3000 );
-
-#### closeChildpanels() ####
-Removes all childpanels of a jsPanel from the DOM and returns the jsPanel the childpanels were removed from
-
-This method accepts no arguments
-
-    // generate a parent panel and store it in a variable
-    var testpanel = $( selector ).jsPanel({
-        id: 'jspanel',
-        position: { top: 70, left: 320 }
-    });
-    // generate a childpanel within the content area of testpanel
-    $( ".jsPanel-content", testpanel ).jsPanel({
-        position: { top: 'center', left: 'center' },
-        size: { width: 250, height: 150 }
-    });
-    // remove the childpanel
-    window.setTimeout( function(){
-        console.log( testpanel.closeChildpanels() );
-    }, 3000 );
-
-#### movetoFront() ####
-Moves a jsPanels to the front by increasing the z-index and returns the jsPanel
-
-This method accepts no arguments
-
-    // generate a few jsPanels
-    var testpanel1 = $( selector ).jsPanel( { position: { top:70, left:360 } } ),
-        testpanel2 = $( selector ).jsPanel( { position: { top:95, left:385 } } ),
-        testpanel3 = $( selector ).jsPanel( { position: { top:120, left:410 } } );
-
-    // move testpanel1 to the front
-    testpanel1.movetoFront();
-
-#### minimze() ####
-Minimizes a jsPanel to the lower left corner of the browser viewport
-
-This method accepts no arguments
-
-    // generate a jsPanel
-    var testpanel = $( selector ).jsPanel( { position: { top:70, left:360 } } );
-
-    // minimize testpanel1
-    testpanel.minimize();
-
-#### maximize() ####
-Maximizes or normalizes a jsPanels depending of the current status of the jsPanel and returns the jsPanel
-
-This method accepts no arguments
-
-A **normalized jsPanel** (meaning it's visible at it's specified position and with it's specified size) will be maximized within its parent element.
-
-A **minimized or maximized jsPanel** will be restored to its latest normalized status.
-
-    // generate a jsPanel
-    var testpanel = $( selector ).jsPanel( { position: { top: 100, left: 360 } } );
-
-    // execute the maximize method on the childpanel several times
-    childpanel.maximize();
+#### title ####
+#### addToolbar ####
+#### close ####
+#### closeChildpanels ####
+#### movetoFront ####
+#### minimze ####
+#### maximize ####
 
 ### ![callback](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/callback.jpg)
 
