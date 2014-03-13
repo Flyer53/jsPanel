@@ -6,7 +6,7 @@ A jQuery Plugin to generate configurable floating panels for use in a backend so
 
 README FILE IS CURRENTLY A WORK IN PROGRESS
 
-## Dependencies ##
+### ![Dependencies](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/dependencies.jpg)
 + jQuery version 1.7.0 or greater
 + jQuery UI version 1.9.0 or greater (with at least core, resizable, draggable)
 + HTML5 compatible browser
@@ -17,7 +17,7 @@ The most basic way to add a jsPanel to your document is:
 
 This will append a jsPanel with all the default options to the first element of the jQuery collection specified by the selector.
 
-## API ##
+### ![API](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/api.jpg)
 | OPTIONS        | METHODS          | CALLBACK      |
 | -------------- | ---------------- | ------------- |
 | id             | title            | callback      |
@@ -33,7 +33,7 @@ This will append a jsPanel with all the default options to the first element of 
 | draggable      |                  |               |
 | toolbarContent |                  |               |
 
-### OPTIONS ###
+### ![options](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options.jpg)
 
 #### id ####
 #### title ####
@@ -48,7 +48,7 @@ This will append a jsPanel with all the default options to the first element of 
 #### draggable ####
 #### toolbarContent ####
 
-### METHODS ###
+### ![methods](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/methods.jpg)
 
 #### title ####
 #### addToolbar ####
@@ -58,6 +58,6 @@ This will append a jsPanel with all the default options to the first element of 
 #### minimze ####
 #### maximize ####
 
-### CALLBACK ###
+### ![callback](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/callback.jpg)
 
 #### callback ####
