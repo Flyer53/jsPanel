@@ -2,14 +2,14 @@
 
 A jQuery Plugin to generate configurable floating panels for use in a backend solution and other web applications.
 
-Copyright &copy; 2014 Stefan Sträßer | stefanstraesser.eu
+Copyright &copy; 2014 Stefan Sträßer | [stefanstraesser.eu](http://stefanstraesser.eu/)
 
 ---
 
 ### ![Dependencies](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/dependencies.png)
-+ jQuery version 1.7.0 or greater
-+ jQuery UI version 1.9.0 or greater (with at least core, resizable, draggable)
-+ HTML5 compatible browser
++ [jQuery](http://jquery.com/) version 1.7.0 or greater
++ [jQuery UI](http://jqueryui.com/) version 1.9.0 or greater (with at least core, resizable, draggable)
++ [HTML5](http://www.w3schools.com/html/html5_intro.asp) compatible browser
 
 The most basic way to add a jsPanel to your document is:
 
