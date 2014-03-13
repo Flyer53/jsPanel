@@ -24,7 +24,7 @@ The function accepts two optional arguments. A **configuration object** to set a
 	$( selector ).jsPanel( [ { options } , callback( jsPanel) ] );
 	
 
-| OPTIONS          | METHODS            | CALLBACK      |
+| [OPTIONS](#options)          | METHODS            | CALLBACK      |
 | ---------------- | ------------------ | ------------- |
 | id               | title()            | callback()    |
 | title            | addToolbar()       |               |
@@ -39,7 +39,7 @@ The function accepts two optional arguments. A **configuration object** to set a
 | draggable        |                    |               |
 | toolbarContent   |                    |               |
 
-### ![options](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options.png)
+### ![options](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options.png)<a name="options"></a>
 
 #### ![id](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options-id.png)
 Type: string | function
