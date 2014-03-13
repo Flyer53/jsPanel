@@ -19,7 +19,7 @@ This will append a jsPanel with all the default options to the first element of 
 
 ### ![API](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/api.jpg)
 
-Optionally the function accepts an options object and a callback function
+The function accepts two optional arguments. A **configuration object** to set all the options of the jsPanel and a **callback function**.
 
 	$( selector ).jsPanel( [ { options } , callback( jsPanel) ] );
 	
