@@ -7,7 +7,7 @@
         "panel",
         "ui",
         "widget",
-        "user-interface",
+        "userinterface",
         "window"
     ],
     "version": "1.0.0",
