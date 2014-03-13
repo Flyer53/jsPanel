@@ -2,6 +2,8 @@
 
 A jQuery Plugin to generate configurable floating panels for use in a backend solution and other web applications.
 
+Copyright &copy; 2014 Stefan Sträßer | stefanstraesser.eu
+
 ---
 
 ### ![Dependencies](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/dependencies.png)
