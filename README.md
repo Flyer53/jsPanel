@@ -26,13 +26,13 @@ The function accepts two optional arguments. A **configuration object** to set a
 
 | OPTIONS        | METHODS          | CALLBACK      |
 | -------------- | ---------------- | ------------- |
-| id             | title            | callback      |
-| title          | addToolbar       |               |
-| size           | close            |               |
-| position       | closeChildpanels |               |
-| overflow       | movetoFront      |               |
-| content        | minimze          |               |
-| load           | maximize         |               |
+| id             | title()          | callback      |
+| title          | addToolbar()     |               |
+| size           | close()          |               |
+| position       | closeChildpanels() |               |
+| overflow       | movetoFront()    |               |
+| content        | minimize()       |               |
+| load           | maximize()       |               |
 | ajax           |                  |               |
 | contentBG      |                  |               |
 | resizable      |                  |               |
@@ -442,7 +442,7 @@ This method accepts no arguments
     // move testpanel1 to the front
     console.log( testpanel1.movetoFront() );
 
-#### minimze() ####
+#### minimize() ####
 Minimizes a jsPanel to the lower left corner of the browser viewport
 
 This method accepts no arguments
@@ -470,7 +470,7 @@ A **minimized or maximized jsPanel** will be restored to its latest normalized s
 
 ### ![callback](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/callback.jpg)
 
-#### function( jsPanel ) ####
+#### callback( jsPanel ) ####
 A callback function that is executed when the jsPanel is inserted in the document. **The function receives the jsPanel as argument.**
 
 **Examples:**
