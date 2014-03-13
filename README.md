@@ -35,6 +35,29 @@ This will append a jsPanel with all the default options to the first element of 
 
 ### OPTIONS ###
 
+#### id ####
+#### title ####
+#### size ####
+#### position ####
+#### overflow ####
+#### content ####
+#### load ####
+#### ajax ####
+#### contentBG ####
+#### resizable ####
+#### draggable ####
+#### toolbarContent ####
+
 ### METHODS ###
 
+#### title ####
+#### addToolbar ####
+#### close ####
+#### closeChildpanels ####
+#### movetoFront ####
+#### minimze ####
+#### maximize ####
+
 ### CALLBACK ###
+
+#### callback ####
