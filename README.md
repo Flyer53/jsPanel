@@ -327,7 +327,44 @@ This will change the "containment" option and add values for the maxWidth/maxHei
 For detailed information on how to use the jQuery-UI resizable interaction see the [api documentation](http://api.jqueryui.com/resizable/)
 
 #### draggable ####
+Type: object
+
+Default: The [jQuery-UI draggable](http://jqueryui.com/draggable/) interaction is enabled on all jsPanels with the following options:
+
+    {
+		handle: 'div.jsPanel-hdr',
+		containment: 'document',
+		stack: '.jsPanel',
+		opacity: 0.6
+    }
+	
+You can change the draggable options to your needs by adding them to the configuration object of the jsPanel. Let's say you want to add a callback to the stop event. You could do it like this:
+
+    $( selector ).jsPanel({
+		draggable: {
+			stop: function( event, ui ) {
+					ui.helper.css( 'background', '#235849' );
+			}
+		},
+		position: { top: 250, left: 300 }
+    });
+	
+This will change the background color of the jsPanel itself after dragging is finished.
+
+For detailed information on how to use the jQuery-UI draggable interaction see the [api documentation](http://api.jqueryui.com/draggable/)
+
 #### toolbarContent ####
+Type: string
+
+Default: there is no default toolbarContent
+
+This option allows to add a toolbar to the jsPanel header. Using this option will automatically add a div element to the jsPanel header and appends the passed html string to this div element.
+
+**Example:**
+
+    $( selector ).jsPanel({
+		toolbarContent: '<p>Toolbar content goes here ...</p>'
+    });
 
 ### ![methods](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/methods.jpg)
 
