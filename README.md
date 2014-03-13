@@ -60,7 +60,7 @@ This option will set the value of the [id attribute](http://www.w3schools.com/ta
 		id: function(){ return 'jsPanel_' + ( $('.jsPanel').length + 1 ) }
 	});
 
-#### title ####
+#### ![title](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options-title.png)
 Type: string | function
 
 Default: a function building a default string like "jsPanel No 1", "jsPanel No 2", "jsPanel No 3", and so on ...
@@ -79,7 +79,7 @@ To set an empty title/header use the option with an empty string.
 		title: function(){ return 'jsPanel No ' + ( $('.jsPanel').length + 1 ) }
 	});
 
-#### size ####
+#### ![size](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options-size.png)
 Type: object | function
 
 Default: { width: 600, height: 370 }
@@ -117,7 +117,7 @@ This option will set the width and height of the jsPanel in pixels.
 		}
     });
 
-#### position ####
+#### ![position](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options-position.png)
 Type: object
 
 Default: { top: 'auto', left: 'auto' }
@@ -177,7 +177,7 @@ top/left also accept a **function** as value. The return value of the function w
 		position: { top: 'center', left: 'center' }
     });
 	
-#### overflow ####
+#### ![overflow](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options-overflow.png)
 Type: object
 
 Default: { vertical: 'scroll', horizontal: 'scroll' }
@@ -195,7 +195,7 @@ This option will set the css [overflow-y](http://www.w3schools.com/cssref/css3_p
 		}
     });
 	
-#### content ####
+#### ![content](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options-content.png)
 Type: string | function | jQuery object
 
 Default: there is no default content
@@ -225,7 +225,7 @@ This option is one of several ways to fill the content area of the jsPanel. It's
 		content: $( '<p>Lorem ipsum ...</p>' ).css( {padding:'20px', 'text-align':'center'} )
     });	
 	
-#### load ####
+#### ![load](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options-load.png)
 Type: object
 
 Default: there is no default for this option
@@ -251,7 +251,7 @@ The keys/values of the option.load configuration object are used in the same way
 		}
     });
 	
-#### ajax ####
+#### ![ajax](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options-ajax.png)
 Type: object
 
 Default: there is no default for this option
@@ -269,7 +269,7 @@ The keys/values of the option.ajax configuration object are used in the same way
 		}
     });
 
-#### contentBG ####
+#### ![contentBG](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options-contentBG.png)
 Type: string | object
 
 Default: is set in the css file _jsPanel.css_
@@ -299,7 +299,7 @@ This option will set the css properties of only the jsPanel content div.
 		}
     });
 
-#### resizable ####
+#### ![resizable](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options-resizable.png)
 Type: object
 
 Default: The [jQuery-UI resizable](http://jqueryui.com/resizable/) interaction is enabled on all jsPanels with the following options:
@@ -326,7 +326,7 @@ This will change the "containment" option and add values for the maxWidth/maxHei
 
 For detailed information on how to use the jQuery-UI resizable interaction see the [api documentation](http://api.jqueryui.com/resizable/)
 
-#### draggable ####
+#### ![draggable](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options-draggable.png)
 Type: object
 
 Default: The [jQuery-UI draggable](http://jqueryui.com/draggable/) interaction is enabled on all jsPanels with the following options:
@@ -353,7 +353,7 @@ This will change the background color of the jsPanel itself after dragging is fi
 
 For detailed information on how to use the jQuery-UI draggable interaction see the [api documentation](http://api.jqueryui.com/draggable/)
 
-#### toolbarContent ####
+#### ![toolbarContent](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options-toolbarContent.png)
 Type: string
 
 Default: there is no default toolbarContent
@@ -368,24 +368,24 @@ This option allows to add a toolbar to the jsPanel header. Using this option wil
 
 ### ![methods](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/methods.jpg)
 
-#### title( [ true | string ] ) ####
+#### ![title\( \[ true | string \] \)](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-title.png)
 Gets or sets the title of an already existing jsPanel
 
-**title()** Returns the html element containing the title text when used without an argument
+**title\(\)** Returns the html element containing the title text when used without an argument
 
     var jspanel = $( selector ).jsPanel({
         title: 'Title of jspanel'
     });
     console.log( jspanel.title() );
 
-**title( true )** Returns the title text when used with one argument which is _true_
+**title\( true \)** Returns the title text when used with one argument which is _true_
 
     var jspanel = $( selector ).jsPanel({
         title: 'Title of jspanel'
     });
     console.log( jspanel.title( true ) );
 
-**title( string )** Returns the jsPanel and sets the title to string when used with one argument which is a string
+**title\( string \)** Returns the jsPanel and sets the title to string when used with one argument which is a string
 
     var jspanel = $( selector ).jsPanel({
         title: 'Title of jspanel'
@@ -393,7 +393,7 @@ Gets or sets the title of an already existing jsPanel
     console.log( jspanel.title( 'And this is a new title!' ) );
 
 
-#### addToolbar( string ) ####
+#### ![addToolbar\( string \)](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-addToolbar.png)
 Adds a toolbar to an already existing jsPanel in the same way the **option.toolbarContent** does and returns the jsPanel
 
     var jspanel = $( selector ).jsPanel({
@@ -401,7 +401,7 @@ Adds a toolbar to an already existing jsPanel in the same way the **option.toolb
     });
     console.log( jspanel.addToolbar( '<p>toolbar content ...</p>' ) );
 
-#### close() ####
+#### ![close\(\)](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-close.png)
 Removes the jsPanel from the DOM and returns the the element that contained the jsPanel
 
 This method accepts no arguments
@@ -411,7 +411,7 @@ This method accepts no arguments
     });
     console.log( jspanel.close() );
 
-#### closeChildpanels() ####
+#### ![closeChildpanels\(\)](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-closeChildpanels.png)
 Removes all childpanels of a jsPanel from the DOM and returns the jsPanel the childpanels were removed from
 
 This method accepts no arguments
@@ -429,7 +429,7 @@ This method accepts no arguments
     // remove the childpanel
     console.log( testpanel.closeChildpanels() );
 
-#### movetoFront() ####
+#### ![movetoFront\(\)](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-movetoFront.png)
 Moves a jsPanels to the front by increasing the z-index and returns the jsPanel
 
 This method accepts no arguments
@@ -442,7 +442,7 @@ This method accepts no arguments
     // move testpanel1 to the front
     console.log( testpanel1.movetoFront() );
 
-#### minimize() ####
+#### ![minimize\(\)](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-minimize.png)
 Minimizes a jsPanel to the lower left corner of the browser viewport
 
 This method accepts no arguments
@@ -453,7 +453,7 @@ This method accepts no arguments
     // minimize testpanel1
     console.log( testpanel.minimize() );
 
-#### maximize() ####
+#### ![maximize\(\)](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-maximize.png)
 Maximizes or normalizes a jsPanels depending of the current status of the jsPanel and returns the jsPanel
 
 This method accepts no arguments
@@ -470,7 +470,7 @@ A **minimized or maximized jsPanel** will be restored to its latest normalized s
 
 ### ![callback](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/callback.jpg)
 
-#### callback( jsPanel ) ####
+#### ![callback\( jsPanel \)](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/method-callback.png)
 A callback function that is executed when the jsPanel is inserted in the document. **The function receives the jsPanel as argument.**
 
 **Examples:**
