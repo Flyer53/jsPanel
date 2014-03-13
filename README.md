@@ -99,7 +99,7 @@ This option will set the width and height of the jsPanel in pixels.
 
 **Examples:**
 
-	$( '#options-size' ).jsPanel({
+	$( selector ).jsPanel({
 		size: {
 			width: 500,
 			height: 300
@@ -107,7 +107,7 @@ This option will set the width and height of the jsPanel in pixels.
 		position: { top: 260, left: 300 }
 	});
 
-	$('#options-size').jsPanel({
+	$( selector ).jsPanel({
 		size: {
 			width: '600px',
 			height: 'auto'
@@ -115,7 +115,7 @@ This option will set the width and height of the jsPanel in pixels.
 		position: { top: 360, left: 300 }
     });
 	
-	$( '#options-size' ).jsPanel({
+	$( selector ).jsPanel({
 		size: {
 			width: function(){ return $(window).width()/3 },
 			height: 350
@@ -124,6 +124,57 @@ This option will set the width and height of the jsPanel in pixels.
     });
 
 #### position ####
+Type: object
+
+Default: { top: 'auto', left: 'auto' }
+
+This option will set the position of the jsPanel in pixels relative to the parent element containing the jsPanel. The parent element needs to be positioned somehow for option.position to work properly.
+
+**Possible values for top and left:** integer | string | 'auto' | 'center'
+
++ An **integer** will be interpreted as pixel value
++ A **string** will be parsed using parseInt() and the result will be used as pixel value
++ **'auto'** will automatically position the jsPanel
++ **'center'** will center the jsPanel within the containing element. 'center' for position.top and/or position.left can not be used when the respective values for size.height/size.width are set to 'auto' (positioning will be automatic in this case)
+
+top/left also accept a **function** as value. The return value of the function will be parsed using [parseInt()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt) and used to set css top/left of the jsPanel if the return values are >= 0
+
+**Examples:**
+
+	$( selector ).jsPanel({
+		position: {
+			top: 550,
+			left: 300
+		}
+	});
+	
+	$( selector ).jsPanel({
+		position: {
+			top: 'auto',
+			left: 'auto'
+		}
+    });
+	
+	$( selector ).jsPanel({
+		position: {
+			top: 860,
+			left: 'auto'
+		}
+    });
+	
+	$( selector ).jsPanel({
+		position: {
+			top: 915,
+			left: 'center'
+		}
+    });
+	
+	// This example will not work since there are no fixed values for width and/or height. Results in default positioning.
+	$( selector ).jsPanel({
+		size: { width: 'auto', height: 'auto' },
+		position: { top: 'center', left: 'center' }
+    });
+	
 #### overflow ####
 #### content ####
 #### load ####
