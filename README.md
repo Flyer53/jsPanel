@@ -276,8 +276,8 @@ Default: is set in the css file _jsPanel.css_
 
 This option will set the css properties of only the jsPanel content div.
 
-+ **Passing a string** will use this string as value for the css [background](http://www.w3schools.com/cssref/css3_pr_background.asp) property like [.css( 'background', string )](http://api.jquery.com/css/)
-+ **Passing an object** will use this object like [.css( object )](http://api.jquery.com/css/)
+**Passing a string** will use this string as value for the css [background](http://www.w3schools.com/cssref/css3_pr_background.asp) property like [.css( 'background', string )](http://api.jquery.com/css/)
+**Passing an object** will use this object like [.css( object )](http://api.jquery.com/css/)
 
 **Examples:**
 
@@ -300,6 +300,32 @@ This option will set the css properties of only the jsPanel content div.
     });
 
 #### resizable ####
+Type: object
+
+Default: The [jQuery-UI resizable](http://jqueryui.com/resizable/) interaction is enabled on all jsPanels with the following options:
+
+    {
+		containment: 'document',
+		autoHide: false,
+		minWidth: 150,
+		minHeight: 100
+    }
+	
+You can change the resizable options to your needs by adding them to the configuration object of the jsPanel. Let's say you want to change the [containment](http://api.jqueryui.com/resizable/#option-containment) to "parent" and add [maxWidth](http://api.jqueryui.com/resizable/#option-maxWidth) and [maxHeight](http://api.jqueryui.com/resizable/#option-maxHeight) values. You could do it like this:
+
+    $( selector ).jsPanel({
+		resizable: {
+			containment: 'parent',
+			maxWidth: 800,
+			maxHeight: 600
+		},
+		position: { top: 260, left: 260 }
+    });
+	
+This will change the "containment" option and add values for the maxWidth/maxHeight options of the jQuery-UI resizable interaction while preserving the other default options.
+
+For detailed information on how to use the jQuery-UI resizable interaction see the [api documentation](http://api.jqueryui.com/resizable/)
+
 #### draggable ####
 #### toolbarContent ####
 
