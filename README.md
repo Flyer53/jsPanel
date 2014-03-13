@@ -6,7 +6,7 @@ A jQuery Plugin to generate configurable floating panels for use in a backend so
 
 README FILE IS CURRENTLY A WORK IN PROGRESS
 
-### ![Dependencies](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/dependencies.jpg)
+### ![Dependencies](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/dependencies.png)
 + jQuery version 1.7.0 or greater
 + jQuery UI version 1.9.0 or greater (with at least core, resizable, draggable)
 + HTML5 compatible browser
