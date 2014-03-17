@@ -336,5 +336,18 @@ $( document ).ready( function(){
         });
     });
 
+    $('#try-38').click( function(){
+        $( '#callback' ).jsPanel( function( panel ){
+            $.ajax({
+                url: 'files/callback-4.html'
+            })
+            .done( function(  data, textStatus, jqXHR  ){
+                panel.find( '.jsPanel-content' ).empty().append( data );
+                console.log( textStatus );
+            });
+        });
+    });
+
+
 
 })
