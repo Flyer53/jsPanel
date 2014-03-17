@@ -1,5 +1,5 @@
 /* jQuery Plugin jsPanel
-   Version: 1.0.0 2014-03-13 12:25
+   Version: 1.0.1 2014-03-17 10:32
    Dependencies:
     jQuery library ( > 1.7.0 incl. 2.1.0 )
     jQuery.UI library ( > 1.9.0 ) - (at least UI Core, Draggable, Resizable)
@@ -19,7 +19,7 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var jsPanelversion = 'jsPanel Version: 1.0.0 2014-03-13 12:25';
+var jsPanelversion = 'jsPanel Version: 1.0.1 2014-03-17 10:32';
 
 //TODO maximize() arbeitet nicht gut wenn Fenster bzw. jsPanel parent gescrollt ist; siehe Beispiel maximize()
 //TODO Events einbauen ja/nein??
@@ -81,31 +81,37 @@ var jsPanelversion = 'jsPanel Version: 1.0.0 2014-03-13 12:25';
         $( '.jsPanel-hdr-l-text', jsPanel ).append( option.title );
 
         /* ATTRIBUT ID DES PANELS */
-        if( option.id )
-        {
-            // wenn es die id noch nicht gibt ...
-            if( $( '#' + option.id ).length < 1 ){
-                jsPanel.attr( 'id', option.id );
-            }
-            else
-            {
-                // sonst ...
-                // wenn jQuery.fn.uniqueId zur Verfügung steht ...
-                if ( jQuery.isFunction( jQuery.fn.uniqueId ) ) {
-                    jsPanel.uniqueId();
+        if( option.id ){
+            // wenn option.id -> string oder function?
+            if( typeof option.id === 'string' ){
+                // wenn id schon vorhanden
+                if( $( '#' + option.id ).length < 1 ){
+                    jsPanel.attr( 'id', option.id );
                 }
                 else
                 {
                     // sonst ...
-                    option.id = function(){
-                        return 'jsPanel_' + ( $('.jsPanel').length + 1 )
+                    // wenn jQuery.fn.uniqueId zur Verfügung steht ...
+                    if ( jQuery.isFunction( jQuery.fn.uniqueId ) ) {
+                        jsPanel.uniqueId();
                     }
+                    else
+                    {
+                        // sonst ...
+                        option.id = function(){
+                            return 'jsPanel_' + ( $('.jsPanel').length + 1 )
+                        }
+                        jsPanel.attr( 'id', option.id );
+                    }
+                    // neue id in den title schreiben
+                    var txt = $('.jsPanel-hdr-l-text', jsPanel).html();
+                    $('.jsPanel-hdr-l-text', jsPanel).html( txt + ' AUTOMATIC ID: ' + jsPanel.attr('id') );
                 }
-                // neue id in den title schreiben
-                var txt = $('.jsPanel-hdr-l-text', jsPanel).html();
-                $('.jsPanel-hdr-l-text', jsPanel).html( txt + ' AUTOMATIC ID: ' + jsPanel.attr('id') );
             }
-
+            if( $.isFunction( option.id ) )
+            {
+                jsPanel.attr( 'id', option.id );
+            }
         }
         else
         {
