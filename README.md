@@ -3,7 +3,7 @@
 A jQuery Plugin to generate configurable floating panels for use in a backend solution and other web applications.
 
 Copyright &copy; 2014 Stefan Sträßer | [stefanstraesser.eu](http://stefanstraesser.eu).<br>
-For a bunch of examples and more documentation go to [jspanel.stefanstraesser.eu](http://jspanel.stefanstraesser.eu).
+For a bunch of working examples and more documentation go to [jspanel.stefanstraesser.eu](http://jspanel.stefanstraesser.eu).
 
 ---
 
@@ -497,7 +497,7 @@ A callback function that is executed when the jsPanel is inserted in the documen
         console.log( panel.attr( 'id' ) )
     });
 
-    // Load content using the native jQuery.load() method
+    // Load content using the native jQuery .load() method
     $( selector ).jsPanel( function( panel ){
         $( '.jsPanel-content', panel ).load( 'files/callback-2.html' );
     });
@@ -508,4 +508,15 @@ A callback function that is executed when the jsPanel is inserted in the documen
         .title( 'Welcome Panel' )
         .find( '.jsPanel-content' )
         .load( 'files/callback-3.html' );
+    });
+
+    // Load content using the native jQuery.ajax() method with .done()
+    $( selector ).jsPanel( function( panel ){
+        $.ajax({
+             url: 'files/callback-4.html'
+        })
+        .done( function(  data, textStatus, jqXHR  ){
+            panel.find( '.jsPanel-content' ).empty().append( data );
+            console.log( textStatus );
+        });
     });
