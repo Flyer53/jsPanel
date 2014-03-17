@@ -342,7 +342,7 @@ $( document ).ready( function(){
                 url: 'files/callback-4.html'
             })
             .done( function(  data, textStatus, jqXHR  ){
-                panel.find( '.jsPanel-content' ).empty().append( data );
+                $( '.jsPanel-content', panel ).empty().append( data );
                 console.log( textStatus );
             });
         });
