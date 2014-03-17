@@ -279,7 +279,7 @@ If you need to use .done(), .fail(), .always() or .then() with jQuery.ajax() I r
              url: 'files/callback-4.html'
         })
         .done( function(  data, textStatus, jqXHR  ){
-            panel.find( '.jsPanel-content' ).empty().append( data );
+            $( '.jsPanel-content', panel ).empty().append( data );
             console.log( textStatus );
         });
     });
