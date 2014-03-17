@@ -1,8 +1,9 @@
 ![jsPanel jQuery Plugin](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/readme-header.jpg)
 
 A jQuery Plugin to generate configurable floating panels for use in a backend solution and other web applications.
-Copyright &copy; 2014 Stefan Sträßer | [stefanstraesser.eu](http://stefanstraesser.eu)
-For a bunch of examples and more documentation go to [jspanel.stefanstraesser.eu](http://jspanel.stefanstraesser.eu)
+
+Copyright &copy; 2014 Stefan Sträßer | [stefanstraesser.eu](http://stefanstraesser.eu).<br>
+For a bunch of examples and more documentation go to [jspanel.stefanstraesser.eu](http://jspanel.stefanstraesser.eu).
 
 ---
 
