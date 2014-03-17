@@ -270,6 +270,20 @@ The keys/values of the option.ajax configuration object are used in the same way
 		}
     });
 
+**Tip:**
+
+If you need to use .done(), .fail(), .always() or .then() with jQuery.ajax() I recommend to make the call to .ajax() in the callback function as in the following example:
+
+    $( selector ).jsPanel( function( panel ){
+        $.ajax({
+             url: 'files/callback-4.html'
+        })
+        .done( function(  data, textStatus, jqXHR  ){
+            panel.find( '.jsPanel-content' ).empty().append( data );
+            console.log( textStatus );
+        });
+    });
+
 #### ![contentBG](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options-contentBG.png)<a name="option-contentBG"></a>
 Type: string | object
 
