@@ -126,6 +126,10 @@ dd{
     margin:auto;
 }
 
+.option-container{
+    margin: 20px 0 0;
+    position: relative;
+}
 .docs{
     background: none repeat scroll 0 0 #FFFFFF;
     -webkit-box-shadow: 1px 1px 8px 5px rgba(128,128,128,0.8);
@@ -144,6 +148,14 @@ dd{
     padding: 15px 5px 10px 10px;
     margin: 15px 0;
 }
+.docs h3{
+    color: #FF4500;
+    font-size: 1.1em;
+    font-weight: bold;
+    padding: 5px;
+    position: relative;
+    text-decoration: none;
+}
 .docs ul{
     margin: 0 0 10px 0;
 }
@@ -151,19 +163,8 @@ dd{
     font-size: 0.9em;
     padding: 5px 40px;
 }
-.docs dt{
-    position: relative;
-    color: #FF4500;
-    font-size: 1em;
-    font-weight: bold;
-    padding: 5px 0;
-    text-decoration: none;
-}
-.docs dd{
-    margin-bottom: 20px;
-}
 .docs p.docs-p{
-    font-size: 0.9em;
+    font-size: 0.8em;
     padding: 5px 20px;
     line-height: 1.2em;
 }

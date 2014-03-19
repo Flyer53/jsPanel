@@ -1,6 +1,8 @@
 $( document ).ready( function(){
 
-    $('button' ).button();
+    $('#jspanelversion' ).append( jsPanelversion );
+
+    $('button').button();
 
     $( document ).on( 'click', '#nav-download', function(e){
         e.preventDefault();
@@ -190,7 +192,6 @@ $( document ).ready( function(){
     $('#try-23').click( function(){
         $('#options-resizable').jsPanel({
             resizable: {
-                containment: 'parent',
                 maxWidth: 800,
                 maxHeight: 600
             },
