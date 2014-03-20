@@ -8,7 +8,7 @@ For a bunch of working examples and more documentation go to [jspanel.stefanstra
 ---
 
 ### ![Dependencies](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/dependencies.png)
-+ [jQuery](http://jquery.com/) version 1.7.0 or greater
++ [jQuery](http://jquery.com/) version 1.7.0 or greater (includes 2.1.0)
 + [jQuery UI](http://jqueryui.com/) version 1.9.0 or greater (with at least core, resizable, draggable)
 + [HTML5](http://www.w3schools.com/html/html5_intro.asp) compatible browser
 
