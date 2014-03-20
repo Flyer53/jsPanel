@@ -231,14 +231,15 @@ Type: object
 
 Default: there is no default for this option
 
-The keys/values of the option.load configuration object are used in the same way as the arguments for jQuery .load() would be used.
+The settings of the option.load configuration object are used in the same way as the arguments for jQuery .load() would be used.
 
 **Possible values for url, data and complete:**
 
 
 + **url:** A string containing the URL to which the request is sent.
 + **data:** A plain object or string that is sent to the server with the request.
-+ **complete:** A callback function that is executed when the request completes.
++ **complete:** A callback function that is executed when the request completes. This callback function receives the same 3 arguments as the native jQuery.load() complete callback.
+Additionally it receives the jsPanel as fourth argument.
 
 **For detailed information about the jQuery .load() configuration refer to the [jQuery API](http://api.jquery.com/load/).**
 
@@ -246,10 +247,14 @@ The keys/values of the option.load configuration object are used in the same way
 
 	// Adding content with option.load
     $( selector ).jsPanel({
-		load: {
-			url: 'files/example-load.html',
-			complete: function(){ console.log( "It's done!" ) }
-		}
+        position: { top: 255, left: 350 },
+        load: {
+            url: 'files/example-load.html',
+            complete: function( responseText, textStatus, XMLHttpRequest, jsPanel ){
+                   console.log( textStatus );
+                   $( '.jsPanel-content', jsPanel ).append( XMLHttpRequest.statusText );
+            }
+        }
     });
 	
 #### ![ajax](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options-ajax.png)<a name="option-ajax"></a>
@@ -257,7 +262,7 @@ Type: object
 
 Default: there is no default for this option
 
-The keys/values of the option.ajax configuration object are used in the same way as the arguments for jQuery.ajax() would be used.
+The settings of the option.ajax configuration object are used in the same way as the arguments for jQuery.ajax() would be used.
 
 **For detailed information about the jQuery.ajax() configuration refer to the [jQuery API](http://api.jquery.com/jQuery.ajax/).**
 
@@ -270,23 +275,57 @@ The keys/values of the option.ajax configuration object are used in the same way
 		}
     });
 
-**Tip:**
+**As of version 1.1.0 the option.ajax settings object accepts the following additional settings:**
 
-If you need to use .done(), .fail(), .always() or .then() with jQuery.ajax() I recommend to make the call to .ajax() in the callback function as in the following example:
++ **done: function( data, textStatus, jqXHR, jsPanel ) {}** A function that will be passed to **jQuerys .done() callback** and receives the same arguments as jQuerys .done() callback plus the jsPanel as fourth argument.
++ **fail: function( jqXHR, textStatus, errorThrown, jsPanel ) {}** A function that will be passed to **jQuerys .fail() callback** and receives the same arguments as jQuerys .fail() callback plus the jsPanel as fourth argument.
++ **always: function( data|jqXHR, textStatus, jqXHR|errorThrown, jsPanel ) {}** A function that will be passed to **jQuerys .always() callback** and receives the same arguments as jQuerys .always() callback plus the jsPanel as fourth argument.<br>
+In response to a successful request, the function's arguments are the same as those of .done(): data, textStatus, and the jqXHR object plus the jsPanel as fourth argument.<br>
+For failed requests the arguments are the same as those of .fail(): the jqXHR object, textStatus, and errorThrown plus the jsPanel as fourth argument.
++ **then: function( data, textStatus, jqXHR, jsPanel ) {}, function( jqXHR, textStatus, errorThrown, jsPanel ) {}** Expects an **array of two functions**. The first function serves as callback for a successful request, the second one as callback for a failed request.
 
+**For detailed information about the jQuery.ajax() configuration refer to the [jQuery API](http://api.jquery.com/jQuery.ajax/).**
+
+**Examples:**
+
+    // Using the settings done, fail and always
     $( selector ).jsPanel({
-            position: { top: 300, left: 400 }
-        },
-        function( panel ){
-            $.ajax({
-                url: 'files/callback-4.html'
-            })
-            .done( function( data, textStatus, jqXHR ){
-                $( '.jsPanel-content', panel ).empty().append( data );
+        position: { top: 475, left: 380 },
+        size: { width: 650, height: 'auto' },
+        ajax: {
+            url: 'files/example-ajax-2.html',
+            done: function(data, textStatus, jqXHR, jsPanel){
+                console.log( 'jqXHR status: ' + jqXHR.status + ' ' + jqXHR.statusText + ' ' + textStatus  );
+            },
+            fail: function( jqXHR, textStatus, errorThrown, jsPanel ){
+                $('.jsPanel-content', jsPanel).append( jqXHR.responseText );
+            },
+            always: function( arg1, textStatus, arg3, jsPanel ){
                 console.log( textStatus );
-            });
+            }
         }
-    );
+    });
+
+    // Using the setting then
+    $( selector ).jsPanel({
+        position: { top: 990, left: 450 },
+        size: { width: 650, height: 'auto' },
+        ajax: {
+            url: 'files/example-ajax-3.html',
+            then: [
+                function( data, textStatus, jqXHR, jsPanel ){
+                    jsPanel.title( 'Example for option.ajax.then' );
+                    console.log( textStatus )
+                },
+                function( jqXHR, textStatus, errorThrown, jsPanel ){
+                    $('.jsPanel-content', jsPanel).append( jqXHR.responseText );
+                    console.log( errorThrown )
+                }
+            ]
+        }
+    });
+
+
 
 #### ![contentBG](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options-contentBG.png)<a name="option-contentBG"></a>
 Type: string | object

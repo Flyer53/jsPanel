@@ -11,7 +11,7 @@
     <link href='http://fonts.googleapis.com/css?family=Rufina:700,400|Open+Sans:400,400italic,700,700italic&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
     <script src='js/jquery-2.1.0.min.js'></script>
     <script src='js/jquery-ui-1.10.4.complete.min.js'></script>
-    <script src='js/jsPanel/jquery.jspanel-1.0.1.min.js'></script>
+    <script src='js/jsPanel/jquery.jspanel-1.1.0.min.js'></script>
     <script src='js/docs.js'></script>
 </head>
 <body>
@@ -39,14 +39,14 @@
                 <h3>code examples</h3>
                 <p class="docs-p">All code examples should work when you copy and paste them to the javascript console and
                     execute them. For some of the examples it's helpful to enable the javascript console first.</p>
-                <p class="docs-p bold">This demopage works with <span id="jspanelversion"></span></p>
+                <p class="docs-p bold" style="font-size:1em;">This demopage works with <span id="jspanelversion"></span></p>
             </div>
 
         <p class="docs-p">The most basic way to add a jsPanel to your document is</p>
 <pre class="prettyprint linenums">
 $( '#content' ).jsPanel();
 </pre>
-        <button class="btn-try" id="try-1">Try it</button>
+        <p class="docs-p"><button class="btn-try" id="try-1">Try it</button></p>
         <p class="docs-p">This will append a jsPanel with all the default options to the first element of the collection specified by the selector.</p>
         <p class="docs-p">The function accepts two optional arguments. A <span class="bold">configuration object</span> to set all the
             options of the jsPanel and a <span class="bold"><a href="http://www.impressivewebs.com/callback-functions-javascript/" title="jquery.com">callback</a></span> function.</p>
@@ -118,14 +118,14 @@ $( '#options-id' ).jsPanel({
     position: { top: 110, left: 240 }
 });
 </pre>
-            <button class="btn-try" id="try-2">Try it</button>
+            <p class="docs-p"><button class="btn-try" id="try-2">Try it</button></p>
 <pre class="prettyprint linenums">
 $('#options-id').jsPanel({
     id: function(){ return 'jsPanel_' + ( $('.jsPanel').length + 1 ) },
     position: { top: 240, left: 390 }
 });
 </pre>
-            <button class="btn-try" id="try-3">Try it</button>
+            <p class="docs-p"><button class="btn-try" id="try-3">Try it</button></p>
         </div>
 
 <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXX title XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
@@ -142,14 +142,14 @@ $( '#options-title' ).jsPanel({
     position: { top: 130, left: 250 }
 });
 </pre>
-            <button class="btn-try" id="try-4">Try it</button>
+            <p class="docs-p"><button class="btn-try" id="try-4">Try it</button></p>
 <pre class="prettyprint linenums">
 $('#options-title').jsPanel({
     title: function(){ return 'jsPanel No ' + ( $('.jsPanel').length + 1 ) },
     position: { top: 190, left: 420 }
 });
 </pre>
-            <button class="btn-try" id="try-5">Try it</button>
+            <p class="docs-p"><button class="btn-try" id="try-5">Try it</button></p>
         </div>
 
 <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXX size XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
@@ -175,14 +175,14 @@ $( '#options-size' ).jsPanel({
     position: { top: 260, left: 300 }
 });
 </pre>
-            <button class="btn-try" id="try-6">Try it</button>
+            <p class="docs-p"><button class="btn-try" id="try-6">Try it</button></p>
 <pre class="prettyprint linenums">
 $('#options-size').jsPanel({
     size: { width: '600px', height: 'auto' },
     position: { top: 360, left: 300 }
 });
 </pre>
-            <button class="btn-try" id="try-7">Try it</button>
+            <p class="docs-p"><button class="btn-try" id="try-7">Try it</button></p>
 <pre class="prettyprint linenums">
 $( '#options-size' ).jsPanel({
     size: {
@@ -192,7 +192,7 @@ $( '#options-size' ).jsPanel({
     position: { top: 460, left: 400 }
 });
 </pre>
-            <button class="btn-try" id="try-8">Try it</button>
+            <p class="docs-p"><button class="btn-try" id="try-8">Try it</button></p>
         </div>
 
 <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXX position XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
@@ -279,7 +279,7 @@ $( '#options-overflow' ).jsPanel({
     position: { top: 135, left: 340 }
 });
 </pre>
-            <button class="btn-try" id="try-14">Try it</button>
+            <p class="docs-p"><button class="btn-try" id="try-14">Try it</button></p>
         </div>
 
 <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXX content XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
@@ -330,13 +330,15 @@ $('#options-content').jsPanel({
             <h3>load</h3>
             <p class="docs-p">Type: object</p>
             <p class="docs-p">Default: there is no default for this option
-            <p class="docs-p">The keys/values of the option.load configuration object are used in the same way as the arguments for jQuery .load()
+            <p class="docs-p">The settings of the option.load configuration object are used in the same way as the arguments for jQuery .load()
                 would be used.</p>
             <p class="docs-p"><span class="bold">Possible values for url, data and complete:</span></p>
             <ul>
                 <li><span class="bold">url:</span> A string containing the URL to which the request is sent.</li>
                 <li><span class="bold">data:</span> A plain object or string that is sent to the server with the request.</li>
-                <li><span class="bold">complete:</span> A callback function that is executed when the request completes.</li>
+                <li><span class="bold">complete:</span> A callback function that is executed when the request completes. This callback
+                    function receives the same 3 arguments as the native jQuery.load() complete callback. Additionally it receives
+                    the jsPanel as fourth argument.</li>
             </ul>
             <p class="docs-p bold">For detailed information about the jQuery .load() configuration refer to the <a href="http://api.jquery.com/load/" title="">jQuery API</a>.</p>
             <p class="docs-p bold">Examples:</p>
@@ -346,7 +348,10 @@ $('#options-load').jsPanel({
     position: { top: 255, left: 350 },
     load: {
         url: 'files/example-load.html',
-        complete: function(){ console.log( "It's done!" ) }
+        complete: function( responseText, textStatus, XMLHttpRequest, jsPanel ){
+               console.log( textStatus );
+               $( '.jsPanel-content', jsPanel ).append( XMLHttpRequest.statusText );
+        }
     }
 });
 </pre>
@@ -357,11 +362,11 @@ $('#options-load').jsPanel({
             <h3>ajax</h3>
             <p class="docs-p">Type: object</p>
             <p class="docs-p">Default: there is no default for this option</p>
-            <p class="docs-p">The keys/values of the option.ajax configuration object are used in the same way as
+            <p class="docs-p">The settings of the option.ajax configuration object are used in the same way as
                 the settings object for jQuery.ajax() would be used.</p>
             <p class="docs-p bold">For detailed information about the jQuery.ajax() configuration refer to
                 the <a href="http://api.jquery.com/jQuery.ajax/" title="">jQuery API</a>.</p>
-            <p class="docs-p bold">Examples:</p>
+            <p class="docs-p bold">Example:</p>
             <p class="docs-p">Adding content with <span class="bold">option.ajax</span>.<button class="btn-try" id="try-19a">Try it</button></p>
 <pre class="prettyprint linenums">
 $( '#options-ajax' ).jsPanel({
@@ -371,23 +376,71 @@ $( '#options-ajax' ).jsPanel({
     }
 });
 </pre>
-            <p class="docs-p bold">Tip:</p>
-            <p class="docs-p">If you need to use .done(), .fail(), .always() or .then() with jQuery.ajax() I recommend
-                to make the call to .ajax() in the callback function as in the following example:</p>
+            <p class="docs-p bold">As of version 1.1.0 the option.ajax settings object accepts the following additional settings:</p>
+            <ul>
+                <li><span class="bold" style="color:#0073EA;">done: function( data, textStatus, jqXHR, jsPanel ) {} </span><br>A function that will be passed to <span class="bold">jQuerys .done() callback</span>
+                    and receives the same arguments as jQuerys .done() callback plus the jsPanel as fourth argument.</li>
+                <li><span class="bold" style="color:#0073EA;">fail: function( jqXHR, textStatus, errorThrown, jsPanel ) {} </span><br>A function that will be passed to <span class="bold">jQuerys .fail() callback</span>
+                    and receives the same arguments as jQuerys .fail() callback plus the jsPanel as fourth argument.</li>
+                <li><span class="bold" style="color:#0073EA;">always: function( data|jqXHR, textStatus, jqXHR|errorThrown, jsPanel ) {} </span><br>A function that will be passed to <span class="bold">jQuerys .always() callback</span>
+                    and receives the same arguments as jQuerys .always() callback plus the jsPanel as fourth argument.<br>
+                    In response to a successful request, the function's arguments are the same as those of .done(): data, textStatus, and the jqXHR object plus the jsPanel as fourth argument.<br>
+                    For failed requests the arguments are the same as those of .fail(): the jqXHR object, textStatus, and errorThrown plus the jsPanel as fourth argument.
+                </li>
+                <li><span class="bold" style="color:#0073EA;">then: function( data, textStatus, jqXHR, jsPanel ) {}, function( jqXHR, textStatus, errorThrown, jsPanel ) {} </span><br>
+                    Expects an <span class="bold">array of two functions</span>. The first function serves as callback for a successful request, the second one as callback for a failed request.</li>
+            </ul>
+            <p class="docs-p bold">For detailed information about the jQuery.ajax() configuration refer to
+                the <a href="http://api.jquery.com/jQuery.ajax/" title="">jQuery API</a>.</p>
+            <p class="docs-p bold">Examples:</p>
+            <p class="docs-p">Using the settings done, fail and always.<button class="btn-try" id="try-19c">Try it</button></p>
 <pre class="prettyprint linenums">
 $( '#options-ajax' ).jsPanel({
-        position: { top: 300, left: 400 }
-    },
-    function( panel ){
-        $.ajax({
-            url: 'files/callback-4.html'
-        })
-        .done( function( data, textStatus, jqXHR ){
-            $( '.jsPanel-content', panel ).empty().append( data );
-            console.log( textStatus );
-        });
+
+    position: { top: 475, left: 380 },
+
+    size: { width: 650, height: 'auto' },
+
+    ajax: {
+            url:        'files/example-ajax-2.html',
+
+            done:   function( data, textStatus, jqXHR, jsPanel ){
+                                console.log( 'jqXHR status: ' + jqXHR.status + ' ' + jqXHR.statusText + ' ' + textStatus  );
+                          },
+
+            fail:       function( jqXHR, textStatus, errorThrown, jsPanel ){
+                                $( '.jsPanel-content', jsPanel ).append( jqXHR.responseText );
+                          },
+
+            always:     function( arg1, textStatus, arg3, jsPanel ){
+                                        console.log( textStatus );
+                               }
     }
-);
+});
+</pre>
+            <p class="docs-p">Using the setting then.<button class="btn-try" id="try-19d">Try it</button></p>
+<pre class="prettyprint linenums">
+$( '#options-ajax' ).jsPanel({
+
+    position: { top: 990, left: 450 },
+
+    size: { width: 650, height: 'auto' },
+
+    ajax: {
+            url: 'files/example-ajax-3.html',
+
+            then: [
+                    function( data, textStatus, jqXHR, jsPanel ){
+                            jsPanel.title( 'Example for option.ajax.then' );
+                            console.log( textStatus )
+                    },
+                    function( jqXHR, textStatus, errorThrown, jsPanel ){
+                            $( '.jsPanel-content', jsPanel ).append( jqXHR.responseText );
+                            console.log( errorThrown )
+                    }
+            ]
+    }
+});
 </pre>
         </div>
 
@@ -460,7 +513,7 @@ $('#options-resizable').jsPanel({
     position: { top: 260, left: 260 }
 });
 </pre>
-            <button class="btn-try" id="try-23">Try it</button>
+            <p class="docs-p"><button class="btn-try" id="try-23">Try it</button></p>
             <p class="docs-p">This will add values for the maxWidth/maxHeight options of
                 the jQuery-UI resizable interaction while preserving the other default options.</p>
             <p class="docs-p">For detailed information on how to use the jQuery-UI resizable interaction see the
@@ -493,7 +546,7 @@ $('#options-draggable').jsPanel({
     position: { top: 250, left: 300 }
 });
 </pre>
-            <button class="btn-try" id="try-24">Try it</button>
+            <p class="docs-p"><button class="btn-try" id="try-24">Try it</button></p>
             <p class="docs-p">This will change the background color of the jsPanel itself after dragging is finished.</p>
             <p class="docs-p">For detailed information on how to use the jQuery-UI draggable interaction see the
                 <a href="http://api.jqueryui.com/draggable/" title="">api documentation</a>

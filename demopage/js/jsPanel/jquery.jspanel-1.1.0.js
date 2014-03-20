@@ -1,5 +1,5 @@
 /* jQuery Plugin jsPanel
-   Version: 1.0.1 2014-03-17 10:32
+   Version: 1.1.0 2014-03-20 10:56
    Dependencies:
     jQuery library ( > 1.7.0 incl. 2.1.0 )
     jQuery.UI library ( > 1.9.0 ) - (at least UI Core, Draggable, Resizable)
@@ -19,24 +19,7 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var jsPanelversion = 'jsPanel Version: 1.0.1 2014-03-17 10:32';
-
-//TODO maximize() arbeitet nicht gut wenn Fenster bzw. jsPanel parent gescrollt ist; siehe Beispiel maximize()
-//TODO Events einbauen ja/nein??
-/*
- if (jQuery.ui) {
- console.log( 'Yep :-)' );
- }
- if (typeof(jQuery.ui.draggable) != 'undefined'){
- console.log( 'draggable loaded :-)' );
- }
- if (typeof(jQuery.ui.resizable) != 'undefined'){
- console.log( 'resizable loaded :-)' );
- }
- if (jQuery.isFunction(jQuery.fn.uniqueId)) {
- console.log('ok')
- }
- */
+var jsPanelversion = 'jsPanel Version: 1.1.0 2014-03-20 10:56';
 
 (function ( $ ) {
 
@@ -273,33 +256,57 @@ var jsPanelversion = 'jsPanel Version: 1.0.1 2014-03-17 10:32';
             $( '.jsPanel-content' , jsPanel ).append( option.content );
         }
 
-        if( option.load && $.isPlainObject( option.load ) )
+        if( option.load && $.isPlainObject( option.load ) && option.load.url )
         {
-            if( option.load.url ){
-                var url = option.load.url;
-            }else{
-                var url = undefined;
+            if( !option.load.data ){
+                option.load.data = undefined;
             }
-            if( option.load.data ){
-                var data = option.load.data;
+            if( !option.load.complete ){
+                var func = $.noop();
             }else{
-                var data = undefined;
+                func = function( responseText, textStatus, XMLHttpRequest ){
+                    option.load.complete( responseText, textStatus, XMLHttpRequest, jsPanel );
+                }
             }
-            if( option.load.complete && $.isFunction( option.load.complete ) ){
-                var complete = option.load.complete;
-            }else{
-                var complete = $.noop();
-            }
-            $( '.jsPanel-content' , jsPanel ).empty().load( url, data, complete );
+            $( '.jsPanel-content' , jsPanel ).empty().load( option.load.url, option.load.data, func );
         }
-
 
         if( option.ajax && $.isPlainObject( option.ajax ) )
         {
             $.ajax( option.ajax )
-            .done( function( data ){
+            .done( function( data, textStatus, jqXHR ){
                 $( '.jsPanel-content' , jsPanel ).empty().append( data );
-            });
+                if( option.ajax.done && $.isFunction( option.ajax.done ) ){
+                    option.ajax.done( data, textStatus, jqXHR, jsPanel );
+                }
+            })
+            .fail( function( jqXHR, textStatus, errorThrown ){
+                    if( option.ajax.fail && $.isFunction( option.ajax.fail ) ){
+                        option.ajax.fail( jqXHR, textStatus, errorThrown, jsPanel );
+                    }
+            })
+            .always( function( arg1, textStatus, arg3 ){
+                //In response to a successful request, the function's arguments are the same as those of .done(): data(hier: arg1), textStatus, and the jqXHR object(hier: arg3)
+                //For failed requests the arguments are the same as those of .fail(): the jqXHR object(hier: arg1), textStatus, and errorThrown(hier: arg3)
+                if( option.ajax.always && $.isFunction( option.ajax.always ) ){
+                    option.ajax.always( arg1, textStatus, arg3, jsPanel );
+                }
+            })
+            .then( function( data, textStatus, jqXHR ){
+                        if( option.ajax.then && $.isArray( option.ajax.then ) ){
+                            if( option.ajax.then[0] && $.isFunction( option.ajax.then[0] ) ){
+                                option.ajax.then[0]( data, textStatus, jqXHR, jsPanel );
+                            }
+                        }
+                    },
+                    function( jqXHR, textStatus, errorThrown ){
+                        if( option.ajax.then && $.isArray( option.ajax.then ) ){
+                            if( option.ajax.then[1] && $.isFunction( option.ajax.then[1] ) ){
+                                option.ajax.then[1]( jqXHR, textStatus, errorThrown, jsPanel );
+                            }
+                        }
+                    }
+            )
         }
 
 
@@ -600,12 +607,10 @@ var jsPanelversion = 'jsPanel Version: 1.0.1 2014-03-17 10:32';
                         },
         "draggable":    {
                             handle:      'div.jsPanel-hdr',
-                            containment: 'document',
                             stack:       '.jsPanel',
                             opacity:     0.6
                         },
         "resizable":    {
-                            containment:    'document',
                             autoHide:       false,
                             minWidth:       150,
                             minHeight:      100

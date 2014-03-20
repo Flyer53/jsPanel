@@ -160,7 +160,8 @@ dd{
     margin: 0 0 10px 0;
 }
 .docs ul li{
-    font-size: 0.9em;
+    font-size: 0.8em;
+    line-height: 1.2em;
     padding: 5px 40px;
 }
 .docs p.docs-p{

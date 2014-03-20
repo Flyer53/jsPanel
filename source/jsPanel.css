@@ -35,7 +35,7 @@
     width: calc(100% - 70px);
     cursor: move;
 }
-.jsPanel-hdr-l-text p{
+.jsPanel-hdr-l-text{
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

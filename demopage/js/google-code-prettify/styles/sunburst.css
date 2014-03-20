@@ -29,6 +29,8 @@ pre.prettyprint {
 	margin: 1em auto;
 	padding: 1em;
 	white-space: pre-wrap;
+    font-size: 13px;    /* von mir hinzugefügt */
+    line-height: 1.2em; /* von mir hinzugefügt */
 }
 
 

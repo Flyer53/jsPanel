@@ -150,7 +150,10 @@ $( document ).ready( function(){
             position: { top: 255, left: 350 },
             load: {
                 url: 'files/example-load.html',
-                complete: function(){ console.log( "It's done!" ) }
+                complete: function( responseText, textStatus, XMLHttpRequest, jsPanel ){
+                    console.log( textStatus );
+                    $('.jsPanel-content', jsPanel).append( XMLHttpRequest.statusText );
+                }
             }
         });
     });
@@ -160,6 +163,45 @@ $( document ).ready( function(){
             position: { top: 155, left: 300 },
             ajax: {
                 url: 'files/example-ajax.html'
+            }
+        });
+    });
+
+    $('#try-19c').click( function(){
+        $( '#options-ajax' ).jsPanel({
+            position: { top: 475, left: 380 },
+            size: { width: 650, height: 'auto' },
+            ajax: {
+                url: 'files/example-ajax-2.html',
+                done: function(data, textStatus, jqXHR, jsPanel){
+                    console.log( 'jqXHR status: ' + jqXHR.status + ' ' + jqXHR.statusText + ' ' + textStatus  );
+                },
+                fail: function( jqXHR, textStatus, errorThrown, jsPanel ){
+                    $('.jsPanel-content', jsPanel).append( jqXHR.responseText );
+                },
+                always: function( arg1, textStatus, arg3, jsPanel ){
+                    console.log( textStatus );
+                }
+            }
+        });
+    });
+
+    $('#try-19d').click( function(){
+        $( '#options-ajax' ).jsPanel({
+            position: { top: 990, left: 450 },
+            size: { width: 650, height: 'auto' },
+            ajax: {
+                url: 'files/example-ajax-3.html',
+                then: [
+                    function( data, textStatus, jqXHR, jsPanel ){
+                        jsPanel.title( 'Example for option.ajax.then' );
+                        console.log( textStatus )
+                    },
+                    function( jqXHR, textStatus, errorThrown, jsPanel ){
+                        $('.jsPanel-content', jsPanel).append( jqXHR.responseText );
+                        console.log( errorThrown )
+                    }
+                ]
             }
         });
     });
