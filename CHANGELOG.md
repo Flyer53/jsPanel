@@ -2,6 +2,14 @@
 
 ---
 
+### Version 1.1.1 ###
+
++ **Bugfix** Content area of the jsPanel did not resize when resizing a maximizes jsPanel with the jQuery-UI resize handle.
+
++ **Change** For z-index management the script internally now uses the jQuery-UI method zIndex()
+
++ **Change** New clearfix css definition in _jsPanel.css_
+
 ### Version 1.1.0 ###
 
 + **Improvement:** Removed the settings for **_containment_** in the default settings objects for **_option.resizable_** and **_option.draggable_**.

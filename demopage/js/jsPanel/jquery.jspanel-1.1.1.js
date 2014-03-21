@@ -1,5 +1,5 @@
 /* jQuery Plugin jsPanel
-   Version: 1.1.0 2014-03-20 10:56
+   Version: 1.1.1 2014-03-21 12:00
    Dependencies:
     jQuery library ( > 1.7.0 incl. 2.1.0 )
     jQuery.UI library ( > 1.9.0 ) - (at least UI Core, Draggable, Resizable)
@@ -19,7 +19,7 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var jsPanelversion = 'jsPanel Version: 1.1.0 2014-03-20 10:56';
+var jsPanelversion = 'jsPanel Version: 1.1.1 2014-03-21 12:00';
 
 (function ( $ ) {
 
@@ -41,7 +41,7 @@ var jsPanelversion = 'jsPanel Version: 1.1.0 2014-03-20 10:56';
                                     '<div class="jsPanel-hdr-r-btn-max normal"></div>'+
                                     '<div class="jsPanel-hdr-r-btn-min"></div>'+
                                 '</div>'+
-                                '<div class="clearfix"></div>'+
+                                '<div class="cf"></div>'+
                             '</div>'+
                         '<div class="jsPanel-content"></div>'+
                         '</div>');
@@ -246,7 +246,7 @@ var jsPanelversion = 'jsPanel Version: 1.1.0 2014-03-20 10:56';
         }
 
         /* CSS für top, left, width, height und z-index des jsPanels setzen */
-        jsPanel.css( { top:option.position.top, left:option.position.left, width:option.size.width, height:option.size.height, 'z-index': set_zIndex() } );
+        jsPanel.css( { top:option.position.top, left:option.position.left, width:option.size.width, height:option.size.height, 'z-index': set_zi() } );
 
 
         /* INHALT DES PANELS */
@@ -316,7 +316,7 @@ var jsPanelversion = 'jsPanel Version: 1.1.0 2014-03-20 10:56';
          */
         // Handler um Panel in den Vordergrund zu holen
         jsPanel.on('click', function(){
-            jsPanel.movetoFront();
+            jsPanel.css( 'z-index', set_zi() );
         });
         // jsPanel schliessen
         $('.jsPanel-hdr-r-btn-close', jsPanel).on('click', function(){
@@ -409,7 +409,7 @@ var jsPanelversion = 'jsPanel Version: 1.1.0 2014-03-20 10:56';
         // jsPanel in den Fordergrund holen
         jsPanel.movetoFront = function()
         {
-            this.css( 'z-index', set_zIndex() );
+            this.css( 'z-index', set_zi() );
             return this;
         }
 
@@ -516,16 +516,19 @@ var jsPanelversion = 'jsPanel Version: 1.1.0 2014-03-20 10:56';
                     .removeClass( 'minimized normalized' )
                     .addClass( 'maximized' );
 
-                if( $('.jsPanel-hdr-toolbar', this).length == 1 ){
+                if( $('.jsPanel-hdr-toolbar', this).length == 1 )
+                {
                     $('.jsPanel-hdr-toolbar', this).css('display', 'block')
                     $('.jsPanel-content', this).css({ display:'block',
                         width: '100%',
                         height: '100%',
                         height: '-webkit-calc(100% - 40px)',
                         height: 'calc(100% - 40px)' });
-                } else {
+                }
+                else
+                {
                     $('.jsPanel-content', this).eq(0).css({ display: 'block' ,
-                        width: width,
+                        width: '100%',
                         height: '100%',
                         height: '-webkit-calc(100% - 20px)',
                         height: 'calc(100% - 20px)' });
@@ -611,6 +614,7 @@ var jsPanelversion = 'jsPanel Version: 1.1.0 2014-03-20 10:56';
                             opacity:     0.6
                         },
         "resizable":    {
+                            //alsoResize:     '.jsPanel-content:first-of-type',
                             autoHide:       false,
                             minWidth:       150,
                             minHeight:      100
@@ -622,18 +626,14 @@ var jsPanelversion = 'jsPanel Version: 1.1.0 2014-03-20 10:56';
      *
      */
     // Funktion bildet einen Wert für css z-index
-    function set_zIndex()
-    {
-        var zIndexe = [];
-        // z-indexe holen und in array schreiben
-        $('.jsPanel:not(.minimized)').each(function(index) {
-            zIndexe.push(parseInt($(this).css('z-index') , 10) );
-            // .zIndex() ist eine jQuery-UI Methode
-            zIndexe.push( $(this).zIndex() );
+    function set_zi(){
+        var zi = 0;
+        $('.jsPanel').each( function(){
+            if( $(this).zIndex() > zi ){
+                zi = $(this).zIndex();
+            }
         });
-        // array absteigend sortieren(größter wert wird erstes element)
-        zIndexe.sort(function(a,b){return b - a});
-        return zIndexe[0] + 1;
+        return zi + 1;
     }
 
 }( jQuery ));

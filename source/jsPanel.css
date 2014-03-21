@@ -1,4 +1,4 @@
-/* Version 3.6.2 2014-03-12 14:09 */
+/* Version 1.1.1 2014-03-21 09:14 */
 .jsPanel, .jsPanel-hdr-r, .jsPanel-hdr-l, .jsPanel-hdr-l-text, .jsPanel-hdr-r span img, .jsPanel-content{
     margin: 0;
     padding: 0;
@@ -89,14 +89,25 @@
     top:30%;
     margin:0 auto;
 }
-.clearfix{
-    clear: both;
-    height: .1px;
-    line-height: 0;
-    margin: 0;
-    padding: 0;
-    border: 0;
+/**
+ * For modern browsers
+ * 1. The space content is one way to avoid an Opera bug when the
+ *    contenteditable attribute is included anywhere else in the document.
+ *    Otherwise it causes space to appear at the top and bottom of elements
+ *    that are clearfixed.
+ * 2. The use of `table` rather than `block` is only necessary if using
+ *    `:before` to contain the top-margins of child elements.
+ */
+.cf:before,
+.cf:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
 }
+.cf:after {
+    clear: both;
+}
+
+/* container that takes the minified jsPanels */
 #jsPanel-min-container{
     position:fixed;
     left:0;
