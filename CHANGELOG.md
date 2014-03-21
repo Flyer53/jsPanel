@@ -4,7 +4,7 @@
 
 ### Version 1.1.1 ###
 
-+ **Bugfix** Content area of the jsPanel did not resize when resizing a maximizes jsPanel with the jQuery-UI resize handle.
++ **Bugfix** Content area of the jsPanel did not resize when resizing a maximized jsPanel with the jQuery-UI resize handle.
 
 + **Change** For z-index management the script internally now uses the jQuery-UI method zIndex()
 
