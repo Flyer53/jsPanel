@@ -2,6 +2,33 @@
 
 ---
 
+### Version 1.2.0 ###
+
+**Added options**
+
++ **option.autoclose** allows the jsPanel to close automatically after a specified time
+
++ **option.controls** allows to configure the buttons in the header
+
+**Improved options:**
+
++ **size: { width: 'auto', height: 'auto' }** can now be abbreviated with **size: 'auto'**
+
++ **position: { top: 'auto', left: 'auto' }** can now be abbreviated with **position: 'auto'**
+
++ **position: { top: 'center', left: 'center' }** can now be abbreviated with **position: 'center'**
+
++ **position** now additionally accepts values for bottom and right **{ bottom: 0, right: 0 }**
+
++ **automatic centering** now also works when width and/or height are set to 'auto', unless loading content is delayed because of using an asynchronous ajax request or the callback function to load the content
+
++ **additional shortcuts for option.position:**<br>
+'top left' | 'top center' | 'top right' | 'center right' | 'bottom right' | 'bottom center' | 'bottom left' | 'center left'
+
++ **overflow** now alternatively accepts a string to set the css property overflow
+
++ **resizable and draggable** can be disabled
+
 ### Version 1.1.1 ###
 
 + **Bugfix** Content area of the jsPanel did not resize when resizing a maximized jsPanel with the jQuery-UI resize handle.

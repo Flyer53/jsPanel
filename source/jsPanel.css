@@ -1,4 +1,4 @@
-/* Version 1.1.1 2014-03-21 09:14 */
+/* Version 1.1.2 2014-03-24 13:06 */
 .jsPanel, .jsPanel-hdr-r, .jsPanel-hdr-l, .jsPanel-hdr-l-text, .jsPanel-hdr-r span img, .jsPanel-content{
     margin: 0;
     padding: 0;
@@ -15,12 +15,14 @@
     padding: 4px;
     box-shadow: 0 2px 6px 1px #222222;
     margin: 0;
+    overflow: hidden;
 }
 .jsPanel-hdr{
     color: #ffffff;
     font-family: tahoma,arial,verdana,sans-serif;
     font-size: 11px;
     font-weight: bold;
+    height: 18px;
     line-height: 17px;
 }
 .jsPanel-hdr-r{
@@ -28,7 +30,6 @@
 }
 .jsPanel-hdr-l{
     float: left;
-    height: 18px;
     white-space: nowrap;
     width: 100%;
     width: -webkit-calc(100% - 70px);

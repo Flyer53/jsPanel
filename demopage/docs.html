@@ -11,7 +11,7 @@
     <link href='http://fonts.googleapis.com/css?family=Rufina:700,400|Open+Sans:400,400italic,700,700italic&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
     <script src='js/jquery-2.1.0.min.js'></script>
     <script src='js/jquery-ui-1.10.4.complete.min.js'></script>
-    <script src='js/jsPanel/jquery.jspanel-1.1.1.min.js'></script>
+    <script src='js/jsPanel/jquery.jspanel-1.2.0.js'></script>
     <script src='js/docs.js'></script>
 </head>
 <body>
@@ -31,7 +31,7 @@
                 <h3>dependencies</h3>
                 <ul>
                     <li><a href="http://jquery.com/" title="jquery.com" target="_blank">jQuery</a> version 1.7.0 or greater (includes 2.1.0)</li>
-                    <li><a href="http://jqueryui.com/" title="jqueryui.com" target="_blank">jQuery-UI</a> version 1.9.0 or greater</li>
+                    <li><a href="http://jqueryui.com/" title="jqueryui.com" target="_blank">jQuery-UI</a> version 1.9.0 or greater (at least core, resizable, draggable)</li>
                     <li><a href="http://www.w3schools.com/html/html5_intro.asp" title="HTML5 Introduction" target="_blank">HTML5</a> compatible browser</li>
                 </ul>
             </div>
@@ -57,16 +57,18 @@ $( '#content' ).jsPanel();
                     <li><a href="#options-options" title="">options</a></li>
                     <li><a href="#options-id" title="">id</a></li>
                     <li><a href="#options-title" title="">title</a></li>
-                    <li><a href="#options-size" title="">size</a></li>
-                    <li><a href="#options-position" title="">position</a></li>
-                    <li><a href="#options-overflow" title="">overflow</a></li>
+                    <li><a href="#options-size" title="">size</a>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red">updated!</span></li>
+                    <li><a href="#options-position" title="">position</a>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red">updated!</span></li>
+                    <li><a href="#options-overflow" title="">overflow</a>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red">updated!</span></li>
                     <li><a href="#options-content" title="">content</a></li>
                     <li><a href="#options-load" title="">load</a></li>
                     <li><a href="#options-ajax" title="">ajax</a></li>
                     <li><a href="#options-contentbg" title="">contentBG</a></li>
-                    <li><a href="#options-resizable" title="">resizable</a></li>
-                    <li><a href="#options-draggable" title="">draggable</a></li>
+                    <li><a href="#options-resizable" title="">resizable</a>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red">updated!</span></li>
+                    <li><a href="#options-draggable" title="">draggable</a>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red">updated!</span></li>
                     <li><a href="#options-toolbarcontent" title="">toolbarContent</a></li>
+                    <li><a href="#options-autoclose" title="">autoclose</a>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red">new!</span></li>
+                    <li><a href="#options-controls" title="">controls</a>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red">new!</span></li>
                 </ul>
             </div>
             <div class="info-float">
@@ -155,7 +157,7 @@ $('#options-title').jsPanel({
 <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXX size XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
         <div class="option-container" id="options-size">
             <h3>size</h3>
-            <p class="docs-p">Type: object | function</p>
+            <p class="docs-p">Type: string | object</p>
             <p class="docs-p">Default: { width:  600, height: 370 }</p>
             <p class="docs-p">This option will set the width and height of the jsPanel in pixels.</p>
             <p class="docs-p"><span class="bold">Possible values for width/height:</span> integer | string | 'auto' | function</p>
@@ -168,6 +170,8 @@ $('#options-title').jsPanel({
                     the function will be parsed using <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt" title="jquery.com">parseInt()</a>
                     and used to set css width/height of the jsPanel if the return values are > 0</li>
             </ul>
+            <p class="docs-p"><span class="bold">As of version 1.2.0 </span>you can use <span class="bold italic">size: 'auto' </span>
+                as abbreviated version of <span class="bold italic">size: { width: 'auto', height: 'auto' }</span></p>
             <p class="docs-p bold">Examples:</p>
 <pre class="prettyprint linenums">
 $( '#options-size' ).jsPanel({
@@ -183,6 +187,21 @@ $('#options-size').jsPanel({
 });
 </pre>
             <p class="docs-p"><button class="btn-try" id="try-7">Try it</button></p>
+
+
+<pre class="prettyprint linenums">
+$('#options-size').jsPanel({
+    size: 'auto',
+    position: 'center',
+    content: "&lt;p style='padding:30px 50px;'&gt;Some text content for demo ...&lt;/p&gt;"
+});
+</pre>
+            <p class="docs-p"><button class="btn-try" id="try-7a">Try it</button></p>
+
+
+
+
+
 <pre class="prettyprint linenums">
 $( '#options-size' ).jsPanel({
     size: {
@@ -198,11 +217,11 @@ $( '#options-size' ).jsPanel({
 <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXX position XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
         <div class="option-container" id="options-position">
             <h3>position</h3>
-            <p class="docs-p">Type: object</p>
-            <p class="docs-p">Default: { top: 'auto', left: 'auto' }</p>
+            <p class="docs-p">Type: string | object</p>
+            <p class="docs-p">Default: 'auto'</p>
             <p class="docs-p">This option will set the position of the jsPanel in pixels relative to the parent element containing the jsPanel.
                 The parent element needs to be positioned somehow for option.position to work properly.</p>
-            <p class="docs-p"><span class="bold">Possible values for top and left:</span> integer | string | 'auto' | 'center'</p>
+            <p class="docs-p"><span class="bold">Possible values for top, left, bottom, right:</span> integer | string | 'auto' | 'center'</p>
             <ul>
                 <li>An <span class="bold">integer</span> will be interpreted as pixel value</li>
                 <li>A <span class="bold">string</span> will be parsed using <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt" title="jquery.com">parseInt()</a>
@@ -211,17 +230,19 @@ $( '#options-size' ).jsPanel({
                 <li><span class="bold">'center'</span> will center the jsPanel within the containing element. 'center' for
                     position.top and/or position.left can not be used when the respective values for size.height/size.width
                     are set to 'auto' (positioning will be automatic in this case)</li>
-                <li>top/left also accept a <span class="bold">function</span> as value. The return value of
+                <li>top/left/bottom/right also accept a <span class="bold">function</span> as value. The return value of
                     the function will be parsed using <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt" title="jquery.com">parseInt()</a>
                     and used to set css top/left of the jsPanel if the return values are >= 0</li>
             </ul>
+            <p class="docs-p"><span class="bold">As of version 1.2.0 </span>you can use <span class="bold italic">position: 'auto' </span> or <span class="bold italic">position: 'center' </span>
+                as abbreviated versions of <span class="bold italic">position: { top: 'auto', left: 'auto' }</span> or <span class="bold italic">position: { top: 'center', left: 'center' }</span>
+                respectively.</p>
+            <p class="docs-p"><span class="bold">Further shortcuts for option.position as of version 1.2.0:</span><br>
+                'top left' | 'top center' | 'top right' | 'center right' | 'bottom right' | 'bottom center' | 'bottom left' | 'center left'</p>
             <div class="info">
                 <div class="info-img"><img src="images/information.png" alt=""></div>
-                <div>
-                    <p class="docs-p">Using 'center' for position.top and/or position.left will be ignored if the respective
-                        values for size.height/size.width are 'auto'. In this case position.top and/or
-                        position.left will be set to 'auto'.</p>
-                </div>
+                <div><p class="docs-p"><span class="bold">New:</span> There is no limitation anymore for using the 'center' settings in option.position. Even if you use any of the
+                    'auto' settings of option.size centering works, unless loading of content is delayed (asynchronos ajax request, callback function).</p></div>
             </div>
             <div class="info">
                 <div class="info-img"><img src="images/information.png" alt=""></div>
@@ -239,7 +260,7 @@ $( '#options-position' ).jsPanel({
             <p class="docs-p">Example using automatic positioning for top and left.<button class="btn-try" id="try-10">Try it</button> Click several times to se the effect.</p>
 <pre class="prettyprint linenums">
 $( '#options-position' ).jsPanel({
-    position: { top:  'auto', left: 'auto' }
+    position: 'auto'
 });
 </pre>
             <p class="docs-p">Example using automatic positioning for one direction only.<button class="btn-try" id="try-11">Try it</button></p>
@@ -254,11 +275,34 @@ $( '#options-position' ).jsPanel({
     position: { top: 915, left: 'center' }
 });
 </pre>
-            <p class="docs-p bold">This example will not work since there are no fixed values for width and/or height. Results in default positioning.<button class="btn-try" id="try-13">Try it</button></p>
+            <p class="docs-p">Example using 'auto' for both size and position.<button class="btn-try" id="try-13">Try it</button></p>
 <pre class="prettyprint linenums">
 $( '#options-position' ).jsPanel({
     size: { width: 'auto', height: 'auto' },
     position: { top: 'center', left: 'center' }
+});
+</pre>
+            <p class="docs-p">Or the shorter version.<button class="btn-try" id="try-13a">Try it</button></p>
+<pre class="prettyprint linenums">
+$( '#options-position' ).jsPanel({
+    size: 'auto',
+    position: 'center',
+    content: "&lt;p style='padding:40px 50px;'&gt;Some text content ...&lt;/p&gt;"
+});
+</pre>
+            <p class="docs-p">Positioning bottom right.<button class="btn-try" id="try-13b">Try it</button></p>
+<pre class="prettyprint linenums">
+$( '#options-position' ).jsPanel({
+    size: 'auto',
+    position: { bottom: 0, right: 0 },
+    content: "&lt;p style='padding:40px 50px;'&gt;Some text content ...&lt;/p&gt;"
+});
+</pre>
+            <p class="docs-p">Or the shorter version.<button class="btn-try" id="try-13c">Try it</button></p>
+<pre class="prettyprint linenums">
+$( '#options-position' ).jsPanel({
+    size: 'auto',
+    position: 'bottom right'
 });
 </pre>
         </div>
@@ -266,13 +310,17 @@ $( '#options-position' ).jsPanel({
 <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXX overflow XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
         <div class="option-container" id="options-overflow">
             <h3>overflow</h3>
-            <p class="docs-p">Type: object</p>
-            <p class="docs-p">Default: { vertical: 'scroll', horizontal: 'scroll' }</p>
-            <p class="docs-p">This option will set the css <a href="http://www.w3schools.com/cssref/css3_pr_overflow-y.asp" title="">overflow-y</a> /
-                <a href="http://www.w3schools.com/cssref/css3_pr_overflow-x.asp" title="">overflow-x</a> properties
-                of the div element containing the content of the jsPanel.</p>
-            <p class="docs-p"><span class="bold">Possible values for vertical and horizontal:</span> 'visible' | 'hidden' | 'scroll' | 'auto' | 'initial' | 'inherit'</p>
-            <p class="docs-p bold">Example:</p>
+            <p class="docs-p">Type: string | object</p>
+            <p class="docs-p">Default: 'scroll'</p>
+            <p class="docs-p">This option will set the css <a href="http://www.w3schools.com/cssref/pr_pos_overflow.asp" title="">overflow</a> property
+                or the css <a href="http://www.w3schools.com/cssref/css3_pr_overflow-y.asp" title="">overflow-y</a> /
+                <a href="http://www.w3schools.com/cssref/css3_pr_overflow-x.asp" title="">overflow-x</a> properties of the div element containing the content of the jsPanel.</p>
+            <ul>
+                <li>Passing a string will set the css overflow property to 'string'</li>
+                <li>Passing an object will set css overflow-y and overflow-x properties</li>
+            </ul>
+            <p class="docs-p"><span class="bold">Possible values:</span> 'visible' | 'hidden' | 'scroll' | 'auto' | 'initial' | 'inherit'</p>
+            <p class="docs-p bold">Examples:</p>
 <pre class="prettyprint linenums">
 $( '#options-overflow' ).jsPanel({
     overflow: { vertical: 'scroll', horizontal: 'hidden' },
@@ -280,6 +328,17 @@ $( '#options-overflow' ).jsPanel({
 });
 </pre>
             <p class="docs-p"><button class="btn-try" id="try-14">Try it</button></p>
+<pre class="prettyprint linenums">
+$( '#options-overflow' ).jsPanel({
+    overflow: 'scroll',
+    position: 'center',
+    size: { width: 440, height: 300 },
+    load: {
+        url: 'files/loremipsum.html'
+    }
+});
+</pre>
+            <p class="docs-p"><button class="btn-try" id="try-14a">Try it</button></p>
         </div>
 
 <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXX content XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
@@ -519,6 +578,7 @@ $('#options-resizable').jsPanel({
             <p class="docs-p">For detailed information on how to use the jQuery-UI resizable interaction see the
                 <a href="http://api.jqueryui.com/resizable/" title="">api documentation</a>
             </p>
+            <p class="docs-p"><span class="bold">Disable </span>the resizable feature by setting option.resizable to the string 'disabled'</p>
         </div>
 
 <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXX draggable XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
@@ -551,6 +611,7 @@ $('#options-draggable').jsPanel({
             <p class="docs-p">For detailed information on how to use the jQuery-UI draggable interaction see the
                 <a href="http://api.jqueryui.com/draggable/" title="">api documentation</a>
             </p>
+            <p class="docs-p"><span class="bold">Disable </span>the draggable feature by setting option.draggable to the string 'disabled'</p>
         </div>
 
 <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXX toolbarContent XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
@@ -568,6 +629,39 @@ $('#options-toolbarcontent').jsPanel({
 });
 </pre>
         </div>
+
+<!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXX autoclose XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
+        <div class="option-container" id="options-autoclose">
+            <h3>autoclose (added version 1.2.0)</h3>
+            <p class="docs-p">Type: number</p>
+            <p class="docs-p">Default: false</p>
+            <p class="docs-p">This option allows the jsPanel to close automatically after the specified time in milliseconds.</p>
+            <p class="docs-p bold">Example:<button class="btn-try" id="try-25a">Try it</button></p>
+<pre class="prettyprint linenums">
+$('#options-autoclose').jsPanel({
+    autoclose: 4000
+});
+</pre>
+        </div>
+
+<!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXX controls XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
+        <div class="option-container" id="options-controls">
+            <h3>controls (added version 1.2.0)</h3>
+            <p class="docs-p">Type: string</p>
+            <p class="docs-p">Default: there is no default for this option</p>
+            <p class="docs-p">This option allows to configure the buttons in the header. Presently there is only one valid setting: <span class="bold">'closeonly'</span>
+                This will show only the close button of the jsPanel.</p>
+            <p class="docs-p bold">Example:<button class="btn-try" id="try-25b">Try it</button></p>
+<pre class="prettyprint linenums">
+$('#options-controls').jsPanel({
+    size: { width: 250, height: 130 },
+    overflow: 'hidden',
+    position: 'top right',
+    controls: 'closeonly'
+});
+</pre>
+        </div>
+
 
 
 <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
@@ -626,7 +720,7 @@ console.log( jspanel.addToolbar( '&lt;p&gt;&lt;img src="js/jsPanel/images/printe
         <div class="option-container" id="method-close">
             <h3>close()</h3>
             <p class="docs-p">Removes the jsPanel from the DOM and returns the the element that contained the jsPanel</p>
-            <p class="docs-p">This method accepts no arguments<button class="btn-try" id="try-30">Try it</button></p>
+            <p class="docs-p">This method accepts no arguments<button class="btn-try" id="try-30">Try it</button> and wait a few seconds for the animated example to complete</p>
 <pre class="prettyprint linenums">
 var jspanel = $('#method-close').jsPanel({
     position: { top: 70, left: 300 }
@@ -645,7 +739,7 @@ window.setTimeout( function(){
             <h3>closeChildpanels()</h3>
             <p class="docs-p">Removes all childpanels of a jsPanel from the DOM and returns the jsPanel the childpanels were
                 removed from</p>
-            <p class="docs-p">This method accepts no arguments<button class="btn-try" id="try-31">Try it</button></p>
+            <p class="docs-p">This method accepts no arguments<button class="btn-try" id="try-31">Try it</button> and wait a few seconds for the animated example to complete</p>
 <pre class="prettyprint linenums">
 // generate a parent panel and store it in a variable
 var testpanel = $( "#method-closechildpanels" ).jsPanel({
@@ -670,7 +764,7 @@ window.setTimeout( function(){
         <div class="option-container" id="method-movetofront">
             <h3>movetoFront()</h3>
             <p class="docs-p">Moves a jsPanels to the front by increasing the z-index and returns the jsPanel</p>
-            <p class="docs-p">This method accepts no arguments<button class="btn-try" id="try-32">Try it</button></p>
+            <p class="docs-p">This method accepts no arguments<button class="btn-try" id="try-32">Try it</button> and wait a few seconds for the animated example to complete</p>
 <pre class="prettyprint linenums">
 // generate a few jsPanels
 var testpanel1 = $( "#method-movetofront" ).jsPanel( { position: { top:70, left:360 } } ),
@@ -690,7 +784,7 @@ window.setTimeout( function(){
         <div class="option-container" id="method-minimize">
             <h3>minimize()</h3>
             <p class="docs-p">Minimizes a jsPanel to the lower left corner of the browser viewport</p>
-            <p class="docs-p">This method accepts no arguments<button class="btn-try" id="try-33">Try it</button></p>
+            <p class="docs-p">This method accepts no arguments<button class="btn-try" id="try-33">Try it</button> and wait a few seconds for the animated example to complete</p>
 <pre class="prettyprint linenums">
 // generate a few jsPanels
 var testpanel1 = $( "#method-minimize" ).jsPanel( { position: { top:70, left:360 } } ),
@@ -712,7 +806,7 @@ window.setTimeout( function(){
             <h3>maximize()</h3>
             <p class="docs-p">Maximizes or normalizes a jsPanels depending of the current status of the jsPanel
                 and returns the jsPanel</p>
-            <p class="docs-p">This method accepts no arguments<button class="btn-try" id="try-34">Try it</button></p>
+            <p class="docs-p">This method accepts no arguments<button class="btn-try" id="try-34">Try it</button> and wait a few seconds for the animated example to complete</p>
             <p class="docs-p">A <span class="bold">normalized jsPanel</span> (meaning it's visible at it's specified position
                 and with it's specified size) will be maximized within its parent element.</p>
             <p class="docs-p">A <span class="bold">minimized or maximized jsPanel</span> will be restored to its latest normalized status.</p>

@@ -1,5 +1,5 @@
 /* jQuery Plugin jsPanel
-   Version: 1.1.1 2014-03-21 12:00
+   Version: 1.2.0 2014-03-26 19:10
    Dependencies:
     jQuery library ( > 1.7.0 incl. 2.1.0 )
     jQuery.UI library ( > 1.9.0 ) - (at least UI Core, Draggable, Resizable)
@@ -19,7 +19,7 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var jsPanelversion = 'jsPanel Version: 1.1.1 2014-03-21 12:00';
+var jsPanelversion = 'jsPanel Version: 1.2.0 2014-03-26 19:10';
 
 (function ( $ ) {
 
@@ -33,7 +33,7 @@ var jsPanelversion = 'jsPanel Version: 1.1.1 2014-03-21 12:00';
         // Counter für die Panels im jeweils verwendeten Container (für top & left)
         var count = $('.jsPanel', this.first() ).length;
 
-        var jsPanel = $('<div class="jsPanel normalized" style="z-index:1;display:none;">'+
+        var jsPanel = $('<div class="jsPanel normalized" style="z-index:1000;display:none;">'+
                             '<div class="jsPanel-hdr">'+
                                 '<div class="jsPanel-hdr-l"><p class="jsPanel-hdr-l-text"></p></div>'+
                                 '<div class="jsPanel-hdr-r">'+
@@ -62,6 +62,16 @@ var jsPanelversion = 'jsPanel Version: 1.1.1 2014-03-21 12:00';
         /* HEADER (Überschrift) des Panels */
         // wird auf jeden Fall in den defaults gesetzt ...
         $( '.jsPanel-hdr-l-text', jsPanel ).append( option.title );
+
+
+        /* CONTROLS (buttons in header right) */
+        if( option.controls )
+        {
+            if( option.controls === 'closeonly' )
+            {
+                $( '.jsPanel-hdr-r-btn-min, .jsPanel-hdr-r-btn-max', jsPanel ).remove();
+            }
+        }
 
         /* ATTRIBUT ID DES PANELS */
         if( option.id ){
@@ -111,64 +121,28 @@ var jsPanelversion = 'jsPanel Version: 1.1.1 2014-03-21 12:00';
             }
         }
 
+        /* OVERFLOW DES JSPANEL-CONTENTS  | default: 'scroll' */
+        if( typeof option.overflow === 'string' )
+        {
+            $( '.jsPanel-content', jsPanel ).css( 'overflow', option.overflow );
+        }
+        else if ( $.isPlainObject( option.overflow ) )
+        {
+            $( '.jsPanel-content', jsPanel ).css( { 'overflow-y':option.overflow.vertical, 'overflow-x':option.overflow.horizontal } );
+        }
+
         /* bei Bedarf eine zusätzliche TOOLBAR einfügen */
         if( option.toolbarContent )
         {
             $( '.jsPanel-content', jsPanel ).css( { height:'-webkit-calc(100% - 40px)', height: 'calc(100% - 40px' } );
             // Toolbareinfügen
-            $( '.jsPanel-hdr', jsPanel ).append( '<div style="color:white;" class="jsPanel-hdr-toolbar"></div>' );
+            $( '.jsPanel-hdr', jsPanel ).css( 'height', '38px' ).append( '<div style="color:white;" class="jsPanel-hdr-toolbar"></div>' );
             // Toolbar-Inhalt einfügen, kann HTML-Code, oder ein entsprechendes jquery-Objekt, oder eine Funktion sein, die HTML-Code liefert
             $( '.jsPanel-hdr-toolbar', jsPanel ).append( option.toolbarContent );
         }
 
-        /* CSS WIDTH initialisieren und zuweisen */
-        /* option.size.width ist in den Defaults vorhanden, ein if/else ist also nicht erforderlich */
-        if( option.size.width != 'auto' ){
-            if( parseInt( option.size.width ) > 0 )
-            {
-                option.size.width = parseInt( option.size.width ) + 'px';
-            }
-            else if( $.isFunction( option.size.width ) )
-            {
-                var w = parseInt( option.size.width() );
-                if( w > 0 )
-                {
-                    option.size.width = w + 'px';
-                }
-            }
-            else
-            {
-                option.size.width = '600px';
-            }
-        }
-
-        /* CSS HEIGHT initialisieren und zuweisen */
-        /* option.size.height ist in den Defaults vorhanden, ein if/else ist also nicht erforderlich */
-        if( option.size.height != 'auto' ){
-            if( parseInt( option.size.height ) > 0 )
-            {
-                option.size.height = parseInt( option.size.height ) + 'px';
-            }
-            else if( $.isFunction( option.size.height ) )
-            {
-                var h = parseInt( option.size.height() );
-                if( h > 0 )
-                {
-                    option.size.height = h + 'px';
-                }
-            }
-            else
-            {
-                option.size.height = '370px';
-            }
-        }
-
-        /* OVERFLOW DES JSPANEL-CONTENTS */
-        // wird auf jeden Fall in den defaults gesetzt ...
-        $( '.jsPanel-content', jsPanel ).css( { 'overflow-y':option.overflow.vertical, 'overflow-x':option.overflow.horizontal } );
-
         /* CSS DES PANELINHALT-CONTAINERS initialisieren und zuweisen; */
-        if( typeof option.contentBG === 'object' )
+        if( $.isPlainObject( option.contentBG ) )
         {
             $('.jsPanel-content', jsPanel ).css( option.contentBG );
         }
@@ -179,75 +153,34 @@ var jsPanelversion = 'jsPanel Version: 1.1.1 2014-03-21 12:00';
 
         /* JQUERY UI DRAGGABLE FEATURE*/
         // default-config für draggable steht in $.fn.jsPanel.defaults.draggable
-        option.customdraggable = $.extend( true, {}, $.fn.jsPanel.defaults.draggable, option.draggable );
-        jsPanel.draggable( option.customdraggable );
+        if( $.isPlainObject( option.draggable ) )
+        {
+            option.customdraggable = $.extend( true, {}, $.fn.jsPanel.defaults.draggable, option.draggable );
+            jsPanel.draggable( option.customdraggable );
+        }
+        else
+        {
+            // cursor zurücksetzen, weil draggable deaktiviert
+            $('.jsPanel-hdr-l', jsPanel ).css( 'cursor', 'inherit' );
+        }
 
         /* JQUERY UI RESIZABLE FEATURE */
         // default-config für resizable steht in $.fn.jsPanel.defaults.resizable
-        option.customresizable = $.extend( true, {}, $.fn.jsPanel.defaults.resizable, option.resizable );
-        jsPanel.resizable( option.customresizable );
-
-        /* POSITION TOP DES JSPANELS SETZEN */
-        // default-config für position.top steht in $.fn.jsPanel.defaults.position
-        if( option.position.top === 'center' && option.size.height != 'auto' )
+        if( $.isPlainObject( option.resizable ) )
         {
-            option.position.top = ( jsPanel.parent().height() - parseInt(option.size.height) ) / 2 + 'px';
-            if( parseInt( option.position.top ) < 0 )
-            {
-                option.position.top = 0;
-            }
-        }
-        else if( option.position.top === 'auto' )
-        {
-            option.position.top = (25 * count + 10) + 'px';
-        }
-        else if( $.isFunction( option.position.top ) )
-        {
-            var t = parseInt( option.position.top() );
-            if( t >= 0 )
-            {
-                option.position.top = t + 'px';
-            }
-        }
-        else if( parseInt( option.position.top ) >= 0 )
-        {
-            option.position.top = parseInt( option.position.top ) + 'px';
-        }
-        else
-        {
-            option.position.top = (25 * count + 10) + 'px';
+            option.customresizable = $.extend( true, {}, $.fn.jsPanel.defaults.resizable, option.resizable );
+            jsPanel.resizable( option.customresizable );
         }
 
-        /* POSITION LEFT DES JSPANELS SETZEN */
-        // default-config für position.left steht in $.fn.jsPanel.defaults.position
-        if( option.position.left === 'center' && option.size.width != 'auto' )
+        /* JSPANEL AUTOCLOSE | default: false */
+        if( typeof option.autoclose == 'number' && option.autoclose > 0 )
         {
-            option.position.left = ( jsPanel.parent().width() - parseInt(option.size.width) ) / 2 + 'px';
+            window.setTimeout( function(){
+                jsPanel.fadeOut('slow', function(){
+                    this.remove();
+                });
+            }, option.autoclose )
         }
-        else if( option.position.left === 'auto' )
-        {
-            option.position.left = (25 * count + 10) + 'px';
-        }
-        else if( $.isFunction( option.position.left ) )
-        {
-            var l = parseInt( option.position.left() );
-            if( l >= 0 )
-            {
-                option.position.left = l + 'px';
-            }
-        }
-        else if( parseInt( option.position.left ) >= 0 )
-        {
-            option.position.left = parseInt( option.position.left ) + 'px';
-        }
-        else
-        {
-            option.position.left = (25 * count + 10) + 'px';
-        }
-
-        /* CSS für top, left, width, height und z-index des jsPanels setzen */
-        jsPanel.css( { top:option.position.top, left:option.position.left, width:option.size.width, height:option.size.height, 'z-index': set_zi() } );
-
 
         /* INHALT DES PANELS */
         if( option.content )
@@ -274,40 +207,277 @@ var jsPanelversion = 'jsPanel Version: 1.1.1 2014-03-21 12:00';
         if( option.ajax && $.isPlainObject( option.ajax ) )
         {
             $.ajax( option.ajax )
-            .done( function( data, textStatus, jqXHR ){
-                $( '.jsPanel-content' , jsPanel ).empty().append( data );
-                if( option.ajax.done && $.isFunction( option.ajax.done ) ){
-                    option.ajax.done( data, textStatus, jqXHR, jsPanel );
-                }
-            })
-            .fail( function( jqXHR, textStatus, errorThrown ){
+                .done( function( data, textStatus, jqXHR ){
+                    $( '.jsPanel-content' , jsPanel ).empty().append( data );
+                    if( option.ajax.done && $.isFunction( option.ajax.done ) ){
+                        option.ajax.done( data, textStatus, jqXHR, jsPanel );
+                    }
+                })
+                .fail( function( jqXHR, textStatus, errorThrown ){
                     if( option.ajax.fail && $.isFunction( option.ajax.fail ) ){
                         option.ajax.fail( jqXHR, textStatus, errorThrown, jsPanel );
                     }
-            })
-            .always( function( arg1, textStatus, arg3 ){
-                //In response to a successful request, the function's arguments are the same as those of .done(): data(hier: arg1), textStatus, and the jqXHR object(hier: arg3)
-                //For failed requests the arguments are the same as those of .fail(): the jqXHR object(hier: arg1), textStatus, and errorThrown(hier: arg3)
-                if( option.ajax.always && $.isFunction( option.ajax.always ) ){
-                    option.ajax.always( arg1, textStatus, arg3, jsPanel );
-                }
-            })
-            .then( function( data, textStatus, jqXHR ){
-                        if( option.ajax.then && $.isArray( option.ajax.then ) ){
-                            if( option.ajax.then[0] && $.isFunction( option.ajax.then[0] ) ){
-                                option.ajax.then[0]( data, textStatus, jqXHR, jsPanel );
-                            }
-                        }
-                    },
-                    function( jqXHR, textStatus, errorThrown ){
-                        if( option.ajax.then && $.isArray( option.ajax.then ) ){
-                            if( option.ajax.then[1] && $.isFunction( option.ajax.then[1] ) ){
-                                option.ajax.then[1]( jqXHR, textStatus, errorThrown, jsPanel );
-                            }
+                })
+                .always( function( arg1, textStatus, arg3 ){
+                    //In response to a successful request, the function's arguments are the same as those of .done(): data(hier: arg1), textStatus, and the jqXHR object(hier: arg3)
+                    //For failed requests the arguments are the same as those of .fail(): the jqXHR object(hier: arg1), textStatus, and errorThrown(hier: arg3)
+                    if( option.ajax.always && $.isFunction( option.ajax.always ) ){
+                        option.ajax.always( arg1, textStatus, arg3, jsPanel );
+                    }
+                })
+                .then( function( data, textStatus, jqXHR ){
+                    if( option.ajax.then && $.isArray( option.ajax.then ) ){
+                        if( option.ajax.then[0] && $.isFunction( option.ajax.then[0] ) ){
+                            option.ajax.then[0]( data, textStatus, jqXHR, jsPanel );
                         }
                     }
+                },
+                function( jqXHR, textStatus, errorThrown ){
+                    if( option.ajax.then && $.isArray( option.ajax.then ) ){
+                        if( option.ajax.then[1] && $.isFunction( option.ajax.then[1] ) ){
+                            option.ajax.then[1]( jqXHR, textStatus, errorThrown, jsPanel );
+                        }
+                    }
+                }
             )
         }
+
+        /* option.size | default: { width: 600, height: 370 } */
+        if( typeof option.size === 'string' && option.size == 'auto' )
+        {
+            option.size = { width: 'auto', height: 'auto' }
+        }
+        if( $.isPlainObject( option.size  ) )
+        {
+            /* CSS WIDTH initialisieren und zuweisen wenn option.size kein string ist */
+            if( option.size.width != 'auto' ){
+                if( parseInt( option.size.width ) > 0 )
+                {
+                    option.size.width = parseInt( option.size.width ) + 'px';
+                }
+                else if( $.isFunction( option.size.width ) )
+                {
+                    var w = parseInt( option.size.width() );
+                    if( w > 0 )
+                    {
+                        option.size.width = w + 'px';
+                    }
+                }
+                else
+                {
+                    option.size.width = '600px';
+                }
+            }
+            /* CSS HEIGHT initialisieren und zuweisen wenn option.height kein string ist */
+            if( option.size.height != 'auto' ){
+                if( parseInt( option.size.height ) > 0 )
+                {
+                    option.size.height = parseInt( option.size.height ) + 'px';
+                }
+                else if( $.isFunction( option.size.height ) )
+                {
+                    var h = parseInt( option.size.height() );
+                    if( h > 0 )
+                    {
+                        option.size.height = h + 'px';
+                    }
+                }
+                else
+                {
+                    option.size.height = '370px';
+                }
+            }
+        }
+
+        /* css width & height des jsPanels setzen (ist hier erforderlich wenn manuell width & height gesetzt wurde) */
+        jsPanel.css( { width: option.size.width, height: option.size.height } );
+
+        /* der folgende code block ermöglicht 'center' für top & left auch dann, wenn width und/oder height 'auto' sind */
+        option.size.width = $( jsPanel ).outerWidth();
+        option.size.height = $( jsPanel ).innerHeight();
+        // css width & height des jsPanels neu setzen, bevor top und left berechnet wird ( es müssen numerische Werte sein)
+        //jsPanel.css( { width: option.size.width, height: option.size.height } );
+
+        /* option.position | default: 'auto' */
+        if( typeof option.position === 'string' )
+        {
+            if( option.position == 'center' ){
+                option.position = { top: 'center', left: 'center' };
+                //jsPanel.css( { top: option.position.top, left: option.position.left, 'z-index': set_zi() } );
+            }
+            else if( option.position == 'auto' ){
+                option.position = { top: 'auto', left: 'auto' };
+            }
+            else if( option.position == 'top left' ){
+                option.position = { top: 0, left: 0 };
+            }
+            else if( option.position == 'top center' ){
+                option.position = { top: 0, left: 'center' };
+            }
+            else if( option.position == 'top right' ){
+                option.position = { top: 0, right: 0 };
+            }
+            else if( option.position == 'center right' ){
+                option.position = { top: 'center', right: 0 };
+            }
+            else if( option.position == 'bottom right' ){
+                option.position = { bottom: 0, right: 0 };
+            }
+            else if( option.position == 'bottom center' ){
+                option.position = { bottom: 0, left: 'center' };
+            }
+            else if( option.position == 'bottom left' ){
+                option.position = { bottom: 0, left: 0 };
+            }
+            else if( option.position == 'center left' ){
+                option.position = { top: 'center', left: 0 };
+            }
+        }
+        if( $.isPlainObject( option.position  ) )
+        {
+            if( option.position.top || option.position.top == 0 )
+            {
+                /* POSITION TOP DES JSPANELS SETZEN */
+                // default-config für position.top steht in $.fn.jsPanel.defaults.position
+                if( option.position.top === 'center' )
+                {
+                    option.position.top = ( jsPanel.parent().height() - parseInt(option.size.height) ) / 2 + 'px';
+                    if( parseInt( option.position.top ) < 0 )
+                    {
+                        option.position.top = 0;
+                    }
+                }
+                else if( option.position.top === 'auto' )
+                {
+                    option.position.top = (25 * count + 10) + 'px';
+                }
+                else if( $.isFunction( option.position.top ) )
+                {
+                    var t = parseInt( option.position.top() );
+                    if( t >= 0 )
+                    {
+                        option.position.top = t + 'px';
+                    }
+                }
+                else if( parseInt( option.position.top ) >= 0 )
+                {
+                    option.position.top = parseInt( option.position.top ) + 'px';
+                }
+                else
+                {
+                    option.position.top = (25 * count + 10) + 'px';
+                }
+                jsPanel.css( 'top', option.position.top );
+            }
+            else if( option.position.bottom  || option.position.bottom == 0 )
+            {
+                /* POSITION BOTTOM DES JSPANELS SETZEN */
+                if( option.position.bottom === 'center' )
+                {
+                    option.position.bottom = ( jsPanel.parent().height() - parseInt(option.size.height) ) / 2 + 'px';
+                    if( parseInt( option.position.bottom ) < 0 )
+                    {
+                        option.position.bottom = 0;
+                    }
+                }
+                else if( option.position.bottom === 'auto' )
+                {
+                    option.position.bottom = (25 * count + 10) + 'px';
+                }
+                else if( $.isFunction( option.position.bottom ) )
+                {
+                    var t = parseInt( option.position.bottom() );
+                    if( t >= 0 )
+                    {
+                        option.position.bottom = t + 'px';
+                    }
+                }
+                else if( parseInt( option.position.bottom ) >= 0 )
+                {
+                    option.position.bottom = parseInt( option.position.bottom ) + 'px';
+                }
+                else
+                {
+                    option.position.bottom = (25 * count + 10) + 'px';
+                }
+                jsPanel.css( 'bottom', option.position.bottom );
+            }
+
+            if( option.position.left || option.position.left == 0 )
+            {
+                /* POSITION LEFT DES JSPANELS SETZEN */
+                // default-config für position.left steht in $.fn.jsPanel.defaults.position
+                if( option.position.left === 'center' )
+                {
+                    option.position.left = ( jsPanel.parent().width() - parseInt(option.size.width) ) / 2 + 'px';
+                }
+                else if( option.position.left === 'auto' )
+                {
+                    option.position.left = (25 * count + 10) + 'px';
+                }
+                else if( $.isFunction( option.position.left ) )
+                {
+                    var l = parseInt( option.position.left() );
+                    if( l >= 0 )
+                    {
+                        option.position.left = l + 'px';
+                    }
+                }
+                else if( parseInt( option.position.left ) >= 0 )
+                {
+                    option.position.left = parseInt( option.position.left ) + 'px';
+                }
+                else
+                {
+                    option.position.left = (25 * count + 10) + 'px';
+                }
+                jsPanel.css( 'left', option.position.left );
+            }
+            else if( option.position.right || option.position.right == 0 )
+            {
+                /* POSITION RIGHT DES JSPANELS SETZEN */
+                if( option.position.right === 'center' )
+                {
+                    option.position.right = ( jsPanel.parent().width() - parseInt(option.size.width) ) / 2 + 'px';
+                }
+                else if( option.position.right === 'auto' )
+                {
+                    option.position.right = (25 * count + 10) + 'px';
+                }
+                else if( $.isFunction( option.position.right ) )
+                {
+                    var l = parseInt( option.position.right() );
+                    if( l >= 0 )
+                    {
+                        option.position.right = l + 'px';
+                    }
+                }
+                else if( parseInt( option.position.right ) >= 0 )
+                {
+                    option.position.right = parseInt( option.position.right ) + 'px';
+                }
+                else
+                {
+                    option.position.right = (25 * count + 10) + 'px';
+                }
+                jsPanel.css( 'right', option.position.right );
+            }
+        }
+
+        /* CSS top, left, bottom, right, z-index des jsPanels setzen */
+        if( option.position.top ){
+            jsPanel.css( 'top', option.position.top );
+        }else if( option.position.bottom ){
+            jsPanel.css( 'bottom', option.position.bottom );
+        }
+        if( option.position.left ){
+            jsPanel.css( 'left', option.position.left );
+        }else if( option.position.right ){
+            jsPanel.css( 'right', option.position.right );
+        }
+        jsPanel.css( 'z-index', set_zi() );
+
+
 
 
         /*
@@ -371,7 +541,7 @@ var jsPanelversion = 'jsPanel Version: 1.1.1 2014-03-21 12:00';
             if( str && typeof str === 'string' ){
                 $( '.jsPanel-content', this ).css( { height:'-webkit-calc(100% - 40px)', height: 'calc(100% - 40px' } );
                 // Toolbareinfügen
-                $( '.jsPanel-hdr', this ).append( '<p style="color:white;" class="jsPanel-hdr-toolbar"></p>' );
+                $( '.jsPanel-hdr', this ).css( 'height', '38px' ).append( '<p style="color:white;" class="jsPanel-hdr-toolbar"></p>' );
                 // Toolbar-Inhalt einfügen, kann HTML-Code, oder ein entsprechendes jquery-Objekt, oder eine Funktion sein, die HTML-Code liefert
                 $( '.jsPanel-hdr-toolbar', this ).append( str );
             }
@@ -437,7 +607,7 @@ var jsPanelversion = 'jsPanel Version: 1.1.1 2014-03-21 12:00';
                 // jsPanel bearbeiten
                 this.removeClass( 'normalized maximized' )
                     .addClass( 'minimized' )
-                    .animate( { width:'150px' , height:'17px' , left:left , top:0 , opacity:1 , zIndex:999 } )
+                    .animate( { width:'150px' , height:'22px' , left:left , top:0 , opacity:1 , zIndex:1000 } )
                     .resizable( "disable" )
                     .draggable( "disable" );
                 // Button Grafik austauschen
@@ -562,7 +732,7 @@ var jsPanelversion = 'jsPanel Version: 1.1.1 2014-03-21 12:00';
          * PANEL EINBLENDEN .....
          *
          */
-        jsPanel.css( 'display', 'block' );
+        jsPanel.fadeIn();
 
 
         /*
@@ -596,18 +766,12 @@ var jsPanelversion = 'jsPanel Version: 1.1.1 2014-03-21 12:00';
         "title":        function(){
                             return 'jsPanel No ' + ( $('.jsPanel').length + 1 )
                         },
-        "overflow":     {
-                            vertical:   'scroll',
-                            horizontal: 'scroll'
-                        },
+        "overflow":     'scroll',
         "size":         {
                             width:  600,
                             height: 370
                         },
-        "position":     {
-                            top:  'auto',
-                            left: 'auto'
-                        },
+        "position":     'auto',
         "draggable":    {
                             handle:      'div.jsPanel-hdr',
                             stack:       '.jsPanel',
@@ -618,7 +782,8 @@ var jsPanelversion = 'jsPanel Version: 1.1.1 2014-03-21 12:00';
                             autoHide:       false,
                             minWidth:       150,
                             minHeight:      100
-                        }
+                        },
+        "autoclose":    false
     };
 
     /*

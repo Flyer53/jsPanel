@@ -61,6 +61,14 @@ $( document ).ready( function(){
         });
     });
 
+    $('#try-7a').click( function(){
+        $('#options-size').jsPanel({
+            size: 'auto',
+            position: 'center',
+            content: "<p style='padding:30px 50px;'>Some text content for demo ...</p>"
+        });
+    });
+
     $('#try-8').click( function(){
         $( '#options-size' ).jsPanel({
             size: {
@@ -79,7 +87,7 @@ $( document ).ready( function(){
 
     $('#try-10').click( function(){
         $( '#options-position' ).jsPanel({
-            position: { top: 'auto', left: 'auto' }
+            position: 'auto'
         });
     });
 
@@ -108,10 +116,44 @@ $( document ).ready( function(){
         });
     });
 
+    $('#try-13a').click( function(){
+        $( '#options-position' ).jsPanel({
+            size: 'auto',
+            position: 'center',
+            content: "<p style='padding:40px 50px;'>Some text content ...</p>"
+        });
+    });
+
+    $('#try-13b').click( function(){
+        $( '#options-position' ).jsPanel({
+            size: 'auto',
+            position: { bottom: 0, right: 0 },
+            content: "<p style='padding:40px 50px;'>Some text content ...</p>"
+        });
+    });
+
+    $('#try-13c').click( function(){
+        $( '#options-position' ).jsPanel({
+            size: 'auto',
+            position: 'bottom right'
+        });
+    });
+
     $('#try-14').click( function(){
         $( '#options-overflow' ).jsPanel({
             overflow: { vertical: 'scroll', horizontal: 'hidden' },
             position: { top: 135, left: 340 }
+        });
+    });
+
+    $('#try-14a').click( function(){
+        $( '#options-overflow' ).jsPanel({
+            overflow: 'scroll',
+            position: 'center',
+            size: { width: 440, height: 300 },
+            load: {
+                url: 'files/loremipsum.html'
+            }
         });
     });
 
@@ -256,6 +298,21 @@ $( document ).ready( function(){
         $('#options-toolbarcontent').jsPanel({
             toolbarContent: '<p>Toolbar content goes here ...</p>',
             position: { top: 120, left: 380 }
+        });
+    });
+
+    $('#try-25a').click( function(){
+        $('#options-autoclose').jsPanel({
+            autoclose: 4000
+        });
+    });
+
+    $('#try-25b').click( function(){
+        $('#options-controls').jsPanel({
+            size: { width: 250, height: 130 },
+            overflow: 'hidden',
+            position: 'top right',
+            controls: 'closeonly'
         });
     });
 

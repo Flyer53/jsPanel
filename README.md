@@ -39,6 +39,8 @@ The function accepts two optional arguments. A **configuration object** to set a
 | [resizable](#option-resizable)           |                                                |                            |
 | [draggable](#option-draggable)           |                                                |                            |
 | [toolbarContent](#option-toolbarContent) |                                                |                            |
+| [autoclose](#option-autoclose)           |                                                |                            |
+| [controls[(#option-controls)             |                                                |                            |
 
 ### ![options](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options.png)<a name="options"></a>
 
@@ -81,13 +83,15 @@ To set an empty title/header use the option with an empty string.
 	});
 
 #### ![size](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options-size.png)<a name="option-size"></a>
-Type: object | function
+Type: string | object
 
 Default: { width: 600, height: 370 }
 
 This option will set the width and height of the jsPanel in pixels.
 
 **Possible values for width/height:** integer | string | 'auto' | function
+
+**As of version 1.2.0** you can use **size: 'auto'** as abbreviated version of **size: { width: 'auto', height: 'auto' }**
 
 + An **integer** will be interpreted as pixel value
 + A **string** will be parsed using [parseInt()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt). If the return value is > 0 it will be used as pixel value
@@ -119,9 +123,9 @@ This option will set the width and height of the jsPanel in pixels.
     });
 
 #### ![position](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options-position.png)<a name="option-position"></a>
-Type: object
+Type: string | object
 
-Default: { top: 'auto', left: 'auto' }
+Default: 'auto'
 
 This option will set the position of the jsPanel in pixels relative to the parent element containing the jsPanel. The parent element needs to be positioned somehow for option.position to work properly.
 
@@ -134,7 +138,12 @@ This option will set the position of the jsPanel in pixels relative to the paren
 
 top/left also accept a **function** as value. The return value of the function will be parsed using [parseInt()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt) and used to set css top/left of the jsPanel if the return values are >= 0
 
-**Using 'center' for position.top and/or position.left will be ignored if the respective values for size.height/size.width are 'auto'. In this case position.top and/or position.left will be set to 'auto'.**
+**As of version 1.2.0** you can use **position: 'auto'** or **position: 'center'** as abbreviated versions of **position: { top: 'auto', left: 'auto' }** or **position: { top: 'center', left: 'center' }** respectively.
+
+**Further shortcuts for option.position as of version 1.2.0:**<br>
+'top left' | 'top center' | 'top right' | 'center right' | 'bottom right' | 'bottom center' | 'bottom left' | 'center left'
+
+**New:** There is no limitation anymore for using the 'center' settings in option.position. Even if you use any of the 'auto' settings of option.size centering works, unless loading of content is delayed (asynchronos ajax request, callback function).
 
 **Remember:** Positioning is always relative to the parent element containing the jsPanel, not to the window. So when the containing element is scrolled, the jsPanel might not be visible in the current viewport.
 
@@ -172,18 +181,41 @@ top/left also accept a **function** as value. The return value of the function w
 		}
     });
 	
-	// This example will not work since there are no fixed values for width and/or height. Results in default positioning.
+	// Example using 'auto' for size and 'center' for position.
 	$( selector ).jsPanel({
 		size: { width: 'auto', height: 'auto' },
 		position: { top: 'center', left: 'center' }
     });
+
+    // Or the short version
+    $( '#options-position' ).jsPanel({
+        size: 'auto',
+        position: 'center'
+    });
+
+    // Positioning bottom right
+    $( '#options-position' ).jsPanel({
+        size: 'auto',
+        position: { bottom: 0, right: 0 },
+        content: "<p style='padding:40px 50px;'>Some text content ...</p>"
+    });
+
+    // Or the short version
+    $( '#options-position' ).jsPanel({
+        size: 'auto',
+        position: 'bottom right'
+    });
 	
 #### ![overflow](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options-overflow.png)<a name="option-overflow"></a>
-Type: object
+Type: string | object
 
 Default: { vertical: 'scroll', horizontal: 'scroll' }
 
 This option will set the css [overflow-y](http://www.w3schools.com/cssref/css3_pr_overflow-y.asp) / [overflow-x](http://www.w3schools.com/cssref/css3_pr_overflow-x.asp) properties of the div element containing the content of the jsPanel.
+
+
++ Passing a string will set the css overflow property to 'string'
++ Passing an object will set css overflow-y and overflow-x properties
 
 **Possible values for vertical and horizontal:** 'visible' | 'hidden' | 'scroll' | 'auto' | 'initial' | 'inherit'
 
@@ -384,6 +416,8 @@ This will change the "containment" option and add values for the maxWidth/maxHei
 
 For detailed information on how to use the jQuery-UI resizable interaction see the [api documentation](http://api.jqueryui.com/resizable/)
 
+**Disable** the resizable feature by setting option.resizable to the string 'disabled'
+
 #### ![draggable](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options-draggable.png)<a name="option-draggable"></a>
 Type: object
 
@@ -411,6 +445,8 @@ This will change the background color of the jsPanel itself after dragging is fi
 
 For detailed information on how to use the jQuery-UI draggable interaction see the [api documentation](http://api.jqueryui.com/draggable/)
 
+**Disable** the draggable feature by setting option.draggable to the string 'disabled'
+
 #### ![toolbarContent](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options-toolbarContent.png)<a name="option-toolbarContent"></a>
 Type: string
 
@@ -422,6 +458,30 @@ This option allows to add a toolbar to the jsPanel header. Using this option wil
 
     $( selector ).jsPanel({
 		toolbarContent: '<p>Toolbar content goes here ...</p>'
+    });
+
+#### ![autoclose](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options-autoclose.png)<a name="option-autoclose"></a>
+
+Type: number
+
+Default: false
+
+This option allows the jsPanel to close automatically after the specified time in milliseconds.
+
+    $( selector ).jsPanel({
+        autoclose: 4000
+    });
+
+#### ![controls](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options-controls.png)<a name="option-controls"></a>
+
+Type: string
+
+Default: there is no default for this option
+
+This option allows to configure the buttons in the header. Presently there is only one valid setting: **'closeonly'** This will show only the close button of the jsPanel.
+
+    $( selector ).jsPanel({
+        controls: 'closeonly'
     });
 
 ### ![methods](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/methods.png)<a name="methods"></a>
