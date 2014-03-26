@@ -40,7 +40,7 @@ The function accepts two optional arguments. A **configuration object** to set a
 | [draggable](#option-draggable)           |                                                |                            |
 | [toolbarContent](#option-toolbarContent) |                                                |                            |
 | [autoclose](#option-autoclose)           |                                                |                            |
-| [controls[(#option-controls)             |                                                |                            |
+| [controls](#option-controls)             |                                                |                            |
 
 ### ![options](https://github.com/Flyer53/jsPanel/raw/master/demopage/images/options.png)<a name="options"></a>
 
