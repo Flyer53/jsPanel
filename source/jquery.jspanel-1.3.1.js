@@ -1,5 +1,5 @@
 /* jQuery Plugin jsPanel
-   Version: 1.3.0 2014-03-31 10:11
+   Version: 1.3.1 2014-04-01 07:06
    Dependencies:
     jQuery library ( > 1.7.0 incl. 2.1.0 )
     jQuery.UI library ( > 1.9.0 ) - (at least UI Core, Draggable, Resizable)
@@ -19,7 +19,9 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var jsPanelversion = '1.3.0 2014-03-31 10:11';
+var jsPanelversion = '1.3.1 2014-04-01 07:06';
+
+// size 'auto' arbeitet nicht immer wie erwartet ... ist wohl eine Eigenart der browser 'auto' unterschiedlich zu handhaben
 
 (function ( $ ) {
 
@@ -744,6 +746,18 @@ var jsPanelversion = '1.3.0 2014-03-31 10:11';
          */
         jsPanel.fadeIn();
 
+        /* css bottom und/oder right in top und left wandeln */
+        // ist notwendig, damit resizable und draggable ordentlich funktionieren wenn bottom oder right benutzt wird
+        var pos = jsPanel.position();
+        if( option.position.bottom )
+        {
+            jsPanel.css( { 'top': parseInt(pos.top) + 'px', 'bottom': '' } );
+        }
+        if( option.position.right )
+        {
+            jsPanel.css( { 'left': parseInt(pos.left) + 'px', 'right': '' } );
+        }
+
 
         /*
          * CALLBACK AUFRUFEN WENN VORHANDEN
@@ -785,10 +799,7 @@ var jsPanelversion = '1.3.0 2014-03-31 10:11';
         "draggable":    {
                             handle:      'div.jsPanel-hdr',
                             stack:       '.jsPanel',
-                            opacity:     0.6,
-                            start:       function( event, ui ) {
-                                $(ui.helper ).css( { 'bottom': '', 'right': '' } );
-                            }
+                            opacity:     0.6
                         },
         "resizable":    {
                             //alsoResize:     '.jsPanel-content:first-of-type',

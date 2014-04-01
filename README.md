@@ -6,11 +6,15 @@ Copyright &copy; 2014 Stefan Sträßer | [stefanstraesser.eu](http://stefanstrae
 
 For a bunch of examples and the api documentation please visit [jspanel.de](http://jspanel.de/)
 
-<br><br><br>
+<br><br>
 
 ## CHANGELOG ##
 
 ---
+
+### Version 1.3.1 ###
+
+**Bugfix** in the resize behaviour when using option.position with bottom and/or right
 
 ### Version 1.3.0 ###
 
