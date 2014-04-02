@@ -1,5 +1,5 @@
 /* jQuery Plugin jsPanel
-   Version: 1.3.1 2014-04-01 07:06
+   Version: 1.4.0 2014-04-02 13:23
    Dependencies:
     jQuery library ( > 1.7.0 incl. 2.1.0 )
     jQuery.UI library ( > 1.9.0 ) - (at least UI Core, Draggable, Resizable)
@@ -19,9 +19,11 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var jsPanelversion = '1.3.1 2014-04-01 07:06';
+var jsPanelversion = '1.4.0 2014-04-02 13:23';
 
 // size 'auto' arbeitet nicht immer wie erwartet ... ist wohl eine Eigenart der browser 'auto' unterschiedlich zu handhaben
+
+// NEU: optional font-awesome für die controls
 
 (function ( $ ) {
 
@@ -43,7 +45,6 @@ var jsPanelversion = '1.3.1 2014-04-01 07:06';
                                     '<div class="jsPanel-hdr-r-btn-max normal"></div>'+
                                     '<div class="jsPanel-hdr-r-btn-min"></div>'+
                                 '</div>'+
-                                '<div class="cf"></div>'+
                             '</div>'+
                         '<div class="jsPanel-content"></div>'+
                         '</div>');
@@ -67,12 +68,9 @@ var jsPanelversion = '1.3.1 2014-04-01 07:06';
 
 
         /* CONTROLS (buttons in header right) */
-        if( option.controls )
+        if( option.controls.buttons && option.controls.buttons === 'closeonly' )
         {
-            if( option.controls === 'closeonly' )
-            {
-                $( '.jsPanel-hdr-r-btn-min, .jsPanel-hdr-r-btn-max', jsPanel ).remove();
-            }
+            $( '.jsPanel-hdr-r-btn-min, .jsPanel-hdr-r-btn-max', jsPanel ).remove();
         }
 
         /* ATTRIBUT ID DES PANELS */
@@ -95,7 +93,7 @@ var jsPanelversion = '1.3.1 2014-04-01 07:06';
                         // sonst ...
                         option.id = function(){
                             return 'jsPanel_' + ( $('.jsPanel').length + 1 )
-                        }
+                        };
                         jsPanel.attr( 'id', option.id );
                     }
                     // neue id in den title schreiben
@@ -119,7 +117,7 @@ var jsPanelversion = '1.3.1 2014-04-01 07:06';
                 // sonst ...
                 option.id = function(){
                     return 'jsPanel_' + ( $('.jsPanel').length + 1 )
-                }
+                };
             }
         }
 
@@ -136,9 +134,9 @@ var jsPanelversion = '1.3.1 2014-04-01 07:06';
         /* bei Bedarf eine zusätzliche TOOLBAR einfügen */
         if( option.toolbarContent )
         {
-            $( '.jsPanel-content', jsPanel ).css( { height:'-webkit-calc(100% - 40px)', height: 'calc(100% - 40px' } );
+            $( '.jsPanel-content', jsPanel ).css( { 'margin-top': '40px', height:'-webkit-calc(100% - 40px)', height: 'calc(100% - 44px' } );
             // Toolbareinfügen
-            $( '.jsPanel-hdr', jsPanel ).css( 'height', '38px' ).append( '<div style="color:white;" class="jsPanel-hdr-toolbar"></div>' );
+            $( '.jsPanel-hdr', jsPanel ).append( '<div class="jsPanel-hdr-l"><p class="jsPanel-hdr-l-text jsPanel-hdr-toolbar"></p></div>' );
             // Toolbar-Inhalt einfügen, kann HTML-Code, oder ein entsprechendes jquery-Objekt, oder eine Funktion sein, die HTML-Code liefert
             $( '.jsPanel-hdr-toolbar', jsPanel ).append( option.toolbarContent );
         }
@@ -164,6 +162,8 @@ var jsPanelversion = '1.3.1 2014-04-01 07:06';
         {
             // cursor zurücksetzen, weil draggable deaktiviert
             $('.jsPanel-hdr-l', jsPanel ).css( 'cursor', 'inherit' );
+            // jquery ui draggable disabled initialisieren, damit Zustand abgefragt werden kann ( z.B. in minimize()/maximize() )
+            jsPanel.draggable({ disabled: true });
         }
 
         /* JQUERY UI RESIZABLE FEATURE */
@@ -172,6 +172,11 @@ var jsPanelversion = '1.3.1 2014-04-01 07:06';
         {
             option.customresizable = $.extend( true, {}, $.fn.jsPanel.defaults.resizable, option.resizable );
             jsPanel.resizable( option.customresizable );
+        }
+        else
+        {
+            // jquery ui resizable disabled initialisieren, damit Zustand abgefragt werden kann ( z.B. in minimize()/maximize() )
+            jsPanel.resizable({ disabled: true });
         }
 
         /* JSPANEL AUTOCLOSE | default: false */
@@ -316,7 +321,8 @@ var jsPanelversion = '1.3.1 2014-04-01 07:06';
                 option.position = { top: 'center', left: 'center' };
                 //jsPanel.css( { top: option.position.top, left: option.position.left, 'z-index': set_zi() } );
             }
-            else if( option.position == 'auto' ){
+            else if( option.position == 'auto' )
+            {
                 option.position = { top: 'auto', left: 'auto' };
             }
             else if( option.position == 'top left' ){
@@ -476,14 +482,18 @@ var jsPanelversion = '1.3.1 2014-04-01 07:06';
         }
 
         /* CSS top, left, bottom, right, z-index des jsPanels setzen */
-        if( option.position.top ){
+        if( option.position.top )
+        {
             jsPanel.css( 'top', option.position.top );
-        }else if( option.position.bottom ){
+        }else if( option.position.bottom )
+        {
             jsPanel.css( 'bottom', option.position.bottom );
         }
-        if( option.position.left ){
+        if( option.position.left )
+        {
             jsPanel.css( 'left', option.position.left );
-        }else if( option.position.right ){
+        }else if( option.position.right )
+        {
             jsPanel.css( 'right', option.position.right );
         }
         jsPanel.css( 'z-index', set_zi() );
@@ -504,7 +514,7 @@ var jsPanelversion = '1.3.1 2014-04-01 07:06';
             jsPanel.close();
         });
         // jsPanel minimieren
-        $('.jsPanel-hdr-r-btn-min', jsPanel).on('click', function(){
+        $('.jsPanel-hdr-r-btn-min, .jsPanel-hdr-r-btn-min *', jsPanel).on('click', function(){
             jsPanel.minimize();
         });
         // jsPanel maximieren
@@ -544,20 +554,20 @@ var jsPanelversion = '1.3.1 2014-04-01 07:06';
                 // in allen anderen Fällen liefert die Funktion das jsPanel an sich
                 return this;
             }
-        }
+        };
 
         // TOOLBAR NACHTRÄGLICH EINFÜGEN
         jsPanel.addToolbar = function( str )
         {
             if( str && typeof str === 'string' ){
-                $( '.jsPanel-content', this ).css( { height:'-webkit-calc(100% - 40px)', height: 'calc(100% - 40px' } );
+                $( '.jsPanel-content', this ).css( { 'margin-top': '40px',  height:'-webkit-calc(100% - 44px)', height: 'calc(100% - 44px' } );
                 // Toolbareinfügen
-                $( '.jsPanel-hdr', this ).css( 'height', '38px' ).append( '<p style="color:white;" class="jsPanel-hdr-toolbar"></p>' );
+                $( '.jsPanel-hdr', this ).append( '<div class="jsPanel-hdr-l"><p class="jsPanel-hdr-l-text jsPanel-hdr-toolbar"></p></div>' );
                 // Toolbar-Inhalt einfügen, kann HTML-Code, oder ein entsprechendes jquery-Objekt, oder eine Funktion sein, die HTML-Code liefert
                 $( '.jsPanel-hdr-toolbar', this ).append( str );
             }
             return this;
-        }
+        };
 
         // jsPanel schließen
         jsPanel.close = function()
@@ -574,7 +584,7 @@ var jsPanelversion = '1.3.1 2014-04-01 07:06';
                 context.children('.minimized').eq(i).animate({left: left});
             }
             return context;
-        }
+        };
 
         // childpanels des jspanels löschen
         jsPanel.closeChildpanels = function()
@@ -585,14 +595,14 @@ var jsPanelversion = '1.3.1 2014-04-01 07:06';
                 $( this ).remove();
             });
             return this;
-        }
+        };
 
         // jsPanel in den Fordergrund holen
         jsPanel.front = function()
         {
             this.css( 'z-index', set_zi() );
             return this;
-        }
+        };
         jsPanel.movetoFront = jsPanel.front; // movetoFront is deprecated
 
         // jsPanel Minimieren und Maximieren
@@ -619,16 +629,23 @@ var jsPanelversion = '1.3.1 2014-04-01 07:06';
                 // jsPanel bearbeiten
                 this.removeClass( 'normalized maximized' )
                     .addClass( 'minimized' )
-                    .animate( { width:'150px' , height:'22px' , left:left , top:0 , opacity:1 , zIndex:1000 } )
-                    .resizable( "disable" )
-                    .draggable( "disable" );
+                    .animate( { width:'150px' , height:'22px' , left:left , top:0 , opacity:1 , zIndex:1000 } );
+                // jquery ui resizable und draggable bei Bedarf deaktivieren
+                if( jsPanel.resizable( "option", "disabled" ) === false )
+                {
+                    this.resizable( "disable" );
+                }
+                if( jsPanel.draggable( "option", "disabled" ) === false )
+                {
+                    this.draggable( "disable" );
+                }
                 // Button Grafik austauschen
                 $( '.jsPanel-hdr-r-btn-max', this ).removeClass( 'normal' ).addClass( 'alternate' );
                 // jsPanel in vorgesehenen Container verschieben
                 jsPanel.appendTo( '#jsPanel-min-container' );
             }
             return this;
-        }
+        };
 
         jsPanel.maximize = function()
         {
@@ -652,14 +669,14 @@ var jsPanelversion = '1.3.1 2014-04-01 07:06';
                     $('.jsPanel-content', this).css({ display:'block',
                         width: '100%',
                         height: '100%',
-                        height: '-webkit-calc(100% - 40px)',
-                        height: 'calc(100% - 40px)' });
+                        height: '-webkit-calc(100% - 44px)',
+                        height: 'calc(100% - 44px)' });
                 } else {
                     $('.jsPanel-content', this).css({ display:'block',
                         width: '100%',
                         height: '100%',
-                        height: '-webkit-calc(100% - 20px)',
-                        height: 'calc(100% - 20px)' });
+                        height: '-webkit-calc(100% - 24px)',
+                        height: 'calc(100% - 24px)' });
                 }
                 // Button Grafik austauschen
                 $( '.jsPanel-hdr-r-btn-max', this ).removeClass( 'alternate' ).addClass( 'normal' );
@@ -677,22 +694,8 @@ var jsPanelversion = '1.3.1 2014-04-01 07:06';
                     this.appendTo( this.data( 'parentElement' ) );
                 }
                 // maximale Größe anwenden
-                if( this.parent().css('overflow-x') != 'hidden' )
-                {
-                    var width =  parseInt( this.parent().width() , 10 ) - 35 + 'px';     // extra 20 wegen scrollbar
-                }
-                else
-                {
-                    var width =  parseInt( this.parent().width() , 10 ) - 20 + 'px'     // -20px wegen padding und box-shadow & um scrollbars zu verhindern
-                }
-                if( this.parent().css('overflow-y') != 'hidden' )
-                {
-                    var height = parseInt( this.parent().height() , 10 ) - 35 + 'px';    // extra 20 wegen scrollbar
-                }
-                else
-                {
-                    var height = parseInt( this.parent().height() , 10 ) - 20 + 'px';    // -20px wegen padding und box-shadow & um scrollbars zu verhindern
-                }
+                var width =  parseInt( this.parent().width() , 10 ) - 10 + 'px',
+                    height = parseInt( this.parent().height() , 10 ) - 10 + 'px';
 
                 this.animate( {left: '5px' , top: '5px' , width: width , height: height} )
                     .removeClass( 'minimized normalized' )
@@ -704,16 +707,16 @@ var jsPanelversion = '1.3.1 2014-04-01 07:06';
                     $('.jsPanel-content', this).css({ display:'block',
                         width: '100%',
                         height: '100%',
-                        height: '-webkit-calc(100% - 40px)',
-                        height: 'calc(100% - 40px)' });
+                        height: '-webkit-calc(100% - 44px)',
+                        height: 'calc(100% - 44px)' });
                 }
                 else
                 {
                     $('.jsPanel-content', this).eq(0).css({ display: 'block' ,
                         width: '100%',
                         height: '100%',
-                        height: '-webkit-calc(100% - 20px)',
-                        height: 'calc(100% - 20px)' });
+                        height: '-webkit-calc(100% - 24px)',
+                        height: 'calc(100% - 24px)' });
                 }
                 // Button Grafik austauschen
                 $( '.jsPanel-hdr-r-btn-max', this ).removeClass( 'normal' ).addClass( 'alternate' );
@@ -727,7 +730,7 @@ var jsPanelversion = '1.3.1 2014-04-01 07:06';
                 $('.jsPanel.minimized').eq(i).animate({left: left});
             }
             return this;
-        }
+        };
 
         // Speichert CSS-Werte in data-Property des jsPanels
         jsPanel.storeData = function( panel )
@@ -737,7 +740,7 @@ var jsPanelversion = '1.3.1 2014-04-01 07:06';
             panel.data( 'panelTop', panel.css( 'top' ) );
             panel.data( 'panelLeft', panel.css( 'left' ) );
             panel.data( 'parentElement', panel.parent() );
-        }
+        };
 
 
         /*
@@ -756,6 +759,24 @@ var jsPanelversion = '1.3.1 2014-04-01 07:06';
         if( option.position.right )
         {
             jsPanel.css( { 'left': parseInt(pos.left) + 'px', 'right': '' } );
+        }
+        /* font-awesome einfügen wenn option.iconfont gesetzt; steht hier unten weil .css() nicht bei display:none Elementen funktioniert */
+        if( option.controls.iconfont )
+        {
+            if( option.controls.iconfont === 'font-awesome' )
+            {
+                $( '.jsPanel-hdr-r-btn-close', jsPanel ).append( '<i class="fa fa-times"></i>' );
+                $( '.jsPanel-hdr-r-btn-max', jsPanel ).append( '<i class="fa fa-arrows-alt"></i>' );
+                $( '.jsPanel-hdr-r-btn-min', jsPanel ).append( '<i class="fa fa-minus"></i>' );
+            }
+            else if( option.controls.iconfont === 'bootstrap' )
+            {
+                $( '.jsPanel-hdr-r-btn-close', jsPanel ).append( '<span class="glyphicon glyphicon-remove"></span>' );
+                $( '.jsPanel-hdr-r-btn-max', jsPanel ).append( '<span class="glyphicon glyphicon-fullscreen"></span>' );
+                $( '.jsPanel-hdr-r-btn-min', jsPanel ).append( '<span class="glyphicon glyphicon-minus"></span>' );
+            }
+            // icon sprites entfernen
+            $( '.jsPanel-hdr-r-btn-close, .jsPanel-hdr-r-btn-min, .jsPanel-hdr-r-btn-max, .jsPanel-hdr-r-btn-alternate' ).css( 'background-image', 'none' );
         }
 
 
@@ -780,13 +801,17 @@ var jsPanelversion = '1.3.1 2014-04-01 07:06';
          */
         return jsPanel;
 
-    }
+    };
 
     /*
      * PLUGIN DEFAULTS - added as a property on our plugin function
      *
      */
     $.fn.jsPanel.defaults = {
+        "controls":     {
+                            buttons:  'all',
+                            iconfont: false
+                        },
         "title":        function(){
                             return 'jsPanel No ' + ( $('.jsPanel').length + 1 )
                         },

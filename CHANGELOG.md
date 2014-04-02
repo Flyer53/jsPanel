@@ -2,6 +2,22 @@
 
 ---
 
+### Versin 1.4.0 ###
+
+**CSS**
+
+In this version I fixed some css issues and changed the design of the jsPanel to meet a more modern or rather neutral style.
+
+**option.controls**
+
+Added support for icon fonts in the title/header of the jsPanel. Built in is the support for bootstrap glyphicons and font-awesome and can be activated in option.controls.
+
+**Bugfix** in the minimize functionality when resizable and/or draggable is disabled.
+
+**Bugfix** in the maximize functionality..
+
+---
+
 ### Version 1.3.1 ###
 
 **Bugfix** in the resize behaviour when using option.position with bottom and/or right
