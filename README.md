@@ -8,9 +8,9 @@ I'm working on version 1.5.0. New features will include:
 
 + option to maximize the jsPanel fullscreen
 
-**For a 1.5.0beta5 preview with option.modal and option.theme implemented go to:**
+**For a 1.5.0beta6 preview with option.modal and option.theme implemented go to:**
 
-[jsPanel 1.5.0beta5](http://jspanel.de/api-beta.html)
+[jsPanel 1.5.0beta6](http://jspanel.de/api-beta.html)
 
 
 ###jsPanel homepage: [http://jspanel.de](http://jspanel.de/)###
