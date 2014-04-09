@@ -2,7 +2,7 @@
 
 ---
 
-### Versin 1.5.0 ###
+### Version 1.5.0 ###
 
 + Added option to create a **modal jsPanel**
 
@@ -18,7 +18,7 @@
 
 ---
 
-### Versin 1.4.0 ###
+### Version 1.4.0 ###
 
 **CSS**
 
