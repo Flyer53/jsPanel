@@ -2,6 +2,22 @@
 
 ---
 
+### Versin 1.5.0 ###
+
++ Added option to create a **modal jsPanel**
+
++ Added basic support for **themes** including various themes
+
++ Updated **maximize** function. jsPanels appended to the body element will maximize fullscreen within the window
+
++ Updated **option.id**: No more fallback if jQuery.fn.uniqueId() is missing since jQuery UI >= version 1.9 is a dependency anyhow
+
++ Updated **option.position** for jsPanels that are appended to the body element
+
++ API documentation now has a section about the defaults and how to change them
+
+---
+
 ### Versin 1.4.0 ###
 
 **CSS**

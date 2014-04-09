@@ -1,17 +1,6 @@
 ##NEWS:##
 
-I'm working on version 1.5.0. New features will include:
-
-+ option to create a modal jsPanel
-
-+ basic support for themes
-
-+ option to maximize the jsPanel fullscreen
-
-**For a 1.5.0beta7 preview with option.modal and option.theme implemented go to:**
-
-[jsPanel 1.5.0beta7](http://jspanel.de/api-beta.html)
-
+###jsPanel version 1.5 released###
 
 ###jsPanel homepage: [http://jspanel.de](http://jspanel.de/)###
 
@@ -34,4 +23,6 @@ Copyright &copy; 2014 Stefan Sträßer | [stefanstraesser.eu](http://stefanstrae
 | contentBG           |                    |                     |
 | resizable           |                    |                     |
 | draggable           |                    |                     |
-| toolbarContent)     |                    |                     |
+| toolbarContent      |                    |                     |
+| modal               |                    |                     |
+| theme               |                    |                     |

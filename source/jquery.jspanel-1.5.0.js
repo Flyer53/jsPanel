@@ -1,8 +1,8 @@
 /* jQuery Plugin jsPanel
-   Version: 1.4.0 2014-04-02 13:23
+   Version: 1.5.0 2014-04-09 09:52
    Dependencies:
     jQuery library ( > 1.7.0 incl. 2.1.0 )
-    jQuery.UI library ( > 1.9.0 ) - (at least UI Core, Draggable, Resizable)
+    jQuery.UI library ( > 1.9.0 ) - (at least UI Core, Mouse, Widget, Draggable, Resizable)
     HTML5 compatible browser
 
    Copyright (c) 2014 Stefan Sträßer, http://stefanstraesser.eu/
@@ -19,15 +19,18 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var jsPanelversion = '1.4.0 2014-04-02 13:23';
-
-// size 'auto' arbeitet nicht immer wie erwartet ... ist wohl eine Eigenart der browser 'auto' unterschiedlich zu handhaben
-
-// NEU: optional font-awesome für die controls
+var jsPanelversion = '1.5.0 2014-04-09 09:52';
 
 (function ( $ ) {
 
     $.fn.jsPanel = function( config , callback ) {
+
+        // tagname des elements an das das jsPanel gehängt wird und window Daten
+        var par = this.first()[0].tagName.toLowerCase(),
+            wsT = $( window ).scrollTop(),
+            wsL = $( window ).scrollLeft(),
+            woW = $( window ).outerWidth(),
+            woH = $( window ).outerHeight();
 
         // Extend our default config with those provided.
         // Note that the first arg to extend is an empty object -
@@ -37,88 +40,89 @@ var jsPanelversion = '1.4.0 2014-04-02 13:23';
         // Counter für die Panels im jeweils verwendeten Container (für top & left)
         var count = $('.jsPanel', this.first() ).length;
 
-        var jsPanel = $('<div class="jsPanel normalized" style="z-index:1000;display:none;">'+
-                            '<div class="jsPanel-hdr">'+
+        var jsPanel = $('<div class="jsPanel jsPanel-theme-light normalized" style="z-index:1000;display:none;">'+
+                            '<div class="jsPanel-hdr jsPanel-theme-light">'+
                                 '<div class="jsPanel-hdr-l"><p class="jsPanel-hdr-l-text"></p></div>'+
                                 '<div class="jsPanel-hdr-r">'+
                                     '<div class="jsPanel-hdr-r-btn-close"></div>'+
                                     '<div class="jsPanel-hdr-r-btn-max normal"></div>'+
                                     '<div class="jsPanel-hdr-r-btn-min"></div>'+
                                 '</div>'+
+                                '<div class="jsPanel-hdr-l"><p class="jsPanel-hdr-l-text jsPanel-hdr-toolbar"></p></div>'+
                             '</div>'+
-                        '<div class="jsPanel-content"></div>'+
+                        '<div class="jsPanel-content jsPanel-theme-light"></div>'+
                         '</div>');
 
 
         /*
-         * PANEL INS DOKUMENT EINFÜGEN, und zwar nur in das erste Element der Kollektion !!
-         *
-         */
-        jsPanel.appendTo( this.first() );
-
-
-        /*
          * DAS OPTIONS-OBJEKT DER FUNKTION .jsPanel() ABARBEITEN
-         *
+         * und jsPanel ins document einfügen
          */
 
-        /* HEADER (Überschrift) des Panels */
-        // wird auf jeden Fall in den defaults gesetzt ...
-        $( '.jsPanel-hdr-l-text', jsPanel ).append( option.title );
-
-
-        /* CONTROLS (buttons in header right) */
-        if( option.controls.buttons && option.controls.buttons === 'closeonly' )
+        /* option.modal  | default: false  */
+        if( option.modal === true )
         {
-            $( '.jsPanel-hdr-r-btn-min, .jsPanel-hdr-r-btn-max', jsPanel ).remove();
-        }
-
-        /* ATTRIBUT ID DES PANELS */
-        if( option.id ){
-            // wenn option.id -> string oder function?
-            if( typeof option.id === 'string' ){
-                // wenn id schon vorhanden
-                if( $( '#' + option.id ).length < 1 ){
-                    jsPanel.attr( 'id', option.id );
-                }
-                else
-                {
-                    // sonst ...
-                    // wenn jQuery.fn.uniqueId zur Verfügung steht ...
-                    if ( jQuery.isFunction( jQuery.fn.uniqueId ) ) {
-                        jsPanel.uniqueId();
-                    }
-                    else
-                    {
-                        // sonst ...
-                        option.id = function(){
-                            return 'jsPanel_' + ( $('.jsPanel').length + 1 )
-                        };
-                        jsPanel.attr( 'id', option.id );
-                    }
-                    // neue id in den title schreiben
-                    var txt = $('.jsPanel-hdr-l-text', jsPanel).html();
-                    $('.jsPanel-hdr-l-text', jsPanel).html( txt + ' AUTOMATIC ID: ' + jsPanel.attr('id') );
-                }
-            }
-            if( $.isFunction( option.id ) )
-            {
-                jsPanel.attr( 'id', option.id );
+            var dh = $(document ).outerHeight() + 'px',
+                backdrop = '<div class="jsPanel-backdrop" style="position:absolute;top:0;left:0;z-index:10000; width:100%;height:' + dh + ';background:rgba(0,0,0,0.9);">'+
+                           '<div class="jsPanel-backdrop-inner" style="position:absolute;top:' + $( window ).scrollTop() + 'px;width:100%;height:' + woH + 'px;"></div></div>';
+            // falls vorhanden backdrop entfernen
+            $( '.jsPanel-backdrop' ).remove();
+            // backdrop wieder einfügen
+            $( 'body' ).append( backdrop );
+            // jsPanel in backdrop einfügen
+            jsPanel.appendTo( $( '.jsPanel-backdrop-inner' ) );
+            // draggable und resizable deaktivieren
+            option.draggable = 'disabled';
+            option.resizable = 'disabled';
+            // jsPanel auf jeden Fall centern
+            option.position = 'center';
+            // reposition wenn window gescrollt wird
+            window.onscroll = function(){
+                $( '.jsPanel-backdrop-inner' ).css( 'top', $( window ).scrollTop() + 'px' );
             }
         }
         else
         {
-            // wenn jQuery.fn.uniqueId zur Verfügung steht ...
-            if ( jQuery.isFunction( jQuery.fn.uniqueId ) ) {
-                jsPanel.uniqueId();
+            jsPanel.appendTo( this.first() );
+        }
+
+        /* THEME | default: 'light' - benutzt  jquery.alterclass.js von peteboere https://gist.github.com/peteboere/1517285 */
+        jsPanel.alterClass( 'jsPanel-theme-*', 'jsPanel-theme-' + option.theme );
+        $( '.jsPanel-hdr', jsPanel ).alterClass( 'jsPanel-theme-*', 'jsPanel-theme-' + option.theme );
+        $( '.jsPanel-content', jsPanel ).alterClass( 'jsPanel-theme-*', 'jsPanel-theme-' + option.theme );
+
+        /* TITLE/HEADER | default: function - (Überschrift) des Panels */
+        $( '.jsPanel-hdr-l:first-of-type p', jsPanel ).append( option.title );
+
+        /* CONTROLS (buttons in header right) | default: object */
+        if( option.controls.buttons === 'closeonly' || option.modal === true )
+        {
+            $( '.jsPanel-hdr-r-btn-min, .jsPanel-hdr-r-btn-max', jsPanel ).remove();
+        }
+
+        /* ATTRIBUT ID DES PANELS | default: false */
+        // wenn option.id -> string oder function?
+        if( typeof option.id === 'string' ){
+            // wenn id noch nicht existiert -> benutzen
+            if( $( '#' + option.id ).length < 1 ){
+                jsPanel.attr( 'id', option.id );
             }
             else
             {
                 // sonst ...
-                option.id = function(){
-                    return 'jsPanel_' + ( $('.jsPanel').length + 1 )
-                };
+                jsPanel.uniqueId();
+                // neue id in den title schreiben
+                var txt = $('.jsPanel-hdr-l:first-of-type p', jsPanel).html();
+                $('.jsPanel-hdr-l:first-of-type p', jsPanel).html( txt + ' AUTOMATIC ID: ' + jsPanel.attr('id') );
             }
+        }
+        else if( $.isFunction( option.id ) )
+        {
+            jsPanel.attr( 'id', option.id );
+        }
+        else
+        {
+            jsPanel.uniqueId();
         }
 
         /* OVERFLOW DES JSPANEL-CONTENTS  | default: 'scroll' */
@@ -131,17 +135,15 @@ var jsPanelversion = '1.4.0 2014-04-02 13:23';
             $( '.jsPanel-content', jsPanel ).css( { 'overflow-y':option.overflow.vertical, 'overflow-x':option.overflow.horizontal } );
         }
 
-        /* bei Bedarf eine zusätzliche TOOLBAR einfügen */
+        /* bei Bedarf eine zusätzliche TOOLBAR einfügen | default: false */
         if( option.toolbarContent )
         {
-            $( '.jsPanel-content', jsPanel ).css( { 'margin-top': '40px', height:'-webkit-calc(100% - 40px)', height: 'calc(100% - 44px' } );
-            // Toolbareinfügen
-            $( '.jsPanel-hdr', jsPanel ).append( '<div class="jsPanel-hdr-l"><p class="jsPanel-hdr-l-text jsPanel-hdr-toolbar"></p></div>' );
             // Toolbar-Inhalt einfügen, kann HTML-Code, oder ein entsprechendes jquery-Objekt, oder eine Funktion sein, die HTML-Code liefert
+            // Nicht vergessen, dass bereits ein p-Element da ist !
             $( '.jsPanel-hdr-toolbar', jsPanel ).append( option.toolbarContent );
         }
 
-        /* CSS DES PANELINHALT-CONTAINERS initialisieren und zuweisen; */
+        /* CSS DES PANELINHALT-CONTAINERS initialisieren und zuweisen | default: false */
         if( $.isPlainObject( option.contentBG ) )
         {
             $('.jsPanel-content', jsPanel ).css( option.contentBG );
@@ -189,14 +191,13 @@ var jsPanelversion = '1.4.0 2014-04-02 13:23';
             }, option.autoclose )
         }
 
-        /* INHALT DES PANELS */
-        if( option.content )
-        {
-            // option.content kann auch eine Funktion (auch IIFE) oder ein jQuery Objekt sein, die den Inhalt zurückliefert
-            $( '.jsPanel-content' , jsPanel ).append( option.content );
-        }
+        /* INHALT DES PANELS | default: false */
+        /* CONTENT */
+        // option.content kann auch eine Funktion (auch IIFE) oder ein jQuery Objekt sein, die den Inhalt zurückliefert
+        $( '.jsPanel-content' , jsPanel ).append( option.content );
 
-        if( option.load && $.isPlainObject( option.load ) && option.load.url )
+        /* LOAD */
+        if( $.isPlainObject( option.load ) && option.load.url )
         {
             if( !option.load.data ){
                 option.load.data = undefined;
@@ -211,7 +212,8 @@ var jsPanelversion = '1.4.0 2014-04-02 13:23';
             $( '.jsPanel-content' , jsPanel ).empty().load( option.load.url, option.load.data, func );
         }
 
-        if( option.ajax && $.isPlainObject( option.ajax ) )
+        /* AJAX */
+        if( $.isPlainObject( option.ajax ) )
         {
             $.ajax( option.ajax )
                 .done( function( data, textStatus, jqXHR ){
@@ -249,7 +251,7 @@ var jsPanelversion = '1.4.0 2014-04-02 13:23';
             )
         }
 
-        /* option.size | default: { width: 600, height: 370 } */
+        /* option.size | default: { width: 500, height: 310 } */
         if( typeof option.size === 'string' && option.size == 'auto' )
         {
             option.size = { width: 'auto', height: 'auto' }
@@ -319,7 +321,6 @@ var jsPanelversion = '1.4.0 2014-04-02 13:23';
         {
             if( option.position == 'center' ){
                 option.position = { top: 'center', left: 'center' };
-                //jsPanel.css( { top: option.position.top, left: option.position.left, 'z-index': set_zi() } );
             }
             else if( option.position == 'auto' )
             {
@@ -350,7 +351,7 @@ var jsPanelversion = '1.4.0 2014-04-02 13:23';
                 option.position = { top: 'center', left: 0 };
             }
         }
-        if( $.isPlainObject( option.position  ) )
+        if( $.isPlainObject( option.position ) )
         {
             if( option.position.top || option.position.top == 0 )
             {
@@ -358,7 +359,14 @@ var jsPanelversion = '1.4.0 2014-04-02 13:23';
                 // default-config für position.top steht in $.fn.jsPanel.defaults.position
                 if( option.position.top === 'center' )
                 {
-                    option.position.top = ( jsPanel.parent().height() - parseInt(option.size.height) ) / 2 + 'px';
+                    if( par == 'body' )
+                    {
+                        option.position.top = ( $( window ).height() - parseInt(option.size.height) ) / 2 + 'px';
+                    }
+                    else
+                    {
+                        option.position.top = ( jsPanel.parent().height() - parseInt(option.size.height) ) / 2 + 'px';
+                    }
                     if( parseInt( option.position.top ) < 0 )
                     {
                         option.position.top = 0;
@@ -384,14 +392,20 @@ var jsPanelversion = '1.4.0 2014-04-02 13:23';
                 {
                     option.position.top = (25 * count + 10) + 'px';
                 }
-                jsPanel.css( 'top', option.position.top );
             }
             else if( option.position.bottom  || option.position.bottom == 0 )
             {
                 /* POSITION BOTTOM DES JSPANELS SETZEN */
                 if( option.position.bottom === 'center' )
                 {
-                    option.position.bottom = ( jsPanel.parent().height() - parseInt(option.size.height) ) / 2 + 'px';
+                    if( par == 'body' )
+                    {
+                        option.position.bottom = ( $( window ).height() - parseInt(option.size.height) ) / 2 + 'px';
+                    }
+                    else
+                    {
+                        option.position.bottom = ( jsPanel.parent().height() - parseInt(option.size.height) ) / 2 + 'px';
+                    }
                     if( parseInt( option.position.bottom ) < 0 )
                     {
                         option.position.bottom = 0;
@@ -417,7 +431,6 @@ var jsPanelversion = '1.4.0 2014-04-02 13:23';
                 {
                     option.position.bottom = (25 * count + 10) + 'px';
                 }
-                jsPanel.css( 'bottom', option.position.bottom );
             }
 
             if( option.position.left || option.position.left == 0 )
@@ -448,7 +461,6 @@ var jsPanelversion = '1.4.0 2014-04-02 13:23';
                 {
                     option.position.left = (25 * count + 10) + 'px';
                 }
-                jsPanel.css( 'left', option.position.left );
             }
             else if( option.position.right || option.position.right == 0 )
             {
@@ -477,26 +489,64 @@ var jsPanelversion = '1.4.0 2014-04-02 13:23';
                 {
                     option.position.right = (25 * count + 10) + 'px';
                 }
-                jsPanel.css( 'right', option.position.right );
             }
         }
 
         /* CSS top, left, bottom, right, z-index des jsPanels setzen */
         if( option.position.top )
         {
-            jsPanel.css( 'top', option.position.top );
-        }else if( option.position.bottom )
+            if( par == 'body' )
+            {
+                jsPanel.css( 'top', parseInt( option.position.top ) + wsT + 'px' );
+            }
+            else
+            {
+                jsPanel.css( 'top', option.position.top );
+            }
+        }
+        else if( option.position.bottom )
         {
-            jsPanel.css( 'bottom', option.position.bottom );
+            if( par == 'body' )
+            {
+                jsPanel.css( 'bottom', parseInt( option.position.bottom ) - wsT + 'px' );
+            }
+            else
+            {
+                jsPanel.css( 'bottom', option.position.bottom );
+            }
         }
         if( option.position.left )
         {
-            jsPanel.css( 'left', option.position.left );
-        }else if( option.position.right )
-        {
-            jsPanel.css( 'right', option.position.right );
+            if( par == 'body' )
+            {
+                jsPanel.css( 'left', parseInt( option.position.left ) + wsL + 'px' );
+            }
+            else
+            {
+                jsPanel.css( 'left', option.position.left );
+            }
         }
-        jsPanel.css( 'z-index', set_zi() );
+        else if( option.position.right )
+        {
+            if( par == 'body' )
+            {
+                jsPanel.css( 'right', parseInt( option.position.right ) - wsL + 'px' );
+            }
+            else
+            {
+                jsPanel.css( 'right', option.position.right );
+            }
+        }
+
+        if( $('.jsPanel-backdrop' ).length > 0 )
+        {
+            var zi = $('.jsPanel-backdrop' ).css('z-index') + 1;
+            jsPanel.css('z-index', zi );
+        }
+        else
+        {
+            jsPanel.css( 'z-index', set_zi() );
+        }
 
 
 
@@ -536,17 +586,17 @@ var jsPanelversion = '1.4.0 2014-04-02 13:23';
             if( arguments.length == 0 )
             {
                 // ohne Argument liefert die Funktion das Element das den Titletext enthält
-                return $('.jsPanel-hdr-l-text', this);
+                return $('.jsPanel-hdr div:first-child p', this);
             }
             else if( arguments.length == 1 && arguments[0] === true )
             {
                 // mit Argument true liefert die Funktion den Inhalt des Title-Elements des jsPanels
-                return $('.jsPanel-hdr-l-text', this).html();
+                return $('.jsPanel-hdr div:first-child p', this).html();
             }
             else if( arguments.length == 1 && typeof arguments[0] === 'string' )
             {
                 // mit Argument string setzt die Funktion den Inhalt des Title-Elements des jsPanels
-                $('.jsPanel-hdr-l-text', this).html( arguments[0] );
+                $('.jsPanel-hdr div:first-child p', this).html( arguments[0] );
                 return this;
             }
             else
@@ -560,10 +610,8 @@ var jsPanelversion = '1.4.0 2014-04-02 13:23';
         jsPanel.addToolbar = function( str )
         {
             if( str && typeof str === 'string' ){
-                $( '.jsPanel-content', this ).css( { 'margin-top': '40px',  height:'-webkit-calc(100% - 44px)', height: 'calc(100% - 44px' } );
-                // Toolbareinfügen
-                $( '.jsPanel-hdr', this ).append( '<div class="jsPanel-hdr-l"><p class="jsPanel-hdr-l-text jsPanel-hdr-toolbar"></p></div>' );
                 // Toolbar-Inhalt einfügen, kann HTML-Code, oder ein entsprechendes jquery-Objekt, oder eine Funktion sein, die HTML-Code liefert
+                // Nicht vergessen, dass bereits ein p-Element da ist !
                 $( '.jsPanel-hdr-toolbar', this ).append( str );
             }
             return this;
@@ -578,6 +626,8 @@ var jsPanelversion = '1.4.0 2014-04-02 13:23';
             // childpanels löschen ...
             jsPanel.closeChildpanels();
             $(this).remove();
+            // backdrop entfernen
+            $( '.jsPanel-backdrop' ).remove();
             // die minimierten Panels repositionieren
             for (var i = 0 ; i < count-1 ; i++){
                 var left = (i * 150) + 'px';
@@ -653,7 +703,6 @@ var jsPanelversion = '1.4.0 2014-04-02 13:23';
             {
                 // jsPanel wieder in den Ursprungscontainer verschieben
                 this.appendTo( this.data( 'parentElement' ) );
-
                 // normale Größe anwenden
                 this.animate({ left:   this.data( 'panelLeft' ),
                     top:    this.data( 'panelTop' ),
@@ -662,22 +711,12 @@ var jsPanelversion = '1.4.0 2014-04-02 13:23';
                     .removeClass('minimized maximized')
                     .addClass('normalized');
 
-                if( $('.jsPanel-hdr-toolbar', this).length == 1 )
-                {
-                    // wenn toolbar vorhanden ist
-                    $('.jsPanel-hdr-toolbar', this).css('display', 'block')
-                    $('.jsPanel-content', this).css({ display:'block',
-                        width: '100%',
-                        height: '100%',
-                        height: '-webkit-calc(100% - 44px)',
-                        height: 'calc(100% - 44px)' });
-                } else {
-                    $('.jsPanel-content', this).css({ display:'block',
-                        width: '100%',
-                        height: '100%',
-                        height: '-webkit-calc(100% - 24px)',
-                        height: 'calc(100% - 24px)' });
-                }
+                $('.jsPanel-content', this).css({ display:'block',
+                    width: '100%',
+                    height: '100%',
+                    height: '-webkit-calc(100% - 44px)',
+                    height: 'calc(100% - 44px)' });
+
                 // Button Grafik austauschen
                 $( '.jsPanel-hdr-r-btn-max', this ).removeClass( 'alternate' ).addClass( 'normal' );
             }
@@ -694,30 +733,31 @@ var jsPanelversion = '1.4.0 2014-04-02 13:23';
                     this.appendTo( this.data( 'parentElement' ) );
                 }
                 // maximale Größe anwenden
-                var width =  parseInt( this.parent().width() , 10 ) - 10 + 'px',
-                    height = parseInt( this.parent().height() , 10 ) - 10 + 'px';
+                var width =  parseInt( this.parent().outerWidth() , 10 ) - 10 + 'px',
+                    height = parseInt( this.parent().outerHeight() , 10 ) - 10 + 'px';
 
-                this.animate( {left: '5px' , top: '5px' , width: width , height: height} )
-                    .removeClass( 'minimized normalized' )
-                    .addClass( 'maximized' );
-
-                if( $('.jsPanel-hdr-toolbar', this).length == 1 )
+                if( par == 'body' )
                 {
-                    $('.jsPanel-hdr-toolbar', this).css('display', 'block')
-                    $('.jsPanel-content', this).css({ display:'block',
-                        width: '100%',
-                        height: '100%',
-                        height: '-webkit-calc(100% - 44px)',
-                        height: 'calc(100% - 44px)' });
+                    // wenn jsPanel im body Ele,ent hängt
+                    var wsT = $( window ).scrollTop(),
+                        wsL = $( window ).scrollLeft(),
+                        woH = $( window ).outerHeight();
+                    this.animate( {left: wsL+5+'px' , top: wsT+5+'px' , width: width , height: woH-10+'px' } );
                 }
                 else
                 {
-                    $('.jsPanel-content', this).eq(0).css({ display: 'block' ,
-                        width: '100%',
-                        height: '100%',
-                        height: '-webkit-calc(100% - 24px)',
-                        height: 'calc(100% - 24px)' });
+                    // sonst
+                    this.animate( {left: '5px' , top: '5px' , width: width , height: height} );
                 }
+                this.removeClass( 'minimized normalized' )
+                    .addClass( 'maximized' );
+
+                $('.jsPanel-content', this).eq(0).css({ display: 'block' ,
+                    width: '100%',
+                    height: '100%',
+                    height: '-webkit-calc(100% - 44px)',
+                    height: 'calc(100% - 44px)' });
+
                 // Button Grafik austauschen
                 $( '.jsPanel-hdr-r-btn-max', this ).removeClass( 'normal' ).addClass( 'alternate' );
             }
@@ -760,7 +800,7 @@ var jsPanelversion = '1.4.0 2014-04-02 13:23';
         {
             jsPanel.css( { 'left': parseInt(pos.left) + 'px', 'right': '' } );
         }
-        /* font-awesome einfügen wenn option.iconfont gesetzt; steht hier unten weil .css() nicht bei display:none Elementen funktioniert */
+        /* font-awesome | bootstrap iconfonts einfügen wenn option.iconfont gesetzt; steht hier unten weil .css() nicht bei display:none Elementen funktioniert */
         if( option.controls.iconfont )
         {
             if( option.controls.iconfont === 'font-awesome' )
@@ -776,8 +816,9 @@ var jsPanelversion = '1.4.0 2014-04-02 13:23';
                 $( '.jsPanel-hdr-r-btn-min', jsPanel ).append( '<span class="glyphicon glyphicon-minus"></span>' );
             }
             // icon sprites entfernen
-            $( '.jsPanel-hdr-r-btn-close, .jsPanel-hdr-r-btn-min, .jsPanel-hdr-r-btn-max, .jsPanel-hdr-r-btn-alternate' ).css( 'background-image', 'none' );
+            $( '.jsPanel-hdr-r-btn-close, .jsPanel-hdr-r-btn-min, .jsPanel-hdr-r-btn-max, .jsPanel-hdr-r-btn-alternate', jsPanel ).css( 'background-image', 'none' );
         }
+
 
 
         /*
@@ -808,32 +849,40 @@ var jsPanelversion = '1.4.0 2014-04-02 13:23';
      *
      */
     $.fn.jsPanel.defaults = {
-        "controls":     {
-                            buttons:  'all',
-                            iconfont: false
-                        },
-        "title":        function(){
-                            return 'jsPanel No ' + ( $('.jsPanel').length + 1 )
-                        },
-        "overflow":     'scroll',
-        "size":         {
-                            width:  500,
-                            height: 310
-                        },
-        "position":     'auto',
-        "draggable":    {
-                            handle:      'div.jsPanel-hdr',
-                            stack:       '.jsPanel',
-                            opacity:     0.6
-                        },
-        "resizable":    {
-                            //alsoResize:     '.jsPanel-content:first-of-type',
-                            handles:        'e, s, w, se, sw',
-                            autoHide:       false,
-                            minWidth:       150,
-                            minHeight:      93
-                        },
-        "autoclose":    false
+        "id":               false,
+        "toolbarContent":   false,
+        "modal":            false,
+        "contentBG":        false,
+        "content":          false,
+        "load":             false,
+        "ajax":             false,
+        "autoclose":        false,
+        "theme":            'light',
+        "position":         'auto',
+        "overflow":         'scroll',
+        "title":            function(){
+                                return 'jsPanel No ' + ( $('.jsPanel').length + 1 )
+                            },
+        "controls":         {
+                                buttons:  'all',
+                                iconfont: false
+                            },
+        "size":             {
+                                width:  500,
+                                height: 310
+                            },
+        "draggable":        {
+                                handle:      'div.jsPanel-hdr',
+                                stack:       '.jsPanel',
+                                opacity:     0.6
+                            },
+        "resizable":        {
+                                //alsoResize:     '.jsPanel-content:first-of-type',
+                                handles:        'e, s, w, se, sw',
+                                autoHide:       false,
+                                minWidth:       150,
+                                minHeight:      93
+                            }
     };
 
     /*
@@ -850,5 +899,41 @@ var jsPanelversion = '1.4.0 2014-04-02 13:23';
         });
         return zi + 1;
     }
+
+    /*
+     * jQuery alterClass plugin
+     *
+     * Remove element classes with wildcard matching. Optionally add classes:
+     * $( '#foo' ).alterClass( 'foo-* bar-*', 'foobar' )
+     *
+     * Copyright (c) 2011 Pete Boere (the-echoplex.net)
+     * Free under terms of the MIT license: http://www.opensource.org/licenses/mit-license.php
+     *
+     */
+    $.fn.alterClass = function ( removals, additions ) {
+        var self = this;
+        if ( removals.indexOf( '*' ) === -1 ) {
+        // Use native jQuery methods if there is no wildcard matching
+            self.removeClass( removals );
+            return !additions ? self : self.addClass( additions );
+        }
+
+        var patt = new RegExp( '\\s' +
+            removals.
+                replace( /\*/g, '[A-Za-z0-9-_]+' ).
+                split( ' ' ).
+                join( '\\s|\\s' ) +
+            '\\s', 'g' );
+
+        self.each( function ( i, it ) {
+            var cn = ' ' + it.className + ' ';
+            while ( patt.test( cn ) ) {
+                cn = cn.replace( patt, ' ' );
+            }
+            it.className = $.trim( cn );
+        });
+
+        return !additions ? self : self.addClass( additions );
+    };
 
 }( jQuery ));
