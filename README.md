@@ -1,8 +1,10 @@
 ###NEWS:###
 
-####[jsPanel version 1.6.0 beta online](http://jspanel.de/beta/)####
+####[jsPanel 1.6.0beta6 2014-04-11 19:20 online](http://jspanel.de/beta/)####
 
 + most important new feature is an optional footer toolbar. Each individual item appended to the toolbar can be configured with its own event type and callback
+
++ the header toolbar now has the same functionality as the footer toolbar
 
 + css and themes are refined a bit
 
