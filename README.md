@@ -2,13 +2,15 @@
 
 ####[jsPanel 1.6.0beta11 2014-04-16 09:48 online](http://jspanel.de/beta/)####
 
-+ most important new feature is an optional footer toolbar. Each individual item appended to the toolbar can be configured with its own event type and callback
++ most important new feature is an **optional footer toolbar**. Each individual item appended to the toolbar can be configured with its own event type and callback
 
 + the header toolbar now has the same functionality as the footer toolbar
 
-+ option.modal now has a few predefined setups for a few standard situations
++ **option.modal** now has a few predefined setups for a few standard situations
 
-+ experimental implementation of events 'onjspanelloaded' and 'onjspanelclosed'
++ experimental implementation of events **'onjspanelloaded'** and **'onjspanelclosed'**
+
++ new **option.show** to chose between two animation types when blending in a jsPanel
 
 + css and themes are refined a bit
 
