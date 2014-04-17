@@ -2,7 +2,7 @@
 
 ---
 
-### Version 1.5.0 ###
+### Version 1.6.0 ###
 
 + most important new feature is an **optional footer toolbar**. Each individual item appended to the toolbar can be configured with its own event type and callback
 
