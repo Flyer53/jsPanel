@@ -4,6 +4,24 @@
 
 ### Version 1.5.0 ###
 
++ most important new feature is an **optional footer toolbar**. Each individual item appended to the toolbar can be configured with its own event type and callback
+
++ the header toolbar now has the same functionality as the footer toolbar
+
++ **option.modal** now has a few predefined setups for a few standard situations
+
++ implementation of events **onjspanelloaded** and **onjspanelclosed**
+
++ new **option.show** to choose between two animation types when blending in a jsPanel
+
++ css and themes are refined a bit
+
++ overall improvements in the code
+
+---
+
+### Version 1.5.0 ###
+
 + Added option to create a **modal jsPanel**
 
 + Added basic support for **themes** including various themes
