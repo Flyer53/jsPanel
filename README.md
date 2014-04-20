@@ -1,4 +1,4 @@
-###NEWS: jsPanel version 1.6.0 released###
+###NEWS: jsPanel version 1.6.1 released###
 
 
 ###jsPanel homepage: [http://jspanel.de](http://jspanel.de/)###

@@ -1,5 +1,5 @@
 /* jQuery Plugin jsPanel
-   Version: 1.6.0 2014-04-17 07:31
+   Version: 1.6.1 2014-04-20 07:16
    Dependencies:
     jQuery library ( > 1.7.0 incl. 2.1.0 )
     jQuery.UI library ( > 1.9.0 ) - (at least UI Core, Mouse, Widget, Draggable, Resizable)
@@ -19,7 +19,10 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var jsPanelversion = '1.6.0 2014-04-17 07:31';
+var jsPanelversion = '1.6.1 2014-04-20 07:16';
+
+// option.show verbessert/erweitert
+// option.controls erweitert
 
 (function ( $ ) {
 
@@ -138,7 +141,11 @@ var jsPanelversion = '1.6.0 2014-04-17 07:31';
         /* CONTROLS (buttons in header right) | default: object */
         if( option.controls.buttons === 'closeonly' || option.modal )
         {
-            $( '.jsPanel-hdr-r-btn-min, .jsPanel-hdr-r-btn-max', jsPanel ).remove();
+            $( '.jsPanel-hdr-r-btn-min, .jsPanel-hdr-r-btn-max', jsPanel ).css('display', 'none');
+        }
+        else if( option.controls.buttons === false )
+        {
+            $( '.jsPanel-hdr-r-btn-min, .jsPanel-hdr-r-btn-max, .jsPanel-hdr-r-btn-close', jsPanel ).css('display', 'none');
         }
 
         /* ATTRIBUT ID DES PANELS | default: false */
@@ -176,7 +183,7 @@ var jsPanelversion = '1.6.0 2014-04-17 07:31';
         /* TOOLBAR im Header einfügen | default: false */
         if( option.toolbarHeader )
         {
-            configToolbar( option.toolbarHeader, '.jsPanel-hdr-toolbar', jsPanel );
+            configToolbar(  option.modal, option.toolbarHeader, '.jsPanel-hdr-toolbar', jsPanel );
         }
         else if( option.toolbarContent ) // remains only for downward compatibility
         {
@@ -850,9 +857,10 @@ var jsPanelversion = '1.6.0 2014-04-17 07:31';
          * PANEL EINBLENDEN .....
          *
          */
-        if( option.show === 'slideDown' )
-        {
-            jsPanel.slideDown( function(){
+        var anim = option.show;
+        if( anim.indexOf(" ") == -1 ){
+            // wenn in anim kein Leerzeichen zu finden ist -> function anwenden
+            jsPanel[anim](function(){
                 // trigger custom event
                 $( jsPanel ).trigger( 'onjspanelloaded', jsPanel.attr('id') );
                 // binds the DOMNodeRemoved event and prepares to trigger 'onjspanelclosed'
@@ -861,10 +869,12 @@ var jsPanelversion = '1.6.0 2014-04-17 07:31';
         }
         else
         {
-            jsPanel.fadeIn( function(){
-                $( jsPanel ).trigger( 'onjspanelloaded', jsPanel.attr('id') );
-                bindRemoveEvent();
-            });
+            // sonst wird es als css animation interpretiert und die class gesetzt
+            // does not work with certain combinations of type of animation and positioning
+            jsPanel.css( { display:'block', opacity: 1 } );
+            jsPanel.addClass( option.show );
+            $( jsPanel ).trigger( 'onjspanelloaded', jsPanel.attr('id') );
+            bindRemoveEvent();
         }
         // Example Code for application as put in api.js:
         //$('body').on( 'onjspanelloaded', function(event, jsPanelID){ console.log( 'jsPanel added with ID: ' + jsPanelID ) });
@@ -934,7 +944,7 @@ var jsPanelversion = '1.6.0 2014-04-17 07:31';
                                 return 'jsPanel No ' + ( $('.jsPanel').length + 1 )
                             },
         "controls":         {
-                                buttons:  'all',
+                                buttons:  true,
                                 iconfont: false
                             },
         "size":             {

@@ -2,6 +2,18 @@
 
 ---
 
+### Version 1.6.1 ###
+
++ **Bugfix when using option.toolbarHeader** instead of option.toolbarContent
+
++ added option in **option.controls**
+
++ **option.show** extended to add basic support of css animations
+
+For details about the changes please go to http://jspanel.de/api.html
+
+---
+
 ### Version 1.6.0 ###
 
 + most important new feature is an **optional footer toolbar**. Each individual item appended to the toolbar can be configured with its own event type and callback

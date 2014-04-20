@@ -1,4 +1,8 @@
-/* Version 1.2.2 2014-04-16 08:42 */
+/* Version 1.2.2 2014-04-19 11:49 */
+* {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box; /* Firefox */
+}
 .jsPanel, .jsPanel-hdr-r, .jsPanel-hdr-l, .jsPanel-hdr-l-text, .jsPanel-hdr-r span img, .jsPanel-content{
     margin: 0; padding: 0; border: 0;
     font-size: 100%; font: inherit;
