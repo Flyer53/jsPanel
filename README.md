@@ -1,4 +1,8 @@
-###NEWS: jsPanel version 1.6.1 released###
+###NEWS:###
+
++ 2014-04-20 jsPanel version 1.6.1 released
+
++ 2014-04-20 I started work on a branch that better supports bootstrap themes by default
 
 
 ###jsPanel homepage: [http://jspanel.de](http://jspanel.de/)###
