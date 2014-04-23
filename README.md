@@ -1,8 +1,8 @@
 ###NEWS:###
 
-+ 2014-04-23 jsPanel version 1.6.2 released
++ 2014-04-23 updated preview of jsPanel-bootstrap version 1.0.0beta4 http://jspanel.de/branch-bootstrap/ 
 
-+ 2014-04-22 A first preview of the **bootstrap version of jsPanel** is available here: http://jspanel.de/branch-bootstrap/index.html
++ 2014-04-23 jsPanel version 1.6.2 released
 
 ###jsPanel homepage: [http://jspanel.de](http://jspanel.de/)###
 
