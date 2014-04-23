@@ -1,5 +1,5 @@
 /* jQuery Plugin jsPanel
-   Version: 1.6.1 2014-04-20 07:16
+   Version: 1.6.2 2014-04-23 09:00
    Dependencies:
     jQuery library ( > 1.7.0 incl. 2.1.0 )
     jQuery.UI library ( > 1.9.0 ) - (at least UI Core, Mouse, Widget, Draggable, Resizable)
@@ -19,10 +19,10 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var jsPanelversion = '1.6.1 2014-04-20 07:16';
+var jsPanelversion = '1.6.2 2014-04-23 09:00';
 
-// option.show verbessert/erweitert
-// option.controls erweitert
+// für die handler der controls e.preventDefault() ergänzt
+// modal presets ergänzt um die Möglichkeit classnames einzutragen
 
 (function ( $ ) {
 
@@ -102,6 +102,7 @@ var jsPanelversion = '1.6.1 2014-04-20 07:16';
                 {
                     item:     jsPanel_mbtn_ok,                      // button to use
                     btntext:  option.toolbarFooter[0].buttontext,   // buttontext
+                    btnclass: option.toolbarFooter[0].buttonclass,  // classname to add to the button
                     event:    'click',
                     callback: option.toolbarFooter[0].callback
                 }
@@ -110,22 +111,22 @@ var jsPanelversion = '1.6.1 2014-04-20 07:16';
         else if( option.modal == 'modal-yesno' )
         {
             option.toolbarFooter = [
-                { item: jsPanel_mbtn_yes, btntext: option.toolbarFooter[0].buttontext, event: 'click', callback: option.toolbarFooter[0].callback },
-                { item: jsPanel_mbtn_no,  btntext: option.toolbarFooter[1].buttontext, event: 'click', callback: option.toolbarFooter[1].callback }
+                { item: jsPanel_mbtn_yes, btntext: option.toolbarFooter[0].buttontext, btnclass: option.toolbarFooter[0].buttonclass, event: 'click', callback: option.toolbarFooter[0].callback },
+                { item: jsPanel_mbtn_no,  btntext: option.toolbarFooter[1].buttontext, btnclass: option.toolbarFooter[1].buttonclass, event: 'click', callback: option.toolbarFooter[1].callback }
             ]
         }
         else if( option.modal == 'modal-confirm' )
         {
             option.toolbarFooter = [
-                { item: jsPanel_mbtn_confirm, btntext: option.toolbarFooter[0].buttontext, event: 'click', callback: option.toolbarFooter[0].callback },
-                { item: jsPanel_mbtn_cancel,  btntext: option.toolbarFooter[1].buttontext, event: 'click', callback: option.toolbarFooter[1].callback }
+                { item: jsPanel_mbtn_confirm, btntext: option.toolbarFooter[0].buttontext, btnclass: option.toolbarFooter[0].buttonclass, event: 'click', callback: option.toolbarFooter[0].callback },
+                { item: jsPanel_mbtn_cancel,  btntext: option.toolbarFooter[1].buttontext, btnclass: option.toolbarFooter[1].buttonclass, event: 'click', callback: option.toolbarFooter[1].callback }
             ]
         }
         else if( option.modal == 'modal-submit' )
         {
             option.toolbarFooter = [
-                { item: jsPanel_mbtn_submit, btntext: option.toolbarFooter[0].buttontext, event: 'click', callback: option.toolbarFooter[0].callback },
-                { item: jsPanel_mbtn_cancel, btntext: option.toolbarFooter[1].buttontext, event: 'click', callback: option.toolbarFooter[1].callback }
+                { item: jsPanel_mbtn_submit, btntext: option.toolbarFooter[0].buttontext, btnclass: option.toolbarFooter[0].buttonclass, event: 'click', callback: option.toolbarFooter[0].callback },
+                { item: jsPanel_mbtn_cancel, btntext: option.toolbarFooter[1].buttontext, btnclass: option.toolbarFooter[1].buttonclass, event: 'click', callback: option.toolbarFooter[1].callback }
             ]
         }
 
@@ -635,15 +636,18 @@ var jsPanelversion = '1.6.1 2014-04-20 07:16';
             jsPanel.css( 'z-index', set_zi() );
         });
         // jsPanel schliessen
-        $('.jsPanel-hdr-r-btn-close', jsPanel).on('click', function(){
+        $('.jsPanel-hdr-r-btn-close', jsPanel).on('click', function(e){
+            e.preventDefault();
             jsPanel.close();
         });
         // jsPanel minimieren
-        $('.jsPanel-hdr-r-btn-min, .jsPanel-hdr-r-btn-min *', jsPanel).on('click', function(){
+        $('.jsPanel-hdr-r-btn-min, .jsPanel-hdr-r-btn-min *', jsPanel).on('click', function(e){
+            e.preventDefault();
             jsPanel.minimize();
         });
         // jsPanel maximieren
-        $('.jsPanel-hdr-r-btn-max', jsPanel).on('click', function(){
+        $('.jsPanel-hdr-r-btn-max', jsPanel).on('click', function(e){
+            e.preventDefault();
             jsPanel.maximize();
         });
 
@@ -995,7 +999,16 @@ var jsPanelversion = '1.6.1 2014-04-20 07:16';
                     var el = $( optionToolbar[i].item );
                     if( typeof optionModal === 'string'  && el.hasClass( 'btn' ) )
                     {
-                        el= $( optionToolbar[i].item ).append( optionToolbar[i].btntext );
+                        // set text of button
+                        el.append( optionToolbar[i].btntext );
+                        // add class to button
+                        if( typeof optionToolbar[i].btnclass == 'string' ){
+                            el.addClass( optionToolbar[i].btnclass );
+                        }
+                        else
+                        {
+                            el.addClass( 'btn-sm' );
+                        }
                     }
                     $( cssToolbar, panel ).append( el );
                     el.bind( optionToolbar[i].event, optionToolbar[i].callback );
@@ -1069,13 +1082,13 @@ var jsPanelversion = '1.6.1 2014-04-20 07:16';
 
     /* Templates */
     // for the modal buttons in the footer toolbar
-    var jsPanel_mbtn_ok      = '<button type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-ok"></span> </button>',
-        jsPanel_mbtn_yes     = '<button type="button" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-ok"></span> </button>',
-        jsPanel_mbtn_no      = '<button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></span> </button>',
-        jsPanel_mbtn_cancel  = '<button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></span> </button>',
-        jsPanel_mbtn_confirm = '<button type="button" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-ok"></span> </button>',
-        jsPanel_mbtn_submit  = '<button type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-ok"></span> </button>',
-        jsPanel_mbtn_close   = '<button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-off"></span> </button>',
-        jsPanel_mbtn_login   = '<button type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-log-in"></span> </button>';
+    var jsPanel_mbtn_ok      = '<button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span> </button>',
+        jsPanel_mbtn_yes     = '<button type="button" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> </button>',
+        jsPanel_mbtn_no      = '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span> </button>',
+        jsPanel_mbtn_cancel  = '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span> </button>',
+        jsPanel_mbtn_confirm = '<button type="button" class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> </button>',
+        jsPanel_mbtn_submit  = '<button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span> </button>',
+        jsPanel_mbtn_close   = '<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-off"></span> </button>',
+        jsPanel_mbtn_login   = '<button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-log-in"></span> </button>';
 
 }( jQuery ));

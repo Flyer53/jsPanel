@@ -1,11 +1,8 @@
 ###NEWS:###
 
++ 2014-04-23 jsPanel version 1.6.2 released
+
 + 2014-04-22 A first preview of the **bootstrap version of jsPanel** is available here: http://jspanel.de/branch-bootstrap/index.html
-
-+ 2014-04-20 jsPanel version 1.6.1 released
-
-+ 2014-04-20 I started work on a branch that better supports bootstrap themes by default
-
 
 ###jsPanel homepage: [http://jspanel.de](http://jspanel.de/)###
 
@@ -33,3 +30,5 @@ Copyright &copy; 2014 Stefan Sträßer | [stefanstraesser.eu](http://stefanstrae
 | theme            |                    |                  |                     |
 | title            |                    |                  |                     |
 | toolbarContent   |                    |                  |                     |
+| toolbarHeader    |                    |                  |                     |
+| toolbarFooter    |                    |                  |                     |

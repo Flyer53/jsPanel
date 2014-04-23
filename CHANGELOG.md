@@ -2,6 +2,14 @@
 
 ---
 
+### Version 1.6.2 ###
+
++ **option.modal:** Added option to add custom css classes to <code>&lt;button&gt;</code> elements in the footer toolbar when using one of the modal presets
+
++ general improvements in the js-script
+
+---
+
 ### Version 1.6.1 ###
 
 + **Bugfix when using option.toolbarHeader** instead of option.toolbarContent
