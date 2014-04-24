@@ -1,7 +1,7 @@
 {
     "name": "jsPanel",
     "title": "jQuery jsPanel",
-    "description": "jQuery plugin to create highly configurable floating panels for use in backend solutions and other web applications.",
+    "description": "jQuery plugin to create highly configurable multifunctional floating panels for use in backend solutions and other web applications.",
     "keywords": [
         "jsPanel",
         "panel",
@@ -11,7 +11,7 @@
         "widget",
         "window"
     ],
-    "version": "1.6.2",
+    "version": "1.7.0",
     "author": {
         "name": "Stefan Straesser",
         "url": "http://stefanstraesser.eu/",

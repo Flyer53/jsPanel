@@ -1,5 +1,5 @@
 /* jQuery Plugin jsPanel
-   Version: 1.6.2 2014-04-23 09:00
+   Version: 1.7.0 2014-04-24 09:00
    Dependencies:
     jQuery library ( > 1.7.0 incl. 2.1.0 )
     jQuery.UI library ( > 1.9.0 ) - (at least UI Core, Mouse, Widget, Draggable, Resizable)
@@ -19,10 +19,11 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var jsPanelversion = '1.6.2 2014-04-23 09:00';
+var jsPanelversion = '1.7.0 2014-04-24 09:00';
 
-// für die handler der controls e.preventDefault() ergänzt
-// modal presets ergänzt um die Möglichkeit classnames einzutragen
+// added option.restoreTo
+// removed option.toolbarContent
+// removed .movetoFront()
 
 (function ( $ ) {
 
@@ -185,11 +186,6 @@ var jsPanelversion = '1.6.2 2014-04-23 09:00';
         if( option.toolbarHeader )
         {
             configToolbar(  option.modal, option.toolbarHeader, '.jsPanel-hdr-toolbar', jsPanel );
-        }
-        else if( option.toolbarContent ) // remains only for downward compatibility
-        {
-            // Toolbar-Inhalt einfügen, kann HTML-Code, oder ein entsprechendes jquery-Objekt, oder eine Funktion sein, die HTML-Code liefert
-            $( '.jsPanel-hdr-toolbar', jsPanel ).append( option.toolbarContent );
         }
 
         /* TOOLBAR im Footer aktivieren | default: false */
@@ -731,12 +727,11 @@ var jsPanelversion = '1.6.2 2014-04-23 09:00';
             this.css( 'z-index', set_zi() );
             return this;
         };
-        jsPanel.movetoFront = jsPanel.front; // movetoFront is deprecated
 
         // jsPanel Minimieren und Maximieren
         jsPanel.minimize = function()
         {
-            // unbind necessary -> event 'onjspanelclosed' would fire
+            // unbind necessary -> event 'onjspanelclosed' would fire because panel is removed from current container and appended to .jsPanel-min-container
             $( "body" ).unbind( "DOMNodeRemoved" );
 
             if( $( '#jsPanel-min-container' ).length == 0 )
@@ -788,13 +783,30 @@ var jsPanelversion = '1.6.2 2014-04-23 09:00';
             {
                 // jsPanel wieder in den Ursprungscontainer verschieben
                 this.appendTo( this.data( 'parentElement' ) );
-                // normale Größe anwenden
-                this.animate({ left:   this.data( 'panelLeft' ),
-                    top:    this.data( 'panelTop' ),
-                    width:  this.data( 'panelWidth' ),
-                    height: this.data( 'panelHeight' )})
-                    .removeClass('minimized maximized')
-                    .addClass('normalized');
+                // jsPanel restore position and size
+                if( par == 'body' && option.restoreTo == 'top_left' )
+                {
+                    // only when jsPanel is appended to body-element AND option.restoreTo is set
+                    this.animate({
+                        // restore normalized size & an position top left
+                        left:   $(window).scrollLeft() + 10 + 'px',
+                        top:    $(window).scrollTop() + 10 + 'px',
+                        width:  this.data( 'panelWidth' ),
+                        height: this.data( 'panelHeight' )
+                    });
+                }
+                else
+                {
+                    // restore normalized size & safed position
+                    this.animate({
+                        left:   this.data( 'panelLeft' ),
+                        top:    this.data( 'panelTop' ),
+                        width:  this.data( 'panelWidth' ),
+                        height: this.data( 'panelHeight' )
+                    });
+                }
+                this.removeClass('minimized maximized').addClass('normalized');
+
                 // Button Grafik austauschen
                 $( '.jsPanel-hdr-r-btn-max', this ).removeClass( 'alternate' ).addClass( 'normal' );
             }
@@ -931,7 +943,6 @@ var jsPanelversion = '1.6.2 2014-04-23 09:00';
         "id":               function(){
                                 $(this).first().uniqueId()
                             },
-        "toolbarContent":   false, // deprecated in favor of toolbarHeader
         "toolbarHeader":    false,
         "toolbarFooter":    false,
         "modal":            false,
@@ -940,6 +951,7 @@ var jsPanelversion = '1.6.2 2014-04-23 09:00';
         "load":             false,
         "ajax":             false,
         "autoclose":        false,
+        "restoreTo":        false,
         "theme":            'light',
         "position":         'auto',
         "overflow":         'scroll',
@@ -1016,19 +1028,6 @@ var jsPanelversion = '1.6.2 2014-04-23 09:00';
             }
         }
     }
-    /*
-     // forEach needs ECMA Script5 implemented -> not the case on all browsers
-     option.toolbarFooter.forEach(
-         function( element, index, array ){
-             if( typeof element === 'object')
-             {
-                 var el = $( element.item )
-                 $( '.jsPanel-ftr', jsPanel ).append( el );
-                 el.bind( element.event, element.callback )
-             }
-         }
-     );
-     */
 
     // binds the DOMNOdeRemoved event and triggers 'onjspanelclosed'
     function bindRemoveEvent(){

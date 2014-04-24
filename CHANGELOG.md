@@ -2,6 +2,16 @@
 
 ---
 
+### Version 1.7.0 ###
+
++ added **option.restoreTo** to change default behaviour of minimized jsPanels when maximized again
+
++ removed option.toolbarContent - use option.toolbarHeader
+
++ removed method .movetoFront() - use .front()
+
+---
+
 ### Version 1.6.2 ###
 
 + **option.modal:** Added option to add custom css classes to <code>&lt;button&gt;</code> elements in the footer toolbar when using one of the modal presets
