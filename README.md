@@ -1,8 +1,8 @@
 ###NEWS:###
 
-+ 2014-04-24 jsPanel version 1.7.0 released with new **option.restoreTo**
++ 2014-04-25 updated preview of the **bootstrap version of jsPanel** is available here: http://jspanel.de/branch-bootstrap/
 
-+ 2014-04-22 A first preview of the **bootstrap version of jsPanel** is available here: http://jspanel.de/branch-bootstrap/index.html
++ 2014-04-24 jsPanel version 1.7.0 released with new **option.restoreTo**
 
 ###jsPanel homepage: [http://jspanel.de](http://jspanel.de/)###
 
