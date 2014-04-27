@@ -4,6 +4,14 @@
 
 ### Version 1.7.0 ###
 
++ primarily a **maintanance release** where I replaced duplicate code with functions
+
++ **option.position** and **option.size** are modified slightly. Refer to the api for details please
+
+---
+
+### Version 1.7.0 ###
+
 + added **option.restoreTo** to change default behaviour of minimized jsPanels when maximized again
 
 + removed option.toolbarContent - use option.toolbarHeader

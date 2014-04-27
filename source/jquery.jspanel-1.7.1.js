@@ -1,5 +1,5 @@
 /* jQuery Plugin jsPanel
-   Version: 1.7.0 2014-04-24 09:00
+   Version: 1.7.1 2014-04-26 15:26
    Dependencies:
     jQuery library ( > 1.7.0 incl. 2.1.0 )
     jQuery.UI library ( > 1.9.0 ) - (at least UI Core, Mouse, Widget, Draggable, Resizable)
@@ -19,11 +19,10 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var jsPanelversion = '1.7.0 2014-04-24 09:00';
+var jsPanelversion = '1.7.1 2014-04-26 15:26';
 
-// added option.restoreTo
-// removed option.toolbarContent
-// removed .movetoFront()
+// replaced duplicate code with functions
+// options position & size modified
 
 (function ( $ ) {
 
@@ -333,51 +332,34 @@ var jsPanelversion = '1.7.0 2014-04-24 09:00';
         if( $.isPlainObject( option.size  ) )
         {
             /* CSS WIDTH initialisieren und zuweisen wenn option.size kein string ist */
-            if( option.size.width != 'auto' ){
-                if( parseInt( option.size.width ) > 149 )
-                {
-                    option.size.width = parseInt( option.size.width ) + 'px';
-                }
-                else if( $.isFunction( option.size.width ) )
-                {
-                    var w = parseInt( option.size.width( jsPanel ) );
-                    console.log( w );
-                    if( w > 149 )
-                    {
-                        option.size.width = w + 'px';
-                    }
-                    else
-                    {
-                        option.size.width = $.fn.jsPanel.defaults.size.width;
-                    }
-                }
-                else
-                {
-                    option.size.width = $.fn.jsPanel.defaults.size.width;
-                }
+            if( option.size.width != 'auto' )
+            {
+                calcSize( 'width' );
             }
             /* CSS HEIGHT initialisieren und zuweisen wenn option.height kein string ist */
-            if( option.size.height != 'auto' ){
-                if( parseInt( option.size.height ) > 92 )
-                {
-                    option.size.height = parseInt( option.size.height ) + 'px';
-                }
-                else if( $.isFunction( option.size.height ) )
-                {
-                    var h = parseInt( option.size.height( jsPanel ) );
-                    if( h > 92 )
-                    {
-                        option.size.height = h + 'px';
-                    }
-                    else
-                    {
-                        option.size.height = $.fn.jsPanel.defaults.size.height;
-                    }
-                }
-                else
-                {
-                    option.size.height = $.fn.jsPanel.defaults.size.height;
-                }
+            if( option.size.height != 'auto' )
+            {
+                calcSize( 'height' );
+            }
+        }
+        // calculate size values for width/height
+        function calcSize( param )
+        {
+            if( $.isFunction( option.size[param] ) )
+            {
+                option.size[param] = option.size[param]( jsPanel );
+            }
+            else if( typeof option.size[param] == 'string' )
+            {
+                option.size[param] = option.size[param];
+            }
+            else if( $.isNumeric( option.size[param] ) )
+            {
+                option.size[param] = option.size[param] + 'px';
+            }
+            else
+            {
+                option.size.height = $.fn.jsPanel.defaults.size[param];
             }
         }
 
@@ -427,186 +409,91 @@ var jsPanelversion = '1.7.0 2014-04-24 09:00';
         {
             if( option.position.top || option.position.top == 0 )
             {
-                /* POSITION TOP DES JSPANELS SETZEN */
-                // default-config für position.top steht in $.fn.jsPanel.defaults.position
-                if( option.position.top === 'center' )
-                {
-                    if( par == 'body' )
-                    {
-                        option.position.top = ( $( window ).height() - parseInt(option.size.height) ) / 2 + 'px';
-                    }
-                    else
-                    {
-                        option.position.top = ( jsPanel.parent().height() - parseInt(option.size.height) ) / 2 + 'px';
-                    }
-                    if( parseInt( option.position.top ) < 0 )
-                    {
-                        option.position.top = 0;
-                    }
-                }
-                else if( option.position.top === 'auto' )
-                {
-                    option.position.top = (25 * count + 10) + 'px';
-                }
-                else if( $.isFunction( option.position.top ) )
-                {
-                    var t = parseInt( option.position.top( jsPanel ) );
-                    if( t >= 0 )
-                    {
-                        option.position.top = t + 'px';
-                    }
-                }
-                else if( parseInt( option.position.top ) >= 0 )
-                {
-                    option.position.top = parseInt( option.position.top ) + 'px';
-                }
-                else
-                {
-                    option.position.top = (25 * count + 10) + 'px';
-                }
+                calcPosition( 'top', 'height' );
             }
             else if( option.position.bottom  || option.position.bottom == 0 )
             {
-                /* POSITION BOTTOM DES JSPANELS SETZEN */
-                if( option.position.bottom === 'center' )
-                {
-                    if( par == 'body' )
-                    {
-                        option.position.bottom = ( $( window ).height() - parseInt(option.size.height) ) / 2 + 'px';
-                    }
-                    else
-                    {
-                        option.position.bottom = ( jsPanel.parent().height() - parseInt(option.size.height) ) / 2 + 'px';
-                    }
-                    if( parseInt( option.position.bottom ) < 0 )
-                    {
-                        option.position.bottom = 0;
-                    }
-                }
-                else if( option.position.bottom === 'auto' )
-                {
-                    option.position.bottom = (25 * count + 10) + 'px';
-                }
-                else if( $.isFunction( option.position.bottom ) )
-                {
-                    var t = parseInt( option.position.bottom( jsPanel ) );
-                    if( t >= 0 )
-                    {
-                        option.position.bottom = t + 'px';
-                    }
-                }
-                else if( parseInt( option.position.bottom ) >= 0 )
-                {
-                    option.position.bottom = parseInt( option.position.bottom ) + 'px';
-                }
-                else
-                {
-                    option.position.bottom = (25 * count + 10) + 'px';
-                }
+                calcPosition( 'bottom', 'height' );
             }
 
             if( option.position.left || option.position.left == 0 )
             {
-                /* POSITION LEFT DES JSPANELS SETZEN */
-                // default-config für position.left steht in $.fn.jsPanel.defaults.position
-                if( option.position.left === 'center' )
-                {
-                    option.position.left = ( jsPanel.parent().width() - parseInt(option.size.width) ) / 2 + 'px';
-                }
-                else if( option.position.left === 'auto' )
-                {
-                    option.position.left = (25 * count + 10) + 'px';
-                }
-                else if( $.isFunction( option.position.left ) )
-                {
-                    var l = parseInt( option.position.left( jsPanel ) );
-                    if( l >= 0 )
-                    {
-                        option.position.left = l + 'px';
-                    }
-                }
-                else if( parseInt( option.position.left ) >= 0 )
-                {
-                    option.position.left = parseInt( option.position.left ) + 'px';
-                }
-                else
-                {
-                    option.position.left = (25 * count + 10) + 'px';
-                }
+                calcPosition( 'left', 'width' );
             }
             else if( option.position.right || option.position.right == 0 )
             {
-                /* POSITION RIGHT DES JSPANELS SETZEN */
-                if( option.position.right === 'center' )
+                calcPosition( 'right', 'width' );
+            }
+        }
+        // calculate position values for top/left/bootom/right
+        function calcPosition( position, dimension ){
+            if( option.position[position] === 'center' )
+            {
+                if( par == 'body' )
                 {
-                    option.position.right = ( jsPanel.parent().width() - parseInt(option.size.width) ) / 2 + 'px';
-                }
-                else if( option.position.right === 'auto' )
-                {
-                    option.position.right = (25 * count + 10) + 'px';
-                }
-                else if( $.isFunction( option.position.right ) )
-                {
-                    var l = parseInt( option.position.right( jsPanel ) );
-                    if( l >= 0 )
-                    {
-                        option.position.right = l + 'px';
-                    }
-                }
-                else if( parseInt( option.position.right ) >= 0 )
-                {
-                    option.position.right = parseInt( option.position.right ) + 'px';
+                    option.position[position] = ( $( window )[dimension]() - parseInt(option.size[dimension]) ) / 2 + 'px';
                 }
                 else
                 {
-                    option.position.right = (25 * count + 10) + 'px';
+                    option.position[position] = ( jsPanel.parent()[dimension]() - parseInt(option.size[dimension]) ) / 2 + 'px';
                 }
+            }
+            else if( option.position[position] === 'auto' )
+            {
+                option.position[position] = (25 * count + 10) + 'px';
+            }
+            else if( $.isFunction( option.position[position] ) )
+            {
+                option.position[position] = parseInt( option.position[position]( jsPanel ) ) + 'px';
+            }
+            else if( $.isNumeric( option.position[position] ) )
+            {
+                option.position[position] = option.position[position] + 'px';
+            }
+            else if( typeof option.position[position] == 'string' )
+            {
+                option.position[position] = option.position[position];
+            }
+            else
+            {
+                option.position[position] = (25 * count + 10) + 'px';
             }
         }
 
         /* CSS top, left, bottom, right, z-index des jsPanels setzen */
         if( option.position.top )
         {
-            if( par == 'body' )
-            {
-                jsPanel.css( 'top', parseInt( option.position.top ) + wsT + 'px' );
-            }
-            else
-            {
-                jsPanel.css( 'top', option.position.top );
-            }
+            setCSS( 'top', wsT );
         }
         else if( option.position.bottom )
         {
-            if( par == 'body' )
-            {
-                jsPanel.css( 'bottom', parseInt( option.position.bottom ) - wsT + 'px' );
-            }
-            else
-            {
-                jsPanel.css( 'bottom', option.position.bottom );
-            }
+            setCSS( 'bottom', wsT );
         }
         if( option.position.left )
         {
-            if( par == 'body' )
-            {
-                jsPanel.css( 'left', parseInt( option.position.left ) + wsL + 'px' );
-            }
-            else
-            {
-                jsPanel.css( 'left', option.position.left );
-            }
+            setCSS( 'left', wsL );
         }
         else if( option.position.right )
         {
+            setCSS( 'right', wsL );
+        }
+        // set css for top/left/bottom/right
+        function setCSS( param, vari ){
+            var panelID = jsPanel.attr('id');
             if( par == 'body' )
             {
-                jsPanel.css( 'right', parseInt( option.position.right ) - wsL + 'px' );
+                if( param == 'bottom' || param == 'right' )
+                {
+                    document.getElementById( panelID ).style[param] = parseInt( option.position[param] ) - vari + 'px';
+                }
+                else
+                {
+                    document.getElementById( panelID ).style[param] = parseInt( option.position[param] ) + vari + 'px';
+                }
             }
             else
             {
-                jsPanel.css( 'right', option.position.right );
+                document.getElementById( panelID ).style[param] = option.position[param];
             }
         }
 
