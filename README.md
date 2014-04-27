@@ -1,8 +1,8 @@
 ###NEWS:###
 
-+ 2014-04-27 jsPanel version 1.7.1 released. This is primarily a maintanance release where I replaced duplicate code with functions. **option.position** and **option.size** are modified slightly. Please refer to the api for details.
++ 2014-04-27 I released the first version of jsPanel-bootstrap which is an optimized version of jsPanel for use in a bootstrap environment.
 
-+ 2014-04-25 updated preview of the **bootstrap version of jsPanel** is available here: http://jspanel.de/branch-bootstrap/
++ 2014-04-27 jsPanel version 1.7.1 released. This is primarily a maintanance release where I replaced duplicate code with functions. **option.position** and **option.size** are modified slightly. Please refer to the api for details.
 
 ###jsPanel homepage: [http://jspanel.de](http://jspanel.de/)###
 
