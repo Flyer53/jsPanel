@@ -2,7 +2,13 @@
 
 ---
 
-### Version 1.7.0 ###
+### Version 1.8.0 ###
+
++ added **option.header** allows to remove the header section of a jsPanel completely
+
+---
+
+### Version 1.7.1 ###
 
 + primarily a **maintanance release** where I replaced duplicate code with functions
 

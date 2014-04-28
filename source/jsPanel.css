@@ -63,9 +63,11 @@
 .jsPanel-content {
     font-size: 12px;
     height: 100%;
-    height: calc(100% - 46px);  /* has to be adjusted according to .jsPanel-hdr height */
     position: relative;
     width: 100%;
+}
+.jsPanel-content-default{
+    height: calc(100% - 46px);  /* has to be adjusted according to .jsPanel-hdr height */
 }
 .jsPanel-content-footer{
     height: calc(100% - 92px) !important;   /* has to be adjusted according to .jsPanel-hdr & .jsPanel-ftr height */
@@ -80,6 +82,7 @@
     background:transparent;
 }
 .jsPanel-ftr{
+    cursor: move;
     display: none;
     font-size: 12px;
     height: 46px;

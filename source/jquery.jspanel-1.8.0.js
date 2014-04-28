@@ -1,5 +1,5 @@
 /* jQuery Plugin jsPanel
-   Version: 1.7.1 2014-04-26 15:26
+   Version: 1.8.0 2014-04-28 11:49
    Dependencies:
     jQuery library ( > 1.7.0 incl. 2.1.0 )
     jQuery.UI library ( > 1.9.0 ) - (at least UI Core, Mouse, Widget, Draggable, Resizable)
@@ -19,10 +19,9 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var jsPanelversion = '1.7.1 2014-04-26 15:26';
+var jsPanelversion = '1.8.0 2014-04-28 11:49';
 
-// replaced duplicate code with functions
-// options position & size modified
+// added option.header - option.header = false removes the header completely
 
 (function ( $ ) {
 
@@ -58,7 +57,7 @@ var jsPanelversion = '1.7.1 2014-04-26 15:26';
                                 '</div>'+
                                 '<div class="jsPanel-hdr-toolbar"></div>'+
                             '</div>'+
-                            '<div class="jsPanel-content jsPanel-theme-light"></div>'+
+                            '<div class="jsPanel-content jsPanel-content-default jsPanel-theme-light"></div>'+
                             '<div class="jsPanel-ftr"></div>'+
                         '</div>');
 
@@ -67,6 +66,16 @@ var jsPanelversion = '1.7.1 2014-04-26 15:26';
          * DAS OPTIONS-OBJEKT DER FUNKTION .jsPanel() ABARBEITEN
          * und jsPanel ins document einfügen
          */
+
+        /* option.header EXPERIMENTAL */
+        if( option.header == false )
+        {
+            $( '.jsPanel-hdr', jsPanel ).remove();
+            if( !option.toolbarFooter )
+            {
+                $( '.jsPanel-content', jsPanel ).removeClass( 'jsPanel-content-default' );
+            }
+        }
 
         /* option.modal  | default: false  */
         if( option.modal )
@@ -190,11 +199,14 @@ var jsPanelversion = '1.7.1 2014-04-26 15:26';
         /* TOOLBAR im Footer aktivieren | default: false */
         if( option.toolbarFooter )
         {
-            $( '.jsPanel-content', jsPanel ).addClass( 'jsPanel-content-footer' );
+            // add .jsPanel-content-footer only when header is present
+            if( option.header == true ) // = header present
+            {
+                $( '.jsPanel-content', jsPanel ).addClass( 'jsPanel-content-footer' );
+            }
             $( '.jsPanel-ftr', jsPanel ).css( { 'display':'block' } );
             // toolbar Elemente einfügen und konfigurieren
             configToolbar( option.modal,  option.toolbarFooter, '.jsPanel-ftr', jsPanel );
-
         }
 
         /* font-awesome | bootstrap iconfonts einfügen wenn option.iconfont gesetzt */
@@ -839,6 +851,7 @@ var jsPanelversion = '1.7.1 2014-04-26 15:26';
         "ajax":             false,
         "autoclose":        false,
         "restoreTo":        false,
+        "header":           true,
         "theme":            'light',
         "position":         'auto',
         "overflow":         'scroll',
@@ -855,7 +868,7 @@ var jsPanelversion = '1.7.1 2014-04-26 15:26';
                                 height: 310
                             },
         "draggable":        {
-                                handle:      'div.jsPanel-hdr',
+                                handle:      'div.jsPanel-hdr, div.jsPanel-ftr',
                                 stack:       '.jsPanel',
                                 opacity:     0.6
                             },
