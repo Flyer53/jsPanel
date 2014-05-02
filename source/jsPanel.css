@@ -99,6 +99,20 @@
     background-position: -81px -224px;
 }
 
+/* css für den modal backdrop --------------------------- */
+.jsPanel-backdrop{
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:10000;
+    width:100%;
+    background:rgba(0,0,0,0.9);
+}
+.jsPanel-backdrop-inner{
+    position:absolute;
+    width:100%;
+}
+
 /* THEMES ------------------------------------------------------------------------- */
 
 /* white ------------------------------------------- */
