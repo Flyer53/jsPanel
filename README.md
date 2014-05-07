@@ -31,3 +31,4 @@ Copyright &copy; 2014 Stefan Sträßer | [stefanstraesser.eu](http://stefanstrae
 | title            |                    |                  |                     |
 | toolbarHeader    |                    |                  |                     |
 | toolbarFooter    |                    |                  |                     |
+| tooltip          |                    |                  |                     |
