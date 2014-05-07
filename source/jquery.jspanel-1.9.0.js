@@ -1,5 +1,5 @@
 /* jQuery Plugin jsPanel
-   Version: 1.8.1 2014-05-02 09:55
+   Version: 1.9.0 2014-05-07 10:01
    Dependencies:
     jQuery library ( > 1.7.0 incl. 2.1.0 )
     jQuery.UI library ( > 1.9.0 ) - (at least UI Core, Mouse, Widget, Draggable, Resizable)
@@ -19,7 +19,7 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var jsPanelversion = '1.8.1 2014-05-02 09:55';
+var jsPanelversion = '1.9.0 2014-05-07 10:01';
 
 (function ( $ ) {
 
@@ -65,16 +65,6 @@ var jsPanelversion = '1.8.1 2014-05-02 09:55';
          * und jsPanel ins document einfügen
          */
 
-        /* option.header EXPERIMENTAL */
-        if( option.header == false )
-        {
-            $( '.jsPanel-hdr', jsPanel ).remove();
-            if( !option.toolbarFooter )
-            {
-                $( '.jsPanel-content', jsPanel ).removeClass( 'jsPanel-content-default' );
-            }
-        }
-
         /* option.modal  | default: false  */
         if( option.modal )
         {
@@ -97,10 +87,90 @@ var jsPanelversion = '1.8.1 2014-05-02 09:55';
                 $( '.jsPanel-backdrop-inner' ).css( 'top', $( window ).scrollTop() + 'px' );
             }
         }
+        else if( option.tooltip )
+        {
+            // draggable & resizable NICHT inizialisieren, nur close button einblenden
+            option.resizable = false;
+            option.draggable = false;
+            option.controls.buttons = 'closeonly';
+            // cursor zurücksetzen, weil draggable deaktiviert
+            $('.jsPanel-hdr', jsPanel ).css( 'cursor', 'inherit' );
+
+            var trigger = this.first(),      // element serving as trigger for the tooltip
+                parW = trigger.outerWidth(), // width of element serving as trigger for the tooltip
+                parH = trigger.height(),     // height of element serving as trigger for the tooltip
+                oX, oY;                      // takes the offsets
+
+            // check whether offsets are set
+            option.tooltip.offsetX ? ( oX = option.tooltip.offsetX ) : ( oX = 0 );
+            option.tooltip.offsetY ? ( oY = option.tooltip.offsetY ) : ( oY = 0 );
+
+            // calc top & left for the various positions
+            if(option.tooltip.position == 'top')
+            {
+                option.position = {
+                    top: function(){ return -( option.size.height ) + (oY) + 'px' },
+                    left: function(){ return ( parW - option.size.width )/2 + (oX) + 'px' }
+                }
+            }
+            else if(option.tooltip.position == 'bottom')
+            {
+                option.position = {
+                    top: function(){ return parH + (oY) + 'px' },
+                    left: function(){ return ( parW - option.size.width )/2 + (oX) + 'px' }
+                }
+            }
+            else if(option.tooltip.position == 'left')
+            {
+                option.position = {
+                    top: function(){ return -( option.size.height/2 ) + ( parH/2 ) + (oY) + 'px' },
+                    left: function(){ return -( option.size.width ) + (oX) + 'px' }
+                }
+            }
+            else if(option.tooltip.position == 'right')
+            {
+                option.position = {
+                    top: function(){ return -( option.size.height/2 ) + ( parH/2 ) + (oY) + 'px' },
+                    left: function(){ return parW + (oX) + 'px' }
+                }
+            }
+
+            if( !trigger.parent().hasClass('jsPanel-tooltip-wrapper') )
+            {
+                // wrap element serving as trigger in a div - will take the tooltip
+                trigger.wrap( '<div class="jsPanel-tooltip-wrapper">' );
+
+                if( option.tooltip.mode == 'semisticky' )
+                {
+                    // tooltip will remain in place until mouse leaves the tooltip
+                    jsPanel.hover(
+                        function(){ $.noop() },
+                        function(){ jsPanel.close() }
+                    );
+                }
+                else if( option.tooltip.mode == 'sticky' )
+                {
+                    // do nothing - tooltip will remain in place
+                    $.noop();
+                }
+                else
+                {
+                    option.controls.buttons = false;
+                    // tooltip will be removed whenever mouse leaves trigger
+                    trigger.mouseout(function(){
+                        jsPanel.close();
+                    })
+                }
+
+                // append tooltip (jsPanel) to the wrapper div
+                trigger.parent().append( jsPanel );
+            }
+        }
         else
         {
             jsPanel.appendTo( this.first() );
         }
+
 
         // various presets for option.modal
         if( option.modal == 'modal-ok' )
@@ -143,7 +213,7 @@ var jsPanelversion = '1.8.1 2014-05-02 09:55';
         $( '.jsPanel-content', jsPanel ).alterClass( 'jsPanel-theme-*', 'jsPanel-theme-' + option.theme );
         $( '.jsPanel-ftr', jsPanel ).alterClass( 'jsPanel-theme-*', 'jsPanel-theme-' + option.theme );
 
-        /* TITLE/HEADER | default: function - (Überschrift) des Panels */
+        /* TITLE | default: function - (Überschrift) des Panels */
         $( '.jsPanel-hdr-l:first-of-type p', jsPanel ).append( option.title );
 
         /* CONTROLS (buttons in header right) | default: object */
@@ -189,7 +259,7 @@ var jsPanelversion = '1.8.1 2014-05-02 09:55';
         }
 
         /* TOOLBAR im Header einfügen | default: false */
-        if( option.toolbarHeader )
+        if( option.toolbarHeader && option.header == true )
         {
             configToolbar(  option.modal, option.toolbarHeader, '.jsPanel-hdr-toolbar', jsPanel );
         }
@@ -209,6 +279,24 @@ var jsPanelversion = '1.8.1 2014-05-02 09:55';
         else
         {
             $( '.jsPanel-ftr', jsPanel ).remove();
+        }
+
+        /* option.header */
+        if( option.header == false )
+        {
+            // remove complete header section
+            $( '.jsPanel-hdr', jsPanel ).remove();
+            // CSS corrections for various combinations of header/header toolbar and footer toolbar when header = false
+            if( !option.toolbarFooter )
+            {
+                // if no toolbarFooter is configured
+                $( '.jsPanel-content', jsPanel ).removeClass( 'jsPanel-content-default' );
+            }
+            else if( option.toolbarFooter )
+            {
+                // if toolbarFooter is configured
+                $( '.jsPanel-content', jsPanel ).removeClass( 'jsPanel-content-footer' );
+            }
         }
 
         /* font-awesome | bootstrap iconfonts einfügen wenn option.iconfont gesetzt */
@@ -247,7 +335,7 @@ var jsPanelversion = '1.8.1 2014-05-02 09:55';
             option.customdraggable = $.extend( true, {}, $.fn.jsPanel.defaults.draggable, option.draggable );
             jsPanel.draggable( option.customdraggable );
         }
-        else
+        else if( option.draggable == 'disabled' )
         {
             // cursor zurücksetzen, weil draggable deaktiviert
             $('.jsPanel-hdr-l', jsPanel ).css( 'cursor', 'inherit' );
@@ -262,7 +350,7 @@ var jsPanelversion = '1.8.1 2014-05-02 09:55';
             option.customresizable = $.extend( true, {}, $.fn.jsPanel.defaults.resizable, option.resizable );
             jsPanel.resizable( option.customresizable );
         }
-        else
+        else if( option.resizable == 'disabled' )
         {
             // jquery ui resizable disabled initialisieren, damit Zustand abgefragt werden kann ( z.B. in minimize()/maximize() )
             jsPanel.resizable({ disabled: true });
@@ -507,7 +595,10 @@ var jsPanelversion = '1.8.1 2014-05-02 09:55';
             }
             else
             {
-                document.getElementById( panelID ).style[param] = option.position[param];
+                if( document.getElementById( panelID ) )
+                {
+                    document.getElementById( panelID ).style[param] = option.position[param];
+                }
             }
         }
 
@@ -600,6 +691,12 @@ var jsPanelversion = '1.8.1 2014-05-02 09:55';
                 count = context.children('.jsPanel').length;    // Anzahl Panels im context
             // childpanels löschen ...
             jsPanel.closeChildpanels();
+            // if present remove tooltip wrapper
+            if( this.parent().hasClass('jsPanel-tooltip-wrapper') )
+            {
+                this.unwrap();
+            }
+            // remove the jsPanel itself
             this.remove();
             // backdrop entfernen
             $( '.jsPanel-backdrop' ).remove();
@@ -847,6 +944,7 @@ var jsPanelversion = '1.8.1 2014-05-02 09:55';
         "toolbarHeader":    false,
         "toolbarFooter":    false,
         "modal":            false,
+        "tooltip":          false,
         "contentBG":        false,
         "content":          false,
         "load":             false,
@@ -856,7 +954,7 @@ var jsPanelversion = '1.8.1 2014-05-02 09:55';
         "header":           true,
         "theme":            'light',
         "position":         'auto',
-        "overflow":         'scroll',
+        "overflow":         'hidden',
         "show":             'fadeIn',
         "title":            function(){
                                 return 'jsPanel No ' + ( $('.jsPanel').length + 1 )

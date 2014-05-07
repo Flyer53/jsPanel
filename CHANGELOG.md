@@ -2,6 +2,16 @@
 
 ---
 
+### Version 1.9.0 ###
+
++ new **option.tooltip** implements a basic tooltip functionality. Tooltips can be positioned either top, right, left or bottom of the element the tooltip is applied to and offers almost all options a normal jsPanel has.
+
++ **jsPanel.css** integrates some css rules that provide the possibility to generate text only tooltips using only css3
+
+See the [API](http://jspanel.de/api.html) for more details
+
+---
+
 ### Version 1.8.1 ###
 
 + changed **option.toolbarFooter**: footer will be removed when not used instead of display:none
