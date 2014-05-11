@@ -1,5 +1,5 @@
 /* jQuery Plugin jsPanel
-   Version: 1.9.0 2014-05-07 10:01
+   Version: 1.9.1 2014-05-08 17:04
    Dependencies:
     jQuery library ( > 1.7.0 incl. 2.1.0 )
     jQuery.UI library ( > 1.9.0 ) - (at least UI Core, Mouse, Widget, Draggable, Resizable)
@@ -19,7 +19,9 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var jsPanelversion = '1.9.0 2014-05-07 10:01';
+var jsPanelversion = '1.9.1 2014-05-08 17:04';
+
+// function configToolbar() changed
 
 (function ( $ ) {
 
@@ -1008,8 +1010,9 @@ var jsPanelversion = '1.9.0 2014-05-07 10:01';
             {
                 if( typeof optionToolbar[i] === 'object' )
                 {
-                    var el = $( optionToolbar[i].item );
-                    if( typeof optionModal === 'string'  && el.hasClass( 'btn' ) )
+                    var el = $( optionToolbar[i].item ),                        // Änderung in 1.9 1
+                        type = el.prop('tagName');                              // Änderung in 1.9 1
+                    if( typeof optionModal === 'string' && type == 'BUTTON' )   // Änderung in 1.9 1
                     {
                         // set text of button
                         el.append( optionToolbar[i].btntext );

@@ -1,5 +1,9 @@
 ###NEWS:###
 
++ Currently working on support for RTL text direction. I expect this option to be in version 1.10
+
++ 2014-05-11 **jsPanel version 1.9.1 released**: Maintainance release. No changes in the api, just internal code improvements.
+
 + 2014-05-07 **jsPanel version 1.9.0 released** implementing a basic **tooltip** functionality - see change log.
 
 ###jsPanel homepage: [http://jspanel.de](http://jspanel.de/)###
