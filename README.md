@@ -1,10 +1,10 @@
 ###NEWS:###
 
-+ Currently working on support for RTL text direction. I expect this option to be in version 1.10
++ 2014-05-13 **jsPanel version 1.10.0 released**: Most important change is the new **option.rtl** that adds support for RTL text direction on individual jsPanels.
 
-+ 2014-05-11 **jsPanel version 1.9.1 released**: Maintainance release. No changes in the api, just internal code improvements.
++ Further changes in 1.10.0 are a bugfix in **option.modal** when a modal jsPanel is appended directly to the <code>body</code> element and overall improvements in the code base.
 
-+ 2014-05-07 **jsPanel version 1.9.0 released** implementing a basic **tooltip** functionality - see change log.
+---
 
 ###jsPanel homepage: [http://jspanel.de](http://jspanel.de/)###
 
@@ -29,6 +29,7 @@ Copyright &copy; 2014 Stefan Sträßer | [stefanstraesser.eu](http://stefanstrae
 | position         |                    |                  |                     |
 | resizable        |                    |                  |                     |
 | restoreTo        |                    |                  |                     |
+| rtl              |                    |                  |                     |
 | show             |                    |                  |                     |
 | size             |                    |                  |                     |
 | theme            |                    |                  |                     |

@@ -1,5 +1,5 @@
 /* jQuery Plugin jsPanel
-   Version: 1.9.1 2014-05-08 17:04
+   Version: 1.10.0 2014-05-13 11:00
    Dependencies:
     jQuery library ( > 1.7.0 incl. 2.1.0 )
     jQuery.UI library ( > 1.9.0 ) - (at least UI Core, Mouse, Widget, Draggable, Resizable)
@@ -19,9 +19,11 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var jsPanelversion = '1.9.1 2014-05-08 17:04';
+var jsPanelversion = '1.10.0 2014-05-13 11:00';
 
-// function configToolbar() changed
+// + Integration of RTL text direction
+// + window properties derived through functions, not variables
+// + bugfix in option.modal when modal is appended directly to the body element
 
 (function ( $ ) {
 
@@ -33,11 +35,17 @@ var jsPanelversion = '1.9.1 2014-05-08 17:04';
 
         // tagname des elements an das das jsPanel gehängt wird und window Daten
         // this is the collection on which .jsPanel() is called
-        var par = this.first()[0].tagName.toLowerCase(),
-            wsT = $( window ).scrollTop(),
-            wsL = $( window ).scrollLeft(),
-            woW = $( window ).outerWidth(),
-            woH = $( window ).outerHeight();
+        var par = this.first()[0].tagName.toLowerCase();
+
+        function winscrollTop(){
+            return $( window ).scrollTop();
+        }
+        function winscrollLeft(){
+            return $( window ).scrollLeft();
+        }
+        function winouterHeight(){
+            return $( window ).outerHeight();
+        }
 
         // Extend our default config with those provided.
         // Note that the first arg to extend is an empty object -
@@ -70,23 +78,30 @@ var jsPanelversion = '1.9.1 2014-05-08 17:04';
         /* option.modal  | default: false  */
         if( option.modal )
         {
+            if( par == 'body' )
+            {
+                // necessary for correct positioning of modal when modal appended directly to the body element
+                // though I don't really get why !!
+                par = null;
+            }
             var dh = $(document ).outerHeight() + 'px',
                 backdrop = '<div class="jsPanel-backdrop" style="height:' + dh + ';">'+
-                    '<div class="jsPanel-backdrop-inner" style="top:' + $( window ).scrollTop() + 'px;height:' + woH + 'px;"></div></div>';
+                    '<div class="jsPanel-backdrop-inner" style="top:' + winscrollTop() + 'px;height:' + winouterHeight() + 'px;"></div></div>';
             // falls vorhanden backdrop entfernen
             $( '.jsPanel-backdrop' ).remove();
             // backdrop wieder einfügen
             $( 'body' ).append( backdrop );
             // jsPanel in backdrop einfügen
             jsPanel.appendTo( $( '.jsPanel-backdrop-inner' ) );
-            // draggable und resizable deaktivieren
-            option.draggable = 'disabled';
-            option.resizable = 'disabled';
+            // draggable & resizable NICHT inizialisieren, nur close button einblenden
+            option.resizable = false;
+            option.draggable = false;
+            option.controls.buttons = 'closeonly';
             // jsPanel auf jeden Fall centern
             option.position = 'center';
             // reposition wenn window gescrollt wird
             window.onscroll = function(){
-                $( '.jsPanel-backdrop-inner' ).css( 'top', $( window ).scrollTop() + 'px' );
+                $( '.jsPanel-backdrop-inner' ).css( 'top', winscrollTop() + 'px' );
             }
         }
         else if( option.tooltip )
@@ -173,7 +188,6 @@ var jsPanelversion = '1.9.1 2014-05-08 17:04';
             jsPanel.appendTo( this.first() );
         }
 
-
         // various presets for option.modal
         if( option.modal == 'modal-ok' )
         {
@@ -209,6 +223,30 @@ var jsPanelversion = '1.9.1 2014-05-08 17:04';
             ]
         }
 
+
+
+
+        /* EXPERIMENTAL RTL Support --------------------------------------------------------------------------------- */
+        if( option.rtl.rtl === true )
+        {
+            $( '.jsPanel-hdr-l-text, .jsPanel-content, .jsPanel-hdr-toolbar, .jsPanel-ftr', jsPanel ).attr( 'dir', 'rtl' );
+            $( '.jsPanel-hdr-l-text', jsPanel ).css( 'text-align', 'right' );
+            if( option.rtl.lang )
+            {
+                $( '.jsPanel-hdr-l-text, .jsPanel-content, .jsPanel-hdr-toolbar, .jsPanel-ftr', jsPanel ).attr( 'lang', option.rtl.lang );
+            }
+
+            $('.jsPanel-hdr-r-btn-close', jsPanel ).removeClass('jsPanel-hdr-r-btn-close' ).addClass('jsPanel-hdr-r-btn-min');
+            $('.jsPanel-hdr-r-btn-min', jsPanel ).eq(1).removeClass( 'jsPanel-hdr-r-btn-min' ).addClass('jsPanel-hdr-r-btn-close');
+
+            $( '.jsPanel-hdr-r', jsPanel ).css( 'float', 'left' );
+            $( '.jsPanel-hdr-l', jsPanel ).css( 'float', 'right' );
+        }
+        /* ---------------------------------------------------------------------------------------------------------- */
+
+
+
+
         /* THEME | default: 'light' - benutzt  jquery.alterclass.js von peteboere https://gist.github.com/peteboere/1517285 */
         jsPanel.alterClass( 'jsPanel-theme-*', 'jsPanel-theme-' + option.theme );
         $( '.jsPanel-hdr', jsPanel ).alterClass( 'jsPanel-theme-*', 'jsPanel-theme-' + option.theme );
@@ -219,7 +257,7 @@ var jsPanelversion = '1.9.1 2014-05-08 17:04';
         $( '.jsPanel-hdr-l:first-of-type p', jsPanel ).append( option.title );
 
         /* CONTROLS (buttons in header right) | default: object */
-        if( option.controls.buttons === 'closeonly' || option.modal )
+        if( option.controls.buttons === 'closeonly' )
         {
             $( '.jsPanel-hdr-r-btn-min, .jsPanel-hdr-r-btn-max', jsPanel ).css('display', 'none');
         }
@@ -282,6 +320,13 @@ var jsPanelversion = '1.9.1 2014-05-08 17:04';
         {
             $( '.jsPanel-ftr', jsPanel ).remove();
         }
+        // Ergänzung für RTL ----------------------------------------------------
+        if( option.rtl.rtl === true )
+        {
+            $( '.jsPanel-ftr button', jsPanel ).css( 'float', 'left' );
+        }
+
+
 
         /* option.header */
         if( option.header == false )
@@ -533,7 +578,7 @@ var jsPanelversion = '1.9.1 2014-05-08 17:04';
         function calcPosition( position, dimension ){
             if( option.position[position] === 'center' )
             {
-                if( par == 'body' )
+                if( par == 'body')
                 {
                     option.position[position] = ( $( window )[dimension]() - parseInt(option.size[dimension]) ) / 2 + 'px';
                 }
@@ -567,19 +612,19 @@ var jsPanelversion = '1.9.1 2014-05-08 17:04';
         /* CSS top, left, bottom, right, z-index des jsPanels setzen */
         if( option.position.top )
         {
-            setCSS( 'top', wsT );
+            setCSS( 'top', winscrollTop() );
         }
         else if( option.position.bottom )
         {
-            setCSS( 'bottom', wsT );
+            setCSS( 'bottom', winscrollTop() );
         }
         if( option.position.left )
         {
-            setCSS( 'left', wsL );
+            setCSS( 'left', winscrollLeft() );
         }
         else if( option.position.right )
         {
-            setCSS( 'right', wsL );
+            setCSS( 'right', winscrollLeft() );
         }
         // set css for top/left/bottom/right
         function setCSS( param, vari ){
@@ -829,10 +874,7 @@ var jsPanelversion = '1.9.1 2014-05-08 17:04';
                 if( par == 'body' )
                 {
                     // wenn jsPanel im body Element hängt
-                    var wsT = $( window ).scrollTop(),
-                        wsL = $( window ).scrollLeft(),
-                        woH = $( window ).outerHeight();
-                    this.animate( {left: wsL+5+'px' , top: wsT+5+'px' , width: width , height: woH-10+'px' } );
+                    this.animate( {left: winscrollLeft()+5+'px' , top: winscrollTop()+5+'px' , width: width , height: winouterHeight()-10+'px' } );
                 }
                 else
                 {
@@ -940,46 +982,49 @@ var jsPanelversion = '1.9.1 2014-05-08 17:04';
      *
      */
     $.fn.jsPanel.defaults = {
-        "id":               function(){
-                                $(this).first().uniqueId()
-                            },
-        "toolbarHeader":    false,
-        "toolbarFooter":    false,
-        "modal":            false,
-        "tooltip":          false,
-        "contentBG":        false,
-        "content":          false,
-        "load":             false,
-        "ajax":             false,
-        "autoclose":        false,
-        "restoreTo":        false,
-        "header":           true,
-        "theme":            'light',
-        "position":         'auto',
-        "overflow":         'hidden',
-        "show":             'fadeIn',
-        "title":            function(){
-                                return 'jsPanel No ' + ( $('.jsPanel').length + 1 )
-                            },
-        "controls":         {
-                                buttons:  true,
-                                iconfont: false
-                            },
-        "size":             {
-                                width:  500,
-                                height: 310
-                            },
-        "draggable":        {
-                                handle:      'div.jsPanel-hdr, div.jsPanel-ftr',
-                                stack:       '.jsPanel',
-                                opacity:     0.6
-                            },
-        "resizable":        {
-                                handles:        'e, s, w, se, sw',
-                                autoHide:       false,
-                                minWidth:       150,
-                                minHeight:      93
-                            }
+        "ajax":          false,
+        "autoclose":     false,
+        "content":       false,
+        "contentBG":     false,
+        "controls":      {
+                             buttons:  true,
+                             iconfont: false
+                         },
+        "draggable":     {
+                             handle:  'div.jsPanel-hdr, div.jsPanel-ftr',
+                             stack:   '.jsPanel',
+                             opacity: 0.6
+                         },
+        "header":        true,
+        "id":            function(){
+                             $(this).first().uniqueId()
+                         },
+        "load":          false,
+        "modal":         false,
+        "overflow":      'hidden',
+        "position":      'auto',
+        "resizable":     {
+                             handles:   'e, s, w, se, sw',
+                             autoHide:  false,
+                             minWidth:  150,
+                             minHeight: 93
+                         },
+        "restoreTo":     false,
+        "rtl":           {
+                             rtl: false
+                         },
+        "show":          'fadeIn',
+        "size":          {
+                             width:  500,
+                             height: 310
+                         },
+        "theme":         'light',
+        "title":         function(){
+                             return 'jsPanel No ' + ( $('.jsPanel').length + 1 )
+                         },
+        "toolbarFooter": false,
+        "toolbarHeader": false,
+        "tooltip":       false
     };
 
     /*
@@ -1010,9 +1055,9 @@ var jsPanelversion = '1.9.1 2014-05-08 17:04';
             {
                 if( typeof optionToolbar[i] === 'object' )
                 {
-                    var el = $( optionToolbar[i].item ),                        // Änderung in 1.9 1
-                        type = el.prop('tagName');                              // Änderung in 1.9 1
-                    if( typeof optionModal === 'string' && type == 'BUTTON' )   // Änderung in 1.9 1
+                    var el = $( optionToolbar[i].item ),                        // Änderung
+                        type = el.prop('tagName');                              // Änderung
+                    if( typeof optionModal === 'string' && type == 'BUTTON' )   // Änderung
                     {
                         // set text of button
                         el.append( optionToolbar[i].btntext );
