@@ -1,22 +1,23 @@
-/* Version 1.2.2 2014-04-16 08:42 */
+/* Version 1.3 2014-05-14 14:46 */
 .jsPanel, .jsPanel-hdr-r, .jsPanel-hdr-l, .jsPanel-hdr-l-text, .jsPanel-hdr-r span img, .jsPanel-content{
     margin: 0; padding: 0; border: 0;
     font-size: 100%; font: inherit;
     line-height: 1.5em; vertical-align: baseline;
 }
 .jsPanel{
-    margin: 0; padding: 0;
+    display: none;
     overflow: hidden; position: absolute;
     border-radius: 3px;
 }
 .jsPanel-hdr{
     font-size: 14px;
     padding: 2px;
-    height: 46px;
+    height: 25px;
 }
 .jsPanel-hdr-r{
     float: right;
-    padding: 2px 2px 0 0;
+    font-size: 13px;
+    padding: 0 2px 0 0;
 }
 .jsPanel-hdr-l{
     float: left;
@@ -28,7 +29,7 @@
     height: 20px;
     padding: 0 5px;
 }
-.jsPanel-hdr-l-text{
+.jsPanel-title, .jsPanel-hdr-l-text{
     white-space: nowrap;
     overflow: hidden;
     text-align: left;
@@ -52,28 +53,33 @@
 
 .jsPanel-hdr-toolbar {
     clear: both;
-    font-size: 12px;
+    font-size: 14px;
     padding: 0 5px;
     width: auto;
+    height: 20px;
 }
 .jsPanel-hdr-toolbar img{
     cursor: pointer;
-    margin-bottom: 0;
+    margin-bottom: 4px;
     margin-right: 5px;
 }
 .jsPanel-content {
     font-size: 12px;
-    height: 100%;
     position: relative;
     width: 100%;
+/*
     padding: 15px;
+*/
 }
-.jsPanel-content-default{
-    height: calc(100% - 46px);  /* has to be adjusted according to .jsPanel-hdr height */
-}
-.jsPanel-content-footer{
-    height: calc(100% - 92px) !important;   /* has to be adjusted according to .jsPanel-hdr & .jsPanel-ftr height */
-}
+.jsPanel-resize0 { height: calc( 100% ); }
+.jsPanel-resize25{ height: calc( 100% - 25px ); }
+.jsPanel-resize46{ height: calc( 100% - 46px ); }
+.jsPanel-resize48{ height: calc( 100% - 48px ); }
+.jsPanel-resize69{ height: calc( 100% - 69px ); }
+.jsPanel-resize71{ height: calc( 100% - 71px ); }
+.jsPanel-resize92{ height: calc( 100% - 92px ); }
+
+
 /* container that takes the minified jsPanels */
 #jsPanel-min-container{
     position:fixed;
@@ -240,6 +246,70 @@
 .jsPanel-tooltip-wrapper .jsPanel{
     border-radius: 4px;
 }
+
+
+
+
+.jsPanel-hint{
+    width: 70px;
+    height: 100%;
+    font-size: 40px;
+    padding: 15px;
+    float: left;
+}
+.jsPanel-hint-close{
+    float:right;
+    padding:5px;
+    cursor: pointer;
+}
+/* hint-default ------------------------------------------- */
+.jsPanel.jsPanel-theme-hint-default{
+    background: none repeat scroll 0 0 #fff;
+    box-shadow: 0 0 6px rgba(0, 33, 50, 0.1), 0 7px 25px rgba(17, 38, 60, 0.4);
+}
+.jsPanel-content.jsPanel-theme-hint-default {
+    background: none repeat scroll 0 0 #fff;
+    color: #333;
+    font-family: tahoma,arial,verdana,sans-serif;
+    /*outline: 1px solid #bbb;*/
+}
+/* hint-success ------------------------------------------- */
+.jsPanel.jsPanel-theme-hint-success{
+    background: none repeat scroll 0 0 #73A839;
+    box-shadow: 0 0 6px rgba(0, 33, 50, 0.1), 0 7px 25px rgba(17, 38, 60, 0.4);
+}
+.jsPanel-content.jsPanel-theme-hint-success {
+    background: none repeat scroll 0 0 #73A839;
+    color: #fff;
+    font-family: tahoma,arial,verdana,sans-serif;
+    /*outline: 1px solid #bbb;*/
+}
+/* hint-info ------------------------------------------- */
+.jsPanel.jsPanel-theme-hint-info{
+    background: none repeat scroll 0 0 #033C73;
+    box-shadow: 0 0 6px rgba(0, 33, 50, 0.1), 0 7px 25px rgba(17, 38, 60, 0.4);
+}
+.jsPanel-content.jsPanel-theme-hint-info {
+    background: none repeat scroll 0 0 #033C73;
+    color: #fff;
+    font-family: tahoma,arial,verdana,sans-serif;
+    /*outline: 1px solid #bbb;*/
+}
+/* hint-error ------------------------------------------- */
+.jsPanel.jsPanel-theme-hint-error{
+    background: none repeat scroll 0 0 #C71C22;
+    box-shadow: 0 0 6px rgba(0, 33, 50, 0.1), 0 7px 25px rgba(17, 38, 60, 0.4);
+}
+.jsPanel-content.jsPanel-theme-hint-error {
+    background: none repeat scroll 0 0 #C71C22;
+    color: #fff;
+    font-family: tahoma,arial,verdana,sans-serif;
+    /*outline: 1px solid #bbb;*/
+}
+
+
+
+
 
 
 /**
