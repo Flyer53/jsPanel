@@ -2,6 +2,22 @@
 
 ---
 
+### Version 2.0 ###
+
+Version 2 is a complete rewrite of the jsPanel jQuery Plugin.
+
+Major changes in version 2 are:
+
++ Compared to version 1.x version 2.x is a **jQuery function** rather than a jQuery method. So basically a jsPanel is created with <code>$.jsPanel([config]);</code>
+
++ The seperate bootstrap version is obsolete. Version 2 can be used in both bootstrap and non-bootstrap environments.
+
+All in all, the new features, improvements and changes are too numerous to list them all here. Please refer to the API documentation:
+
+[http://jspanel.de/api.html](http://jspanel.de/api.html)
+
+---
+
 ### Version 1.11.0 ###
 
 Version 1.11 implements a number of changes and improvements. Most of them are just internal issues. But there are some other changes as well. See details below:
