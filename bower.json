@@ -28,6 +28,6 @@
   ],
   "dependencies": {
         "jquery": ">=1.7",
-        "jquery ui": ">=1.9"
+        "jquery-ui": ">=1.9"
   }
 }
