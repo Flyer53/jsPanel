@@ -3,7 +3,8 @@
 }
 .jsPanel{
     display: none;
-    overflow: hidden; position: absolute;
+    overflow: hidden;
+    position: absolute;
     border-radius: 3px;
 }
 .jsPanel-hdr{
@@ -18,7 +19,7 @@
 }
 .jsPanel-title{
     float: left;
-    width: calc(100% - 90px);
+    width: calc(100% - 100px);
     white-space: nowrap;
     overflow: hidden;
     text-align: left;
@@ -169,6 +170,14 @@
 .jsPanel-content.jsPanel-theme-dark { background: none repeat scroll 0 0 #fff; color: #000; font-family: tahoma,arial,verdana,sans-serif; outline: 1px solid #bbb; }
 .jsPanel-ftr.jsPanel-theme-dark{ color: #fff; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: linear-gradient(to bottom, rgba(181,189,200,1) 0%,rgba(130,140,149,1) 36%,rgba(40,52,59,1) 100%); }
 
+/* black ---------------------------------------------- */
+/* .jsPanel.jsPanel-theme-black{ background: -moz-linear-gradient(center top , #4a4a4a 0px, black 100%) repeat scroll 0 0 #4a4a4a; box-shadow: 0 0 3px #333; } */
+.jsPanel.jsPanel-theme-black{ background: linear-gradient(#4a4a4a 0px, black 100%) repeat scroll 0 0 #4a4a4a; box-shadow: 0 0 3px #333; }
+.jsPanel-hdr.jsPanel-theme-black{ color: #fff; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: transparent; }
+.jsPanel-hdr.jsPanel-theme-black h3{ color: #fff; }
+.jsPanel-content.jsPanel-theme-black { background: transparent; color: #c3c3c3; }
+.jsPanel-ftr.jsPanel-theme-black{ color: #fff; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: transparent; }
+
 /* primary ---------------------------------------------- */
 .jsPanel.jsPanel-theme-primary{ background: none repeat scroll 0 0 #fff; box-shadow: 0 0 6px rgba(0, 33, 50, 0.1), 0 7px 25px rgba(17, 38, 60, 0.4); }
 .jsPanel-hdr.jsPanel-theme-primary{ color: #ffffff; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: #2FA4E7; }
@@ -243,14 +252,32 @@
     border-radius: 4px;
 }
 
+/* css for tooltip corners */
+.jsPanel-corner-top, .jsPanel-corner-right, .jsPanel-corner-bottom, .jsPanel-corner-left{
+    width: 0;
+    height: 0;
+    border: 12px solid transparent;
+    position: absolute;
+}
+
+
+
 /* css for the hints ----------------------------------------------------------- */
 .jsPanel-hint{
     margin-bottom: 4px;
 }
-.jsPanel-hint-close{
+.jsPanel-hint-close-dark, .jsPanel-hint-close-white{
     float:right;
-    padding:5px;
+    margin:5px;
     cursor: pointer;
+    width: 20px;
+    height: 20px;
+}
+.jsPanel-hint-close-dark{
+    background: url('images/close-20-333.png');
+}
+.jsPanel-hint-close-white{
+    background: url('images/close-20.png');
 }
 .jsPanel-content.jsPanel-hint-default{
     background: none repeat scroll 0 0 #fff;
@@ -292,7 +319,6 @@
     background: none repeat scroll 0 0 #73A839;
     color: #fff;
 }
-
 .jsPanel-content.jsPanel-hint-warning{
     background: none repeat scroll 0 0 #DD5600;
     color: #fff;

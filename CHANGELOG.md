@@ -2,6 +2,20 @@
 
 ---
 
+### Version 2.1.0 ###
+
++ HTML & CSS for hints improved
++ try/catch block added to catch errors when element chosen by option.selector doesn't exsist
++ method **closeChildpanels** improved
++ added class **jsPanel-tt** to tooltips
++ **added option.paneltype.solo** for tooltips (if true will close all other tooltips)
++ added function **closeallTooltips()** (used only internally)
++ body click handler removes all tooltips on click in body except click is inside tooltip
++ **fix:** reset controls of smallified panel on resize with mouse (within resizestop handler)
++ extended **option.paneltype** to add arrowlike corners/pointers to tooltips
+
+---
+
 ### Version 2.0 ###
 
 Version 2 is a complete rewrite of the jsPanel jQuery Plugin.

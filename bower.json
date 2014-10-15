@@ -1,0 +1,40 @@
+{
+	"name": "jspanel",
+	"version": "v2.1.0",
+	"description": "A jQuery Plugin to create highly configurable multifunctional floating panels for use in backend solutions and other web applications. Also usable as modal panel, tooltip or hint. With built in support for bootstrap, right-to-left text direction and more ...",
+	"keywords": [
+		"jQuery",
+		"jQuery-UI",
+		"plugin",
+		"jsPanel",
+		"hint",
+		"layout",
+		"popup",
+		"ui",
+		"backend",
+		"floating panel",
+		"modal",
+		"tooltip",
+		"bootstrap"
+	],
+	"main": [
+		"source/jquery.jspanel.js",
+		"source/jsPanel.css"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/flyer53/jspanel"
+	},
+	"ignore": [
+		"**/*.txt"
+	],
+	"dependencies": {
+		"jquery": ">=1.7",
+		"jquery-ui": ">=1.9"
+	},
+	"authors": [
+		{ "name": "Stefan Straesser", "email": "info@jspanel.de", "homepage": "http://jspanel.de/" }
+	],
+	"license": "MIT",
+	"homepage": "http://jspanel.de/"
+}
