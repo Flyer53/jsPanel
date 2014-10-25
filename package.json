@@ -6,9 +6,6 @@
 		"source/jquery.jspanel.js",
 		"source/jsPanel.css"
 	],
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "dependencies": {
     "jquery": "^2.1.1",
     "jquery-ui": "^1.10.5"
