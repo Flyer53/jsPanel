@@ -1,0 +1,41 @@
+{
+  "name": "jspanel",
+  "version": "2.1.0",
+  "description": "A jQuery Plugin to create highly configurable floating panels for use in a backend solution and other web applications",
+  "main": [
+		"source/jquery.jspanel.js",
+		"source/jsPanel.css"
+	],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "jquery": "^2.1.1",
+    "jquery-ui": "^1.10.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/flyer53/jspanel"
+  },
+  "keywords": [
+    "jquery-plugin",
+    "jsPanel",
+    "panel",
+    "ui",
+    "layout",
+    "popup",
+    "widget",
+    "window",
+    "modal",
+    "tooltip",
+    "hint",
+    "bootstrap"
+  ],
+  "author": {
+    "name": "Stefan Straesser",
+    "url": "http://stefanstraesser.eu/",
+    "email": "info@jspanel.de"
+  },
+  "homepage": "http://jspanel.de",
+  "license": "MIT"
+}
