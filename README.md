@@ -1,23 +1,26 @@
-###NEWS:###
+##[jsPanel](#)##
 
-**2014-11-11 Public beta of version 2.2.0: [http://jspanel.de/beta/](http://jspanel.de/beta/)**
- 
----
+**A jQuery plugin to create multifunctional floating panels.**
 
-**Current version 2.1.0: [http://jspanel.de/](http://jspanel.de/)**
+A **jsPanel** can be used as a floating, **draggable and resizable panel**, as **modal**, as **tooltip** and even as a **hint**.
+Configuration options include **additional toolbars** for header and/or footer sections, **support for right-to-left text direction**,
+built in **bootstrap support**, 13 **themes** and much more.
 
-A jQuery plugin to create highly configurable multifunctional floating panels for use in backend solutions and other web applications.
-Also usable as modal panel, tooltip or hint. With built in support for bootstrap, right-to-left text direction and more ...
+Various options allow for a flexible way to add content to a jsPanel, including AJAX support.
 
----
+Existing jsPanel sections and contents are easily accessed via various properties, and methods and events offer interaction with it.
+
+![jsPanel jQuery Plugin](https://github.com/Flyer53/jsPanel/raw/master/jsPanel.jpg)
+
+**Current version 2.1.0**
+
+**Latest beta of version 2.2.0 at [http://jspanel.de/beta/](http://jspanel.de/beta/)**
 
 ###jsPanel homepage: [http://jspanel.de](http://jspanel.de/)###
 
-For a bunch of examples and the api documentation please visit [http://jspanel.de/api.html](http://jspanel.de/api.html)
+#### API and examples: [http://jspanel.de/api.html](http://jspanel.de/api.html)####
 
 Copyright &copy; 2014 Stefan Sträßer | [stefanstraesser.eu](http://stefanstraesser.eu)
-
-![jsPanel jQuery Plugin](https://github.com/Flyer53/jsPanel/raw/master/jsPanel.jpg)
 
 ---
 
