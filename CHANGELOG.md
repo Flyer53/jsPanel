@@ -2,6 +2,18 @@
 
 ---
 
+### Version 2.2.0 ###
+
++ new **option.iframe** to ease the use of iframes as content
++ new **option.dblclicks** to add doubleclick handlers for title, content and footer sections
++ new method **jsPanel.control(action, ctrl)** to disable/enable individual controls of existing panel
++ added **jsGlyph iconfont** included to get rid of the icon sprite image
++ **option.controls** extended to disable individual controls on panel creation
++ improved: title width now automatically adjust not to exceed jsPanel width
++ various bugfixes
+
+---
+
 ### Version 2.1.0 ###
 
 + HTML & CSS for hints improved

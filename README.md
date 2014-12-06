@@ -1,4 +1,4 @@
-##[jsPanel](#)##
+##[jsPanel 2.2.0 released 2014-12-06](#)##
 
 **A jQuery plugin to create multifunctional floating panels.**
 
@@ -12,13 +12,13 @@ Existing jsPanel sections and contents are easily accessed via various propertie
 
 ![jsPanel jQuery Plugin](https://github.com/Flyer53/jsPanel/raw/master/jsPanel.jpg)
 
-**Current version 2.1.0**
-
-**Latest beta of version 2.2.0 at [http://jspanel.de/beta/](http://jspanel.de/beta/)**
+**Current version 2.2.0**
 
 ###jsPanel homepage: [http://jspanel.de](http://jspanel.de/)###
 
 #### API and examples: [http://jspanel.de/api.html](http://jspanel.de/api.html)####
+
+#### more documentation: [http://jspanel.de/documentation](http://jspanel.de/documentation/)####
 
 Copyright &copy; 2014 Stefan Sträßer | [stefanstraesser.eu](http://stefanstraesser.eu)
 

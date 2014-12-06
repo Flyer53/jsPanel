@@ -1,3 +1,25 @@
+/* jsPanel.css version 2.2.0 - 2014-11-28 15:56 */
+@font-face {
+    font-family: 'jsglyphregular';
+    src: url('fonts/jsglyph.eot');
+    src: url('fonts/jsglyph.eot?#iefix') format('embedded-opentype'),
+         url('fonts/jsglyph.woff2') format('woff2'),
+         url('fonts/jsglyph.woff') format('woff'),
+         url('fonts/jsglyph.ttf') format('truetype'),
+         url('fonts/jsglyph.svg#jsglyphregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+.jsglyph{ font-family: "jsglyphregular"; }
+
+.jsglyph-remove:before{ content: "\e007"; } /* unicode &#xe007; */
+.jsglyph-minimize:before{ content: "\e001"; }
+.jsglyph-maximize:before{ content: "\e002"; }
+.jsglyph-chevron-up:before{ content: "\e003"; }
+.jsglyph-chevron-down:before{ content: "\e004"; }
+.jsglyph-normalize:before{ content: "\e005"; }
+.jsglyph-circle2-exclamationmark:before{ content:"\e02c"; color:red; font-size:14px; }
+
 .jsPanel, .jsPanel-hdr-r, .jsPanel-hdr-l, .jsPanel-hdr-r span img, .jsPanel-content{
     margin: 0; padding: 0; border: 0; font-size: 100%; line-height: 1.5em; vertical-align: baseline;
 }
@@ -8,24 +30,25 @@
     border-radius: 3px;
 }
 .jsPanel-hdr{
-    font-size: 14px;
-    padding: 2px;
-    min-height: 25px;
+    min-height: 28px;
+    padding: 2px 0 4px 2px;
+}
+.jsPanel-hdr *{
+    font-size: 18px;
 }
 .jsPanel-hdr-r{
-    float: right;
-    font-size: 16px;
-    margin: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
 }
-.jsPanel-title{
+h3.jsPanel-title{
     float: left;
-    width: calc(100% - 100px);
+    width: calc(100% - 90px);
     white-space: nowrap;
     overflow: hidden;
     text-align: left;
     text-overflow: ellipsis;
     margin: 0;
-    font-size: 14px;
     font-variant: small-caps;
     font-weight: normal;
     cursor: move;
@@ -36,8 +59,10 @@
     float: right;
     cursor: pointer;
 	margin-left: 1px;
-    width: 20px;
-    height: 20px;
+    width: auto;
+    height: auto;
+    min-width: 20px;
+    min-height: 20px;
     overflow: hidden;
 }
 
@@ -51,7 +76,8 @@
 
 .jsPanel-hdr-toolbar {
     clear: both;
-    font-size: 14px;
+    font-size: 18px;
+    margin-top: 25px;
     height: auto;
     padding: 0 5px;
     width: auto;
@@ -101,7 +127,7 @@
     left:0;
     bottom:0;
     width:auto;
-    height:25px;
+    height:28px;
     background:transparent;
     z-index:1000;
 }
@@ -134,6 +160,10 @@
 .jsPanel-hdr.jsPanel-theme-default h3{
     color: #000;
 }
+.jsPanel-hdr.jsPanel-theme-default h3 small{
+    color: #000;
+    font-size: 65%;
+}
 .jsPanel-content.jsPanel-theme-default{
     background: none repeat scroll 0 0 #FFFFFF;
     color: #000;
@@ -151,30 +181,34 @@
 
 /* light ------------------------------------------- */
 .jsPanel.jsPanel-theme-light{ background: none repeat scroll 0 0 #eee; box-shadow: 0 0 6px rgba(0, 33, 50, 0.1), 0 7px 25px rgba(17, 38, 60, 0.4); }
-.jsPanel-hdr.jsPanel-theme-light{ color: #000; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: linear-gradient(to bottom,  rgba(0,0,0,0) 0%,rgba(250,250,250,0.65) 100%); }
+.jsPanel-hdr.jsPanel-theme-light{ color: #000; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: linear-gradient(to bottom,  rgba(0,0,0,0) 0%,rgba(250,250,250,0.65) 100%); background: -ms-linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(250,250,250,0.65) 100%); }
 .jsPanel-hdr.jsPanel-theme-light h3{ color: #000; }
+.jsPanel-hdr.jsPanel-theme-light h3 small{ color: #000; font-size: 65%; }
 .jsPanel-content.jsPanel-theme-light { background: none repeat scroll 0 0 #FFFFFF; color: #000; font-family: tahoma,arial,verdana,sans-serif; outline: 1px solid #bbb; }
-.jsPanel-ftr.jsPanel-theme-light{ color: #000; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: linear-gradient(to bottom,  rgba(0,0,0,0) 0%,rgba(250,250,250,0.65) 100%); }
+.jsPanel-ftr.jsPanel-theme-light{ color: #000; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: linear-gradient(to bottom,  rgba(0,0,0,0) 0%,rgba(250,250,250,0.65) 100%); background: -ms-linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(250,250,250,0.65) 100%); }
 
 /* medium -------------------------------------------- */
 .jsPanel.jsPanel-theme-medium{ background: none repeat scroll 0 0 #fff; box-shadow: 0 0 6px rgba(0, 33, 50, 0.1), 0 7px 25px rgba(17, 38, 60, 0.4); }
-.jsPanel-hdr.jsPanel-theme-medium{ color: #000; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(130, 130, 130, 1) 100%); }
+.jsPanel-hdr.jsPanel-theme-medium{ color: #000; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(130, 130, 130, 1) 100%); background: -ms-linear-gradient(top, rgba(0, 0, 0, 0) 0%, rgba(130, 130, 130, 1) 100%); }
 .jsPanel-hdr.jsPanel-theme-medium h3{ color: #000; }
+.jsPanel-hdr.jsPanel-theme-medium h3 small{ color: #000; font-size: 65%; }
 .jsPanel-content.jsPanel-theme-medium { background: none repeat scroll 0 0 #fff; color: #000; font-family: tahoma,arial,verdana,sans-serif; outline: 1px solid #bbb; }
-.jsPanel-ftr.jsPanel-theme-medium{ color: #000; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(130, 130, 130, 1) 100%); }
+.jsPanel-ftr.jsPanel-theme-medium{ color: #000; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(130, 130, 130, 1) 100%); background: -ms-linear-gradient(top, rgba(0, 0, 0, 0) 0%, rgba(130, 130, 130, 1) 100%); }
 
 /* dark ---------------------------------------------- */
 .jsPanel.jsPanel-theme-dark{ background: none repeat scroll 0 0 #fff; box-shadow: 0 0 6px rgba(0, 33, 50, 0.1), 0 7px 25px rgba(17, 38, 60, 0.4); }
-.jsPanel-hdr.jsPanel-theme-dark{ color: #fff; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: linear-gradient(to bottom, rgba(181,189,200,1) 0%,rgba(130,140,149,1) 36%,rgba(40,52,59,1) 100%); }
+.jsPanel-hdr.jsPanel-theme-dark{ color: #fff; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: linear-gradient(to bottom, rgba(181,189,200,1) 0%,rgba(130,140,149,1) 36%,rgba(40,52,59,1) 100%); background: -ms-linear-gradient(top, rgba(181,189,200,1) 0%,rgba(130,140,149,1) 36%,rgba(40,52,59,1) 100%); }
 .jsPanel-hdr.jsPanel-theme-dark h3{ color: #fff; }
+.jsPanel-hdr.jsPanel-theme-dark h3 small{ color: #fff; font-size: 65%; }
 .jsPanel-content.jsPanel-theme-dark { background: none repeat scroll 0 0 #fff; color: #000; font-family: tahoma,arial,verdana,sans-serif; outline: 1px solid #bbb; }
-.jsPanel-ftr.jsPanel-theme-dark{ color: #fff; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: linear-gradient(to bottom, rgba(181,189,200,1) 0%,rgba(130,140,149,1) 36%,rgba(40,52,59,1) 100%); }
+.jsPanel-ftr.jsPanel-theme-dark{ color: #fff; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: linear-gradient(to bottom, rgba(181,189,200,1) 0%,rgba(130,140,149,1) 36%,rgba(40,52,59,1) 100%); background: -ms-linear-gradient(top, rgba(181,189,200,1) 0%,rgba(130,140,149,1) 36%,rgba(40,52,59,1) 100%); }
 
 /* black ---------------------------------------------- */
 /* .jsPanel.jsPanel-theme-black{ background: -moz-linear-gradient(center top , #4a4a4a 0px, black 100%) repeat scroll 0 0 #4a4a4a; box-shadow: 0 0 3px #333; } */
-.jsPanel.jsPanel-theme-black{ background: linear-gradient(#4a4a4a 0px, black 100%) repeat scroll 0 0 #4a4a4a; box-shadow: 0 0 3px #333; }
+.jsPanel.jsPanel-theme-black{ background: linear-gradient(#4a4a4a 0px, black 100%) repeat scroll 0 0 #4a4a4a; background: -ms-linear-gradient(#4a4a4a 0px, black 100%) repeat scroll 0 0 #4a4a4a; box-shadow: 0 0 3px #333; }
 .jsPanel-hdr.jsPanel-theme-black{ color: #fff; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: transparent; }
 .jsPanel-hdr.jsPanel-theme-black h3{ color: #fff; }
+.jsPanel-hdr.jsPanel-theme-black h3 small{ color: #fff; font-size: 65%; }
 .jsPanel-content.jsPanel-theme-black { background: transparent; color: #c3c3c3; }
 .jsPanel-ftr.jsPanel-theme-black{ color: #fff; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: transparent; }
 
@@ -182,6 +216,7 @@
 .jsPanel.jsPanel-theme-primary{ background: none repeat scroll 0 0 #fff; box-shadow: 0 0 6px rgba(0, 33, 50, 0.1), 0 7px 25px rgba(17, 38, 60, 0.4); }
 .jsPanel-hdr.jsPanel-theme-primary{ color: #ffffff; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: #2FA4E7; }
 .jsPanel-hdr.jsPanel-theme-primary h3{ color: #fff; }
+.jsPanel-hdr.jsPanel-theme-primary h3 small{ color: #fff; font-size: 65%; }
 .jsPanel-content.jsPanel-theme-primary { background: none repeat scroll 0 0 #ffffff; color: #000000; font-family: tahoma,arial,verdana,sans-serif; outline: 1px solid #bbb; }
 .jsPanel-ftr.jsPanel-theme-primary{}
 
@@ -189,6 +224,7 @@
 .jsPanel.jsPanel-theme-success{ background: none repeat scroll 0 0 #fff; box-shadow: 0 0 6px rgba(0, 33, 50, 0.1), 0 7px 25px rgba(17, 38, 60, 0.4); }
 .jsPanel-hdr.jsPanel-theme-success{ color: #fff; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: #73A839; }
 .jsPanel-hdr.jsPanel-theme-success h3{ color: #fff; }
+.jsPanel-hdr.jsPanel-theme-success h3 small{ color: #fff; font-size: 65%; }
 .jsPanel-content.jsPanel-theme-success { background: none repeat scroll 0 0 #ffffff; color: #000000; font-family: tahoma,arial,verdana,sans-serif; outline: 1px solid #bbb; }
 .jsPanel-ftr.jsPanel-theme-success{}
 
@@ -196,6 +232,7 @@
 .jsPanel.jsPanel-theme-info{ background: none repeat scroll 0 0 #fff; box-shadow: 0 0 6px rgba(0, 33, 50, 0.1), 0 7px 25px rgba(17, 38, 60, 0.4); }
 .jsPanel-hdr.jsPanel-theme-info{ color: #fff; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: #033C73; }
 .jsPanel-hdr.jsPanel-theme-info h3{ color: #fff; }
+.jsPanel-hdr.jsPanel-theme-info h3 small{ color: #fff; font-size: 65%; }
 .jsPanel-content.jsPanel-theme-info { background: none repeat scroll 0 0 #ffffff; color: #000000; font-family: tahoma,arial,verdana,sans-serif; outline: 1px solid #bbb; }
 .jsPanel-ftr.jsPanel-theme-info{}
 
@@ -203,6 +240,7 @@
 .jsPanel.jsPanel-theme-warning{ background: none repeat scroll 0 0 #fff; box-shadow: 0 0 6px rgba(0, 33, 50, 0.1), 0 7px 25px rgba(17, 38, 60, 0.4); }
 .jsPanel-hdr.jsPanel-theme-warning{ color: #fff; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: #DD5600; }
 .jsPanel-hdr.jsPanel-theme-warning h3{ color: #fff; }
+.jsPanel-hdr.jsPanel-theme-warning h3 small{ color: #fff; font-size: 65%; }
 .jsPanel-content.jsPanel-theme-warning { background: none repeat scroll 0 0 #fff; color: #000; font-family: tahoma,arial,verdana,sans-serif; outline: 1px solid #bbb; }
 .jsPanel-ftr.jsPanel-theme-warning{}
 
@@ -210,6 +248,7 @@
 .jsPanel.jsPanel-theme-danger{ background: none repeat scroll 0 0 #fff; box-shadow: 0 0 6px rgba(0, 33, 50, 0.1), 0 7px 25px rgba(17, 38, 60, 0.4); }
 .jsPanel-hdr.jsPanel-theme-danger{ color: #fff; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: #C71C22; }
 .jsPanel-hdr.jsPanel-theme-danger h3{ color: #fff; }
+.jsPanel-hdr.jsPanel-theme-danger h3 small{ color: #fff; font-size: 65%; }
 .jsPanel-content.jsPanel-theme-danger { background: none repeat scroll 0 0 #ffffff; color: #000000; font-family: tahoma,arial,verdana,sans-serif; outline: 1px solid #bbb; }
 .jsPanel-ftr.jsPanel-theme-danger{}
 
@@ -217,22 +256,25 @@
 .jsPanel.jsPanel-theme-autumngreen{ background: none repeat scroll 0 0 #eee; box-shadow: 0 0 6px rgba(0, 33, 50, 0.1), 0 7px 25px rgba(17, 38, 60, 0.4); }
 .jsPanel-hdr.jsPanel-theme-autumngreen{ color: rgb(196, 189, 142); font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: rgb(125, 126, 81); }
 .jsPanel-hdr.jsPanel-theme-autumngreen h3{ color: rgb(196, 189, 142); }
+.jsPanel-hdr.jsPanel-theme-autumngreen h3 small{ color: #fff; font-size: 65%; }
 .jsPanel-content.jsPanel-theme-autumngreen { background: none repeat scroll 0 0 #FFFFFF; color: rgb(110, 100, 73); font-family: tahoma,arial,verdana,sans-serif; outline: 1px solid #bbb; }
-.jsPanel-ftr.jsPanel-theme-autumngreen{ background: linear-gradient(to bottom,  rgba(125, 126, 81,0.65) 0%,rgba(0,0,0,0) 100%); color: rgb(110, 100, 73); }
+.jsPanel-ftr.jsPanel-theme-autumngreen{ background: linear-gradient(to bottom,  rgba(125, 126, 81,0.65) 0%,rgba(0,0,0,0) 100%); background: -ms-linear-gradient(top,  rgba(125, 126, 81,0.65) 0%,rgba(0,0,0,0) 100%); color: rgb(110, 100, 73); }
 
 /* autumnbrown ------------------------------------------- */
 .jsPanel.jsPanel-theme-autumnbrown{ background: none repeat scroll 0 0 #eee; box-shadow: 0 0 6px rgba(0, 33, 50, 0.1), 0 7px 25px rgba(17, 38, 60, 0.4); }
 .jsPanel-hdr.jsPanel-theme-autumnbrown{ color: rgb(233, 206, 135); font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: rgb(138, 91, 51); }
 .jsPanel-hdr.jsPanel-theme-autumnbrown h3{ color: rgb(233, 206, 135); }
+.jsPanel-hdr.jsPanel-theme-autumnbrown h3 small{ color: #fff; font-size: 65%; }
 .jsPanel-content.jsPanel-theme-autumnbrown { background: none repeat scroll 0 0 #FFFFFF; color: rgb(110, 100, 73); font-family: tahoma,arial,verdana,sans-serif; outline: 1px solid #bbb; }
-.jsPanel-ftr.jsPanel-theme-autumnbrown{ background: linear-gradient(to bottom,  rgba(138, 91, 51,0.65) 0%,rgba(0,0,0,0) 100%); color: rgb(110, 100, 73); }
+.jsPanel-ftr.jsPanel-theme-autumnbrown{ background: linear-gradient(to bottom,  rgba(138, 91, 51,0.65) 0%,rgba(0,0,0,0) 100%); background: -ms-linear-gradient(top,  rgba(138, 91, 51,0.65) 0%,rgba(0,0,0,0) 100%); color: rgb(110, 100, 73); }
 
 /* autumnred ------------------------------------------- */
 .jsPanel.jsPanel-theme-autumnred{ background: none repeat scroll 0 0 #eee; box-shadow: 0 0 6px rgba(0, 33, 50, 0.1), 0 7px 25px rgba(17, 38, 60, 0.4); }
 .jsPanel-hdr.jsPanel-theme-autumnred{ color: rgb(233, 206, 135); font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: rgb(198, 113, 10); }
 .jsPanel-hdr.jsPanel-theme-autumnred h3{ color: rgb(233, 206, 135); }
+.jsPanel-hdr.jsPanel-theme-autumnred h3 small{ color: #fff; font-size: 65%; }
 .jsPanel-content.jsPanel-theme-autumnred { background: none repeat scroll 0 0 #FFFFFF; color: rgb(110, 100, 73); font-family: tahoma,arial,verdana,sans-serif; outline: 1px solid #bbb; }
-.jsPanel-ftr.jsPanel-theme-autumnred{ background: linear-gradient(to bottom,  rgba(198, 113, 10,0.65) 0%,rgba(0,0,0,0) 100%); color: rgb(110, 100, 73); }
+.jsPanel-ftr.jsPanel-theme-autumnred{ background: linear-gradient(to bottom,  rgba(198, 113, 10,0.65) 0%,rgba(0,0,0,0) 100%); background: -ms-linear-gradient(top,  rgba(198, 113, 10,0.65) 0%,rgba(0,0,0,0) 100%); color: rgb(110, 100, 73); }
 
 /* bootstrap adjustments */
 .jsPanel.panel-default, .jsPanel.panel-primary, .jsPanel.panel-info, .jsPanel.panel-success, .jsPanel.panel-warning, .jsPanel.panel-danger{
@@ -284,27 +326,27 @@
     color: #000;
 }
 .jsPanel-content.jsPanel-hint-light{
-    background: linear-gradient(to bottom,  rgba(0,0,0,0) 0%,rgba(250,250,250,0.65) 100%);
+    background: linear-gradient(to bottom,  rgba(0,0,0,0) 0%,rgba(250,250,250,0.65) 100%); background: -ms-linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(250,250,250,0.65) 100%);
     color: #000;
 }
 .jsPanel-content.jsPanel-hint-medium{
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(130, 130, 130, 1) 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(130, 130, 130, 1) 100%); background: -ms-linear-gradient(top, rgba(0, 0, 0, 0) 0%, rgba(130, 130, 130, 1) 100%);
     color: #fff;
 }
 .jsPanel-content.jsPanel-hint-dark{
-    background: linear-gradient(to bottom, rgba(181,189,200,1) 0%,rgba(130,140,149,1) 36%,rgba(40,52,59,1) 100%);
+    background: linear-gradient(to bottom, rgba(181,189,200,1) 0%,rgba(130,140,149,1) 36%,rgba(40,52,59,1) 100%); background: -ms-linear-gradient(top, rgba(181,189,200,1) 0%,rgba(130,140,149,1) 36%,rgba(40,52,59,1) 100%);
     color: #fff;
 }
 .jsPanel-content.jsPanel-hint-autumngreen{
-    background: linear-gradient(to bottom,  rgba(125, 126, 81,0.65) 0%,rgba(0,0,0,0) 100%); color: rgb(110, 100, 73);
+    background: linear-gradient(to bottom,  rgba(125, 126, 81,0.65) 0%,rgba(0,0,0,0) 100%); color: rgb(110, 100, 73); background: -ms-linear-gradient(top,  rgba(125, 126, 81,0.65) 0%,rgba(0,0,0,0) 100%); color: rgb(110, 100, 73);
     color: #fff;
 }
 .jsPanel-content.jsPanel-hint-autumnbrown{
-    background: linear-gradient(to bottom,  rgba(138, 91, 51,0.65) 0%,rgba(0,0,0,0) 100%); color: rgb(110, 100, 73);
+    background: linear-gradient(to bottom,  rgba(138, 91, 51,0.65) 0%,rgba(0,0,0,0) 100%); color: rgb(110, 100, 73); background: -ms-linear-gradient(top,  rgba(138, 91, 51,0.65) 0%,rgba(0,0,0,0) 100%); color: rgb(110, 100, 73);
     color: #fff;
 }
 .jsPanel-content.jsPanel-hint-autumnred{
-    background: linear-gradient(to bottom,  rgba(198, 113, 10,0.65) 0%,rgba(0,0,0,0) 100%); color: rgb(110, 100, 73);
+    background: linear-gradient(to bottom,  rgba(198, 113, 10,0.65) 0%,rgba(0,0,0,0) 100%); color: rgb(110, 100, 73); background: -ms-linear-gradient(top,  rgba(198, 113, 10,0.65) 0%,rgba(0,0,0,0) 100%); color: rgb(110, 100, 73);
     color: #fff;
 }
 .jsPanel-content.jsPanel-hint-primary{
