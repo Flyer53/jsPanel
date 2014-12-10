@@ -1,4 +1,4 @@
-##[jsPanel 2.2.0 released 2014-12-06](#)##
+##[jsPanel 2.2.1 released 2014-12-10](#)##
 
 **A jQuery plugin to create multifunctional floating panels.**
 
@@ -8,11 +8,11 @@ built in **bootstrap support**, 13 **themes** and much more.
 
 Various options allow for a flexible way to add content to a jsPanel, including AJAX support.
 
-Existing jsPanel sections and contents are easily accessed via various properties, and methods and events offer interaction with it.
+Existing jsPanel sections and contents are easily accessed via various properties. Methods and events offer interaction with it.
 
 ![jsPanel jQuery Plugin](https://github.com/Flyer53/jsPanel/raw/master/jsPanel.jpg)
 
-**Current version 2.2.0**
+**Current version 2.2.1**
 
 ###jsPanel homepage: [http://jspanel.de](http://jspanel.de/)###
 
