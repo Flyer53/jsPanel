@@ -1,6 +1,6 @@
 /* global console, MobileDetect */
 /* jQuery Plugin jsPanel
- Version: 2.2.1 2014-12-09 16:08
+ Version: 2.2.2 2014-12-11 11:47
  Dependencies:
      jQuery library ( > 1.7.0 incl. 2.1.1 )
      jQuery.UI library ( > 1.9.0 ) - (at least UI Core, Mouse, Widget, Draggable, Resizable)
@@ -31,12 +31,9 @@
  */
 
 /*
- ### changes in 2.2.1 ###
- + bugfix in the handling of the controls, only relevant for child panels within a parent panel
- + new parameter "maxtoScreen" in option.controls; enables fullscreen maximize of panels appended to an element other than "body"
-   (on request of devmondo)
- + event handling improved
- + function autoclose improved
+ ### changes in 2.2.2 ###
+ + apearance of disabled controls improved (change in jsPanel.control())
+ + z-index minimum 100 (change in jsPanel.setZi()); reason was the sticky nav of foundation which has a z-index of 99
 */
 
 var jsPanel;
@@ -44,7 +41,7 @@ var jsPanel;
 (function($){
     "use strict";
     jsPanel = {
-        version: '2.2.1 2014-12-09 16:08',
+        version: '2.2.2 2014-12-11 11:47',
         ID: 0,                  // kind of a counter to add to automatically generated id attribute
         widthForMinimized: 150, // default width of minimized panels
         hintsTc: [],            // arrays that log hints for option.position 'top center', 'top left' and 'top right'
@@ -502,9 +499,6 @@ var jsPanel;
 
                 if (arguments[1] === 'disable') {
 
-                    // safe font color of header controls in property
-                    panel.fcHeader = $('.jsPanel-hdr', panel).css('color');
-
                     if (btn === 'close') {
 
                         btn = $('.jsPanel-btn-close', panel.header.controls);
@@ -536,7 +530,7 @@ var jsPanel;
                     }
 
                     // unbind handler and set styles
-                    btn.off().css({color: 'rgb(150,150,150)', cursor: 'default'});
+                    btn.off().css({opacity:0.5, cursor: 'default'});
 
                 } else if (arguments[1] === 'enable') {
 
@@ -578,8 +572,7 @@ var jsPanel;
                         e.preventDefault();
                         panel[btn]();
 
-                    })
-                        .css({color: panel.fcHeader, cursor: 'pointer'});
+                    }).css({opacity: 1, cursor: 'pointer'});
                 }
 
             }
@@ -1440,13 +1433,13 @@ var jsPanel;
 
         setZi: function () {
 
-            var zi = 0;
+            var zi = 100;
 
             $('.jsPanel').each(function () {
 
                 if ($(this).zIndex() > zi) {
 
-                    zi = $(this).zIndex();
+                    zi += $(this).zIndex();
 
                 }
 

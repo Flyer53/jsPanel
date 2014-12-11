@@ -2,6 +2,14 @@
 
 ---
 
+### Version 2.2.2 ###
+
++ solved issue with z-index values when using zurb foundation
++ improved css for disabled controls
++ slightly changed themes light, medium and dark
+
+---
+
 ### Version 2.2.1 ###
 
 + bugfix: configuration of controls (affected only controls of childpanels)

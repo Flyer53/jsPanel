@@ -1,4 +1,4 @@
-/* jsPanel.css version 2.2.0 - 2014-11-28 15:56 */
+/* jsPanel.css version 2.2.1 - 2014-12-10 21:30 */
 @font-face {
     font-family: 'jsglyphregular';
     src: url('fonts/jsglyph.eot');
@@ -180,28 +180,28 @@ h3.jsPanel-title{
 }
 
 /* light ------------------------------------------- */
-.jsPanel.jsPanel-theme-light{ background: none repeat scroll 0 0 #eee; box-shadow: 0 0 6px rgba(0, 33, 50, 0.1), 0 7px 25px rgba(17, 38, 60, 0.4); }
-.jsPanel-hdr.jsPanel-theme-light{ color: #000; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: linear-gradient(to bottom,  rgba(0,0,0,0) 0%,rgba(250,250,250,0.65) 100%); background: -ms-linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(250,250,250,0.65) 100%); }
+.jsPanel.jsPanel-theme-light{ background: #f1f1f1; box-shadow: 0 0 6px rgba(0, 33, 50, 0.1), 0 7px 25px rgba(17, 38, 60, 0.4); }
+.jsPanel-hdr.jsPanel-theme-light{ color: #000; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: #f1f1f1; }
 .jsPanel-hdr.jsPanel-theme-light h3{ color: #000; }
 .jsPanel-hdr.jsPanel-theme-light h3 small{ color: #000; font-size: 65%; }
 .jsPanel-content.jsPanel-theme-light { background: none repeat scroll 0 0 #FFFFFF; color: #000; font-family: tahoma,arial,verdana,sans-serif; outline: 1px solid #bbb; }
-.jsPanel-ftr.jsPanel-theme-light{ color: #000; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: linear-gradient(to bottom,  rgba(0,0,0,0) 0%,rgba(250,250,250,0.65) 100%); background: -ms-linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(250,250,250,0.65) 100%); }
+.jsPanel-ftr.jsPanel-theme-light{ color: #000; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: #f1f1f1; }
 
 /* medium -------------------------------------------- */
-.jsPanel.jsPanel-theme-medium{ background: none repeat scroll 0 0 #fff; box-shadow: 0 0 6px rgba(0, 33, 50, 0.1), 0 7px 25px rgba(17, 38, 60, 0.4); }
-.jsPanel-hdr.jsPanel-theme-medium{ color: #000; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(130, 130, 130, 1) 100%); background: -ms-linear-gradient(top, rgba(0, 0, 0, 0) 0%, rgba(130, 130, 130, 1) 100%); }
+.jsPanel.jsPanel-theme-medium{ background: #c2c2c2; box-shadow: 0 0 6px rgba(0, 33, 50, 0.1), 0 7px 25px rgba(17, 38, 60, 0.4); }
+.jsPanel-hdr.jsPanel-theme-medium{ color: #000; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: #c2c2c2; }
 .jsPanel-hdr.jsPanel-theme-medium h3{ color: #000; }
 .jsPanel-hdr.jsPanel-theme-medium h3 small{ color: #000; font-size: 65%; }
 .jsPanel-content.jsPanel-theme-medium { background: none repeat scroll 0 0 #fff; color: #000; font-family: tahoma,arial,verdana,sans-serif; outline: 1px solid #bbb; }
-.jsPanel-ftr.jsPanel-theme-medium{ color: #000; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(130, 130, 130, 1) 100%); background: -ms-linear-gradient(top, rgba(0, 0, 0, 0) 0%, rgba(130, 130, 130, 1) 100%); }
+.jsPanel-ftr.jsPanel-theme-medium{ color: #000; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: #c2c2c2; }
 
 /* dark ---------------------------------------------- */
-.jsPanel.jsPanel-theme-dark{ background: none repeat scroll 0 0 #fff; box-shadow: 0 0 6px rgba(0, 33, 50, 0.1), 0 7px 25px rgba(17, 38, 60, 0.4); }
-.jsPanel-hdr.jsPanel-theme-dark{ color: #fff; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: linear-gradient(to bottom, rgba(181,189,200,1) 0%,rgba(130,140,149,1) 36%,rgba(40,52,59,1) 100%); background: -ms-linear-gradient(top, rgba(181,189,200,1) 0%,rgba(130,140,149,1) 36%,rgba(40,52,59,1) 100%); }
+.jsPanel.jsPanel-theme-dark{ background: #828282; box-shadow: 0 0 6px rgba(0, 33, 50, 0.1), 0 7px 25px rgba(17, 38, 60, 0.4); }
+.jsPanel-hdr.jsPanel-theme-dark{ color: #fff; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: #828282; }
 .jsPanel-hdr.jsPanel-theme-dark h3{ color: #fff; }
 .jsPanel-hdr.jsPanel-theme-dark h3 small{ color: #fff; font-size: 65%; }
 .jsPanel-content.jsPanel-theme-dark { background: none repeat scroll 0 0 #fff; color: #000; font-family: tahoma,arial,verdana,sans-serif; outline: 1px solid #bbb; }
-.jsPanel-ftr.jsPanel-theme-dark{ color: #fff; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: linear-gradient(to bottom, rgba(181,189,200,1) 0%,rgba(130,140,149,1) 36%,rgba(40,52,59,1) 100%); background: -ms-linear-gradient(top, rgba(181,189,200,1) 0%,rgba(130,140,149,1) 36%,rgba(40,52,59,1) 100%); }
+.jsPanel-ftr.jsPanel-theme-dark{ color: #fff; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: #828282; }
 
 /* black ---------------------------------------------- */
 /* .jsPanel.jsPanel-theme-black{ background: -moz-linear-gradient(center top , #4a4a4a 0px, black 100%) repeat scroll 0 0 #4a4a4a; box-shadow: 0 0 3px #333; } */

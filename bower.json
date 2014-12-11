@@ -1,6 +1,6 @@
 {
 	"name": "jspanel",
-	"version": "v2.2.1",
+	"version": "v2.2.2",
 	"description": "A jQuery Plugin to create highly configurable multifunctional floating panels for use in backend solutions and other web applications. Also usable as modal panel, tooltip or hint. With built in support for bootstrap, right-to-left text direction and more ...",
 	"keywords": [
 		"jQuery",
@@ -29,7 +29,7 @@
 		"**/*.txt"
 	],
 	"dependencies": {
-		"jquery": ">=1.7",
+		"jquery": ">=1.9.1",
 		"jquery-ui": ">=1.9"
 	},
 	"authors": [
