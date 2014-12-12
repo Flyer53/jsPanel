@@ -10,7 +10,7 @@ Various options allow for a flexible way to add content to a jsPanel, including 
 
 Existing jsPanel sections and contents are easily accessed via various properties. Methods and events offer interaction with it.
 
-![jsPanel jQuery Plugin](https://github.com/Flyer53/jsPanel/raw/master/jsPanel.jpg)
+![jsPanel jQuery Plugin](https://github.com/Flyer53/jsPanel/raw/master/jsPanel-comp.png)
 
 **Current version 2.2.2**
 
