@@ -1,6 +1,6 @@
 /* global console, MobileDetect */
 /* jQuery Plugin jsPanel
- Version: 2.2.2 2014-12-11 11:47
+ Version: 2.2.3 2014-12-14 12:30
  Dependencies:
      jQuery library ( > 1.7.0 incl. 2.1.1 )
      jQuery.UI library ( > 1.9.0 ) - (at least UI Core, Mouse, Widget, Draggable, Resizable)
@@ -31,7 +31,7 @@
  */
 
 /*
- ### changes in 2.2.2 ###
+ ### changes in 2.2.2 | in version 2.2.3 only css changed ###
  + apearance of disabled controls improved (change in jsPanel.control())
  + z-index minimum 100 (change in jsPanel.setZi()); reason was the sticky nav of foundation which has a z-index of 99
 */
@@ -41,7 +41,7 @@ var jsPanel;
 (function($){
     "use strict";
     jsPanel = {
-        version: '2.2.2 2014-12-11 11:47',
+        version: '2.2.3 2014-12-14 12:30',
         ID: 0,                  // kind of a counter to add to automatically generated id attribute
         widthForMinimized: 150, // default width of minimized panels
         hintsTc: [],            // arrays that log hints for option.position 'top center', 'top left' and 'top right'

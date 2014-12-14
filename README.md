@@ -1,4 +1,4 @@
-##[jsPanel 2.2.2 released 2014-12-11](#)##
+##[jsPanel 2.2.3 released 2014-12-14](#)##
 
 **A jQuery plugin to create multifunctional floating panels.**
 
@@ -12,7 +12,7 @@ Existing jsPanel sections and contents are easily accessed via various propertie
 
 ![jsPanel jQuery Plugin](https://github.com/Flyer53/jsPanel/raw/master/jsPanel-comp.png)
 
-**Current version 2.2.2**
+**Current version 2.2.3**
 
 ###jsPanel homepage: [http://jspanel.de](http://jspanel.de/)###
 
@@ -30,10 +30,6 @@ Copyright &copy; 2014 Stefan Sträßer | [stefanstraesser.eu](http://stefanstrae
 Using bower don't use the camelcase spelling of jsPanel. Use only lower case **jspanel**
 
 <code>bower install jspanel</code>
-
-####npm####
-
-<code>npm install jspanel</code>
 
 ####Angular####
 Since I didn't work with Angular so far, I can't say very much about using jsPanel with Angular. Nevertheless I can say that:

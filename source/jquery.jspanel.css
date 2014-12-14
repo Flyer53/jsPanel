@@ -1,4 +1,4 @@
-/* jsPanel.css version 2.2.1 - 2014-12-10 21:30 */
+/* jsPanel.css version 2.2.3 - 2014-12-14 12:09 */
 @font-face {
     font-family: 'jsglyphregular';
     src: url('fonts/jsglyph.eot');
@@ -321,51 +321,51 @@ h3.jsPanel-title{
 .jsPanel-hint-close-white{
     background: url('images/close-20.png');
 }
-.jsPanel-content.jsPanel-hint-default{
+.jsPanel-hint-content.jsPanel-hint-default{
     background: none repeat scroll 0 0 #fff;
     color: #000;
 }
-.jsPanel-content.jsPanel-hint-light{
+.jsPanel-hint-content.jsPanel-hint-light{
     background: linear-gradient(to bottom,  rgba(0,0,0,0) 0%,rgba(250,250,250,0.65) 100%); background: -ms-linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(250,250,250,0.65) 100%);
     color: #000;
 }
-.jsPanel-content.jsPanel-hint-medium{
+.jsPanel-hint-content.jsPanel-hint-medium{
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(130, 130, 130, 1) 100%); background: -ms-linear-gradient(top, rgba(0, 0, 0, 0) 0%, rgba(130, 130, 130, 1) 100%);
     color: #fff;
 }
-.jsPanel-content.jsPanel-hint-dark{
+.jsPanel-hint-content.jsPanel-hint-dark{
     background: linear-gradient(to bottom, rgba(181,189,200,1) 0%,rgba(130,140,149,1) 36%,rgba(40,52,59,1) 100%); background: -ms-linear-gradient(top, rgba(181,189,200,1) 0%,rgba(130,140,149,1) 36%,rgba(40,52,59,1) 100%);
     color: #fff;
 }
-.jsPanel-content.jsPanel-hint-autumngreen{
-    background: linear-gradient(to bottom,  rgba(125, 126, 81,0.65) 0%,rgba(0,0,0,0) 100%); color: rgb(110, 100, 73); background: -ms-linear-gradient(top,  rgba(125, 126, 81,0.65) 0%,rgba(0,0,0,0) 100%); color: rgb(110, 100, 73);
+.jsPanel-hint-content.jsPanel-hint-autumngreen{
+    background: linear-gradient(to bottom,  rgba(125, 126, 81,0.65) 0%,rgba(0,0,0,0) 100%); background: -ms-linear-gradient(top,  rgba(125, 126, 81,0.65) 0%,rgba(0,0,0,0) 100%);
     color: #fff;
 }
-.jsPanel-content.jsPanel-hint-autumnbrown{
-    background: linear-gradient(to bottom,  rgba(138, 91, 51,0.65) 0%,rgba(0,0,0,0) 100%); color: rgb(110, 100, 73); background: -ms-linear-gradient(top,  rgba(138, 91, 51,0.65) 0%,rgba(0,0,0,0) 100%); color: rgb(110, 100, 73);
+.jsPanel-hint-content.jsPanel-hint-autumnbrown{
+    background: linear-gradient(to bottom,  rgba(138, 91, 51,0.65) 0%,rgba(0,0,0,0) 100%); background: -ms-linear-gradient(top,  rgba(138, 91, 51,0.65) 0%,rgba(0,0,0,0) 100%);
     color: #fff;
 }
-.jsPanel-content.jsPanel-hint-autumnred{
-    background: linear-gradient(to bottom,  rgba(198, 113, 10,0.65) 0%,rgba(0,0,0,0) 100%); color: rgb(110, 100, 73); background: -ms-linear-gradient(top,  rgba(198, 113, 10,0.65) 0%,rgba(0,0,0,0) 100%); color: rgb(110, 100, 73);
+.jsPanel-hint-content.jsPanel-hint-autumnred{
+    background: linear-gradient(to bottom,  rgba(198, 113, 10,0.65) 0%,rgba(0,0,0,0) 100%); background: -ms-linear-gradient(top,  rgba(198, 113, 10,0.65) 0%,rgba(0,0,0,0) 100%);
     color: #fff;
 }
-.jsPanel-content.jsPanel-hint-primary{
+.jsPanel-hint-content.jsPanel-hint-primary{
     background: none repeat scroll 0 0 #2FA4E7;
     color: #fff;
 }
-.jsPanel-content.jsPanel-hint-info{
+.jsPanel-hint-content.jsPanel-hint-info{
     background: none repeat scroll 0 0 #033C73;
     color: #fff;
 }
-.jsPanel-content.jsPanel-hint-success{
+.jsPanel-hint-content.jsPanel-hint-success{
     background: none repeat scroll 0 0 #73A839;
     color: #fff;
 }
-.jsPanel-content.jsPanel-hint-warning{
+.jsPanel-hint-content.jsPanel-hint-warning{
     background: none repeat scroll 0 0 #DD5600;
     color: #fff;
 }
-.jsPanel-content.jsPanel-hint-danger{
+.jsPanel-hint-content.jsPanel-hint-danger{
     background: none repeat scroll 0 0 #C71C22;
     color: #fff;
 }

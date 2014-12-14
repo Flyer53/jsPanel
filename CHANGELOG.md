@@ -2,6 +2,12 @@
 
 ---
 
+### Version 2.2.3 ###
+
++ bugfix in the jsPanel css files concerning hints
+
+---
+
 ### Version 2.2.2 ###
 
 + solved issue with z-index values when using zurb foundation
