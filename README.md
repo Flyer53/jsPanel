@@ -26,10 +26,11 @@ Copyright &copy; 2014 Stefan Sträßer | [stefanstraesser.eu](http://stefanstrae
 
 ###NOTES:###
 
-####Bower/npm####
+####bower / npm####
 Don't use the camelcase spelling of jsPanel. Use only lower case **jspanel**
 
 <code>bower install jspanel</code>
+
 <code>npm install jspanel</code>
 
 ####Angular####
