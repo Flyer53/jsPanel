@@ -26,10 +26,11 @@ Copyright &copy; 2014 Stefan Sträßer | [stefanstraesser.eu](http://stefanstrae
 
 ###NOTES:###
 
-####Bower####
-Using bower don't use the camelcase spelling of jsPanel. Use only lower case **jspanel**
+####Bower/npm####
+Don't use the camelcase spelling of jsPanel. Use only lower case **jspanel**
 
 <code>bower install jspanel</code>
+<code>npm install jspanel</code>
 
 ####Angular####
 Since I didn't work with Angular so far, I can't say very much about using jsPanel with Angular. Nevertheless I can say that:
