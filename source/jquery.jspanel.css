@@ -1,4 +1,4 @@
-/* jsPanel.css version 2.2.3 - 2014-12-14 12:09 */
+/* jsPanel.css version 2.3.0 - 2014-12-17 09:22 */
 @font-face {
     font-family: 'jsglyphregular';
     src: url('fonts/jsglyph.eot');
@@ -30,11 +30,11 @@
     border-radius: 3px;
 }
 .jsPanel-hdr{
-    min-height: 28px;
+    min-height: 26px;
     padding: 2px 0 4px 2px;
 }
 .jsPanel-hdr *{
-    font-size: 18px;
+    font-size: 16px;
 }
 .jsPanel-hdr-r{
     position: absolute;
@@ -76,8 +76,8 @@ h3.jsPanel-title{
 
 .jsPanel-hdr-toolbar {
     clear: both;
-    font-size: 18px;
-    margin-top: 25px;
+    font-size: 16px;
+    margin-top: 23px;
     height: auto;
     padding: 0 5px;
     width: auto;
@@ -301,6 +301,19 @@ h3.jsPanel-title{
     border: 12px solid transparent;
     position: absolute;
 }
+.jsPanel-corner-top{
+    border-top-width: 10px;
+}
+.jsPanel-corner-right{
+    border-right-width: 10px;
+}
+.jsPanel-corner-bottom{
+    border-bottom-width: 10px;
+}
+.jsPanel-corner-left{
+    border-left-width: 10px;
+}
+
 
 
 

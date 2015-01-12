@@ -1,6 +1,6 @@
 {
   "name": "jspanel",
-  "version": "2.2.3",
+  "version": "2.3.0",
   "description": "A jQuery Plugin to create highly configurable floating panels for use in a backend solution and other web applications",
   "main": [
 		"source/jquery.jspanel.js",

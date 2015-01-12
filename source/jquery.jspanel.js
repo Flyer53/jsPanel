@@ -1,9 +1,10 @@
 /* global console, MobileDetect */
 /* jQuery Plugin jsPanel
- Version: 2.2.3 2014-12-14 12:30
+ Version: 2.3.0 2015-01-12 09:10
  Dependencies:
      jQuery library ( > 1.7.0 incl. 2.1.1 )
      jQuery.UI library ( > 1.9.0 ) - (at least UI Core, Mouse, Widget, Draggable, Resizable)
+     mobile-detect.js for the responsive features <https://github.com/hgoebl/mobile-detect.js>
      bootstrap (required only when using the bootstrap features)
      HTML5/CSS3 compatible browser
 
@@ -31,9 +32,14 @@
  */
 
 /*
- ### changes in 2.2.2 | in version 2.2.3 only css changed ###
- + apearance of disabled controls improved (change in jsPanel.control())
- + z-index minimum 100 (change in jsPanel.setZi()); reason was the sticky nav of foundation which has a z-index of 99
+ ### changes in 2.3.0 ###
+ + new method .resize(width, height) to resize an exsisting jsPanel by code
+ + new jsPanel property "device" return NULL if device is not a mobile
+ + new jsPanel.getMargins() to calculate panel margins either relative to browser viewport or panel.parent
+ + functions to shift tooltips horizontally or vertically depending on position used
+ + rewriteOPaneltype slightly adjusted
+ + Tooltips: option.paneltype NEW property "shiftwithin" to set the element witin a tooltip is to be repositioned; default "body"
+ + jsPanel function calcPosTooltipLeft und calcPosTooltipTop improved to consider possible margins of tooltrip trigger
 */
 
 var jsPanel;
@@ -41,7 +47,22 @@ var jsPanel;
 (function($){
     "use strict";
     jsPanel = {
-        version: '2.2.3 2014-12-14 12:30',
+        version: '2.3.0 2015-01-12 09:10',
+        device: (function(){
+            try {
+                // requires "mobile-detect.js" to be loaded
+                var md = new MobileDetect(window.navigator.userAgent),
+                    mobile = md.mobile(),
+                    phone = md.phone(),
+                    tablet = md.tablet(),
+                    os = md.os(),
+                    userAgent = md.userAgent();
+                return {mobile: mobile, tablet: tablet, phone: phone, os: os, userAgent: userAgent};
+            } catch (e) {
+                console.log(e + "; Seems like mobile-detect.js is not loaded");
+                return false;
+            }
+        })(),
         ID: 0,                  // kind of a counter to add to automatically generated id attribute
         widthForMinimized: 150, // default width of minimized panels
         hintsTc: [],            // arrays that log hints for option.position 'top center', 'top left' and 'top right'
@@ -198,24 +219,26 @@ var jsPanel;
 
             // width of element serving as trigger for the tooltip
             var parW = jsPparent.outerWidth(),
+                // check possible margins of  trigger
+                mL = parseInt(jsPparent.css('margin-left')),
                 // check whether offset is set
                 oX = option.offset.left || 0;
 
             if (pos === 'top' || pos === 'bottom') {
 
-                return (parW - option.size.width) / 2 + oX + 'px';
+                return (parW - option.size.width) / 2 + mL + oX + 'px';
 
             }
 
             if (pos === 'left') {
 
-                return -(option.size.width) + oX + 'px';
+                return -(option.size.width) + mL + oX + 'px';
 
             }
 
             if (pos === 'right') {
 
-                return parW + oX + 'px';
+                return parW + mL + oX + 'px';
 
             }
 
@@ -227,23 +250,24 @@ var jsPanel;
         calcPosTooltipTop: function (pos, jsPparent, option) {
 
             var parH = jsPparent.innerHeight(),
+                mT = parseInt(jsPparent.css('margin-top')),
                 oY = option.offset.top || 0;
 
             if (pos === 'left' || pos === 'right') {
 
-                return -(option.size.height / 2) + (parH / 2) + oY + 'px';
+                return -(option.size.height / 2) + (parH / 2) + mT + oY + 'px';
 
             }
 
             if (pos === 'top') {
 
-                return -(option.size.height + oY) + 'px';
+                return -(option.size.height + oY) + mT + 'px';
 
             }
 
             if (pos === 'bottom') {
 
-                return parH + oY + 'px';
+                return parH + mT + oY + 'px';
 
             }
 
@@ -626,6 +650,146 @@ var jsPanel;
             };
 
             $(window).on('scroll', panel.jsPanelfixPos);
+
+        },
+
+        // calculate panel margins
+        getMargins: function(panel, selector) {
+
+            var off, elmtOff, mR, mL, mB, mT;
+
+            if(!selector || selector === "body") {
+
+                // panel margins relative to browser viewport
+                off = panel.offset();
+                mR = jsPanel.winouterWidth() - off.left - panel.outerWidth() + jsPanel.winscrollLeft();
+                mL = jsPanel.winouterWidth() - panel.outerWidth() - mR;
+                mB = jsPanel.winouterHeight() - off.top - panel.outerHeight() + jsPanel.winscrollTop();
+                mT = jsPanel.winouterHeight() - panel.outerHeight() - mB;
+
+            } else {
+
+                // panel margins relative to element matching selector "selector"
+                elmtOff = $(selector).offset();
+                off = panel.offset();
+                mR = $(selector).outerWidth() - parseInt(panel.css('width')) - (off.left - elmtOff.left);
+                mL = off.left - elmtOff.left;
+                mB = $(selector).outerHeight() - (off.top - elmtOff.top) - parseInt(panel.css('height'));
+                mT = off.top - elmtOff.top;
+
+            }
+
+            return {marginTop: parseInt(mT), marginRight: parseInt(mR), marginBottom: parseInt(mB), marginLeft: parseInt(mL)};
+
+        },
+
+        // calculate max horizontal and vertical tooltip shift
+        getMaxpanelshift: function(panel) {
+
+            var horiz = parseInt( panel.outerWidth()/2 ) + parseInt( panel.parent().outerWidth()/2 ) - 20,
+                vert = parseInt( panel.outerHeight()/2 ) + parseInt( panel.parent().outerHeight()/2 ) - 20,
+                cornerHoriz = parseInt( panel.outerWidth()/2 ) - 16,
+                cornerVert = parseInt( panel.outerHeight()/2 ) - 16;
+
+            return {maxshiftH: horiz, maxshiftV: vert, maxCornerH: cornerHoriz, maxCornerV: cornerVert};
+
+        },
+
+        // shift tooltip left/right if it overflows window
+        // when using horizontal offsets of panel and/or corner result might be not as expected
+        shiftTooltipHorizontal: function(panel, optionPaneltypeshiftwithin){
+
+            var margins = jsPanel.getMargins(panel, optionPaneltypeshiftwithin),
+                leftShiftRequired = 0,
+                maxShift = jsPanel.getMaxpanelshift(panel),
+                maxLeftShift = maxShift.maxshiftH,
+                shift = 0,
+                maxCornerLeft = maxShift.maxCornerH,
+                cornerShift = 0,
+                newPanelLeft = 0,
+                newCornerLeft = 0;
+
+            if (margins.marginLeft < 0 && margins.marginRight > 0) {
+                // if panel overflows left window border
+                leftShiftRequired = Math.abs(margins.marginLeft) + 5;
+                shift = Math.min(leftShiftRequired, maxLeftShift);
+                cornerShift = Math.min(maxCornerLeft, shift);
+                newPanelLeft = parseInt(panel.css('left')) + shift + "px";
+                newCornerLeft = parseInt($('.jsPanel-corner', panel).css('left')) - cornerShift + "px";
+
+            } else if (margins.marginRight < 0 && margins.marginLeft > 0) {
+                // if panel overflows right window border
+                leftShiftRequired = Math.abs(margins.marginRight) + 5;
+                shift = Math.min(leftShiftRequired, maxLeftShift);
+                cornerShift = Math.min(maxCornerLeft, shift);
+                newPanelLeft = parseInt(panel.css('left')) - shift + "px";
+                newCornerLeft = parseInt($('.jsPanel-corner', panel).css('left')) + cornerShift + "px";
+
+            }
+
+            if ((margins.marginLeft < 0 && margins.marginRight > 0) || (margins.marginRight < 0 && margins.marginLeft > 0)) {
+                // shift panel
+                panel.animate({
+                    "left": newPanelLeft
+                },{ queue: false /* to have both animation run simultaneously */ });
+
+                // shift corner if present
+                if ($('.jsPanel-corner', panel)) {
+                    $('.jsPanel-corner', panel).animate({
+                        "left": newCornerLeft
+                    },{ queue: false /* to have both animation run simultaneously */ });
+                }
+            }
+
+        },
+
+        // shift tooltip up/down if it overflows window
+        // when using vertical offsets of panel and/or corner result might be not as expected
+        shiftTooltipVertical: function(panel, optionPaneltypeshiftwithin){
+
+            //console.log( parseInt($('*:first-child', panel.parent()).css('margin-left')) );
+
+            var margins = jsPanel.getMargins(panel, optionPaneltypeshiftwithin),
+                topShiftRequired = 0,
+                maxShift = jsPanel.getMaxpanelshift(panel),
+                maxTopShift = maxShift.maxshiftV,
+                shift = 0,
+                maxCornerTop = maxShift.maxCornerV,
+                cornerShift = 0,
+                newPanelTop = 0,
+                newCornerTop = 0;
+
+            if (margins.marginTop < 0 && margins.marginBottom > 0) {
+                // if panel overflows top window border
+                topShiftRequired = Math.abs(margins.marginTop) + 5;
+                shift = Math.min(topShiftRequired, maxTopShift);
+                cornerShift = Math.min(maxCornerTop, shift);
+                newPanelTop = parseInt(panel.css('top')) + shift + "px";
+                newCornerTop = parseInt($('.jsPanel-corner', panel).css('top')) - cornerShift + "px";
+
+            } else if (margins.marginBottom < 0 && margins.marginTop > 0) {
+                // if panel overflows bottom window border
+                topShiftRequired = Math.abs(margins.marginBottom) + 5;
+                shift = Math.min(topShiftRequired, maxTopShift);
+                cornerShift = Math.min(maxCornerTop, shift);
+                newPanelTop = parseInt(panel.css('top')) - shift + "px";
+                newCornerTop = parseInt($('.jsPanel-corner', panel).css('top')) + cornerShift + "px";
+
+            }
+
+            if ((margins.marginTop < 0 && margins.marginBottom > 0) || (margins.marginBottom < 0 && margins.marginTop > 0)) {
+                // shift panel
+                panel.animate({
+                    "top": newPanelTop
+                },{ queue: false /* to have both animation run simultaneously */ });
+
+                // shift corner if present
+                if ($('.jsPanel-corner', panel)) {
+                    $('.jsPanel-corner', panel).animate({
+                        "top": newCornerTop
+                    },{ queue: false /* to have both animation run simultaneously */ });
+                }
+            }
 
         },
 
@@ -1177,7 +1341,7 @@ var jsPanel;
 
             } else if (op === 'tooltip') {
 
-                return {type: 'tooltip'};
+                return {type: 'tooltip', position: 'top'};
 
             } else if (op === 'hint') {
 
@@ -1192,6 +1356,7 @@ var jsPanel;
 
                 op.mode = op.mode || false;
                 op.position = op.position || false;
+                op.shiftwithin = op.shiftwithin || "body";
                 op.solo = op.solo || false;
                 op.cornerBG = op.cornerBG || false;
                 op.cornerOX = op.cornerOX || false;
@@ -1201,6 +1366,7 @@ var jsPanel;
                     type: 'tooltip',
                     mode: op.mode,
                     position: op.position,
+                    shiftwithin: op.shiftwithin,
                     solo: op.solo,
                     cornerBG: op.cornerBG,
                     cornerOX: op.cornerOX,
@@ -1703,6 +1869,23 @@ var jsPanel;
 
         };
 
+        jsP.resize = function (width, height) {
+            // method resizes the full panel (not content section only)
+
+            if(width && width !== null) {
+                jsP.css("width", width);
+            } else {
+                jsP.css("width", jsP.content.css("width"));
+            }
+            if(height && height !== null) {
+                jsP.css("height", height);
+            }
+            jsPanel.resizeContent(jsP);
+            jsPanel.resizeTitle(jsP);
+            return jsP;
+
+        };
+
         /*
          * handlers for the controls -----------------------------------------------------------------------------------
          */
@@ -1848,11 +2031,11 @@ var jsPanel;
 
                 if (option.paneltype.position !== "bottom") {
 
-                    corner.addClass(cornerLoc).appendTo(jsP);
+                    corner.addClass("jsPanel-corner " + cornerLoc).appendTo(jsP);
 
                 } else {
 
-                    corner.addClass(cornerLoc).prependTo(jsP);
+                    corner.addClass("jsPanel-corner " + cornerLoc).prependTo(jsP);
 
                 }
 
@@ -1864,12 +2047,12 @@ var jsPanel;
                 } else if (option.paneltype.position === "right") {
 
                     cornerPos = parseInt(option.size.height)/2 - 12 + (cornerOY) + "px";
-                    corner.css({borderRightColor: cornerBG, left: "-24px", top: cornerPos});
+                    corner.css({borderRightColor: cornerBG, left: "-22px", top: cornerPos});
 
                 } else if (option.paneltype.position === "bottom") {
 
                     cornerPos = parseInt(option.size.width)/2 - 12 + (cornerOX) + "px";
-                    corner.css({borderBottomColor: cornerBG, left: cornerPos, top: "-24px"});
+                    corner.css({borderBottomColor: cornerBG, left: cornerPos, top: "-22px"});
 
                 } else if (option.paneltype.position === "left") {
 
@@ -2645,7 +2828,7 @@ var jsPanel;
 
         }
 
-        /* option.callback & option.autoclose and a jQuery-UI draggable bugfix ----------- */
+        /* option.callback & option.autoclose and a jQuery-UI draggable bugfix -------------------------------------- */
         /* resizestart & resizestop & dragstop callbacks ------------------------------------------------------------ */
         // features activated for extended modals only for @genachka
         if (!option.paneltype || option.paneltype.mode !== 'default') {
@@ -2709,14 +2892,25 @@ var jsPanel;
             });
         }
 
-        /* option.autoclose | default: false -------------------------------- */
+        /* option.autoclose | default: false --------------------------------------- */
         if (typeof option.autoclose === 'number' && option.autoclose > 0) {
 
             jsPanel.autoclose(jsP, jsP.attr('id'), option.autoclose);
 
         }
 
-        /* option.callback ----------------------------------------------- */
+        /* tooltip corrections ----------------------------------------------------- */
+        if (option.paneltype.type === "tooltip" && (option.paneltype.position === "top" || option.paneltype.position === "bottom")) {
+
+            jsPanel.shiftTooltipHorizontal(jsP, option.paneltype.shiftwithin);
+
+        } else if (option.paneltype.position === "left" || option.paneltype.position === "right") {
+
+            jsPanel.shiftTooltipVertical(jsP, option.paneltype.shiftwithin);
+
+        }
+
+        /* option.callback --------------------------------------------------------- */
         if (option.callback && $.isFunction(option.callback)) {
 
             option.callback(jsP);

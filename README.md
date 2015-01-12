@@ -1,4 +1,4 @@
-##[jsPanel 2.2.3 released 2014-12-14](#)##
+##[jsPanel 2.3.0 released 2015-01-12](#)##
 
 **A jQuery plugin to create multifunctional floating panels.**
 
@@ -12,7 +12,7 @@ Existing jsPanel sections and contents are easily accessed via various propertie
 
 ![jsPanel jQuery Plugin](https://github.com/Flyer53/jsPanel/raw/master/jsPanel-comp.png)
 
-**Current version 2.2.3**
+**Current version 2.3.0**
 
 ###jsPanel homepage: [http://jspanel.de](http://jspanel.de/)###
 
@@ -26,10 +26,12 @@ Copyright &copy; 2014 Stefan Sträßer | [stefanstraesser.eu](http://stefanstrae
 
 ###NOTES:###
 
-####bower / npm####
-Don't use the camelcase spelling of jsPanel. Use only lower case **jspanel**
+####Bower####
+Using bower don't use the camelcase spelling of jsPanel. Use only lower case **jspanel**
 
 <code>bower install jspanel</code>
+
+####npm####
 
 <code>npm install jspanel</code>
 

@@ -2,9 +2,11 @@
 
 ---
 
-### Version 2.2.3 ###
+### Version 2.3.0 ###
 
-+ bugfix in the jsPanel css files concerning hints
++ **new** method **resize(width, height)** to resize an exsisting jsPanel by code
++ this version adds some "responsiveness" to **tooltips**. Tooltips check whether they overflow the boundaries of the browser viewport and will shift either left/right or up/down. Optionally a new tooltip parameter **shiftwithin** sets another container as reference to check against concerning overflow.
++ the global object **jsPanel** has a new property **device**, an object with the keys **mobile**, **tablet**, **phone**, **os** and **userAgent**. **jsPanel.device** is available when [mobile-detect.js](https://github.com/hgoebl/mobile-detect.js) is loaded. 
 
 ---
 
