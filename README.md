@@ -20,7 +20,7 @@ Existing jsPanel sections and contents are easily accessed via various propertie
 
 #### more documentation: [http://jspanel.de/documentation](http://jspanel.de/documentation/)####
 
-Copyright &copy; 2014 Stefan Sträßer | [stefanstraesser.eu](http://stefanstraesser.eu)
+Copyright &copy; 2014-15 Stefan Sträßer | [stefanstraesser.eu](http://stefanstraesser.eu)
 
 ---
 
