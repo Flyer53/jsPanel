@@ -39,6 +39,6 @@ Using bower don't use the camelcase spelling of jsPanel. Use only lower case **j
 Since I didn't work with Angular so far, I can't say very much about using jsPanel with Angular. Nevertheless I can say that:
 
 + merely loading Angular doesn't affect jsPanel in a negative way
-+ Angular uses only a subset of jQuery by default and that's not enough. You need to load the full jQuery library prior loading Angular. See [https://docs.angularjs.org/api/ng/function/angular.element](docs.angularjs.org/api/ng/function/angular.element)
++ Angular uses only a subset of jQuery by default and that's not enough. You need to load the full jQuery library prior loading Angular. See [docs.angularjs.org/api/ng/function/angular.element](https://docs.angularjs.org/api/ng/function/angular.element) or [www.bennadel.com/blog/2752-using-jquery-instead-of-jqlite-in-angularjs.htm](http://www.bennadel.com/blog/2752-using-jquery-instead-of-jqlite-in-angularjs.htm) 
 + don't forget to load jQuery-UI (js and css) with at least UI Core, Mouse, Widget, Draggable, Resizable
 + use HTML5 doctype
