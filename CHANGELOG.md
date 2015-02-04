@@ -2,6 +2,12 @@
 
 ---
 
+### Version 2.3.2 ###
+
++ **bugfix** in handling of z-index values of modal panels
+
+---
+
 ### Version 2.3.1 ###
 
 + **bugfix** in handling of z-index values

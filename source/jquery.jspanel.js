@@ -1,6 +1,6 @@
 /* global console, MobileDetect */
 /* jQuery Plugin jsPanel
- Version: 2.3.1 2015-02-04 08:32
+ Version: 2.3.2 2015-02-04 19:22
  Dependencies:
      jQuery library ( > 1.7.0 incl. 2.1.1 )
      jQuery.UI library ( > 1.9.0 ) - (at least UI Core, Mouse, Widget, Draggable, Resizable)
@@ -32,6 +32,8 @@
  */
 
 /*
+ ### changes in 2.3.2 ###
+ + bugfix in handling of z-index values for modals
  ### changes in 2.3.1 ###
  + bugfix in handling of z-index values
  ### changes in 2.3.0 ###
@@ -49,7 +51,7 @@ var jsPanel;
 (function($){
     "use strict";
     jsPanel = {
-        version: '2.3.1 2015-02-04 08:32',
+        version: '2.3.2 2015-02-04 19:22',
         device: (function(){
             try {
                 // requires "mobile-detect.js" to be loaded
@@ -1495,6 +1497,7 @@ var jsPanel;
 
             option.selector = 'body';
             option.show = 'fadeIn';
+            panel.addClass('jsPanel-modal');
 
             if (option.paneltype.mode === 'default') {
 
@@ -1894,7 +1897,9 @@ var jsPanel;
         // handler to move panel to foreground on
         jsP.on('click', function () {
 
-            jsP.css('z-index', jsPanel.setZi());
+            if (!jsP.hasClass("jsPanel-modal")) {
+                jsP.css('z-index', jsPanel.setZi());
+            }
 
         });
 
@@ -2125,7 +2130,9 @@ var jsPanel;
 
         } else {
 
-            jsP.css('z-index', jsPanel.setZi());
+            if (!jsP.hasClass("jsPanel-modal")) {
+                jsP.css('z-index', jsPanel.setZi());
+            }
 
         }
 
