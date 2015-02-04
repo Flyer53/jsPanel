@@ -1,4 +1,4 @@
-##[jsPanel 2.3.0 released 2015-01-12](#)##
+##[jsPanel 2.3.1 released 2015-02-04](#)##
 
 **A jQuery plugin to create multifunctional floating panels.**
 
@@ -12,7 +12,7 @@ Existing jsPanel sections and contents are easily accessed via various propertie
 
 ![jsPanel jQuery Plugin](https://github.com/Flyer53/jsPanel/raw/master/jsPanel-comp.png)
 
-**Current version 2.3.0**
+**Current version 2.3.1**
 
 ###jsPanel homepage: [http://jspanel.de](http://jspanel.de/)###
 
@@ -20,7 +20,7 @@ Existing jsPanel sections and contents are easily accessed via various propertie
 
 #### more documentation: [http://jspanel.de/documentation](http://jspanel.de/documentation/)####
 
-Copyright &copy; 2014-15 Stefan Sträßer | [stefanstraesser.eu](http://stefanstraesser.eu)
+Copyright &copy; 2014 Stefan Sträßer | [stefanstraesser.eu](http://stefanstraesser.eu)
 
 ---
 
@@ -39,6 +39,6 @@ Using bower don't use the camelcase spelling of jsPanel. Use only lower case **j
 Since I didn't work with Angular so far, I can't say very much about using jsPanel with Angular. Nevertheless I can say that:
 
 + merely loading Angular doesn't affect jsPanel in a negative way
-+ Angular uses only a subset of jQuery by default and that's not enough. You need to load the full jQuery library prior loading Angular. See [docs.angularjs.org/api/ng/function/angular.element](https://docs.angularjs.org/api/ng/function/angular.element) or [www.bennadel.com/blog/2752-using-jquery-instead-of-jqlite-in-angularjs.htm](http://www.bennadel.com/blog/2752-using-jquery-instead-of-jqlite-in-angularjs.htm) 
++ Angular uses only a subset of jQuery by default and that's not enough. You need to load the full jQuery library prior loading Angular. See [https://docs.angularjs.org/api/ng/function/angular.element](docs.angularjs.org/api/ng/function/angular.element)
 + don't forget to load jQuery-UI (js and css) with at least UI Core, Mouse, Widget, Draggable, Resizable
 + use HTML5 doctype

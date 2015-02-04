@@ -2,6 +2,12 @@
 
 ---
 
+### Version 2.3.1 ###
+
++ **bugfix** in handling of z-index values
+
+---
+
 ### Version 2.3.0 ###
 
 + **new** method **resize(width, height)** to resize an exsisting jsPanel by code

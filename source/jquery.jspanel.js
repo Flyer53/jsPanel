@@ -1,6 +1,6 @@
 /* global console, MobileDetect */
 /* jQuery Plugin jsPanel
- Version: 2.3.0 2015-01-12 09:10
+ Version: 2.3.1 2015-02-04 08:32
  Dependencies:
      jQuery library ( > 1.7.0 incl. 2.1.1 )
      jQuery.UI library ( > 1.9.0 ) - (at least UI Core, Mouse, Widget, Draggable, Resizable)
@@ -32,6 +32,8 @@
  */
 
 /*
+ ### changes in 2.3.1 ###
+ + bugfix in handling of z-index values
  ### changes in 2.3.0 ###
  + new method .resize(width, height) to resize an exsisting jsPanel by code
  + new jsPanel property "device" return NULL if device is not a mobile
@@ -47,7 +49,7 @@ var jsPanel;
 (function($){
     "use strict";
     jsPanel = {
-        version: '2.3.0 2015-01-12 09:10',
+        version: '2.3.1 2015-02-04 08:32',
         device: (function(){
             try {
                 // requires "mobile-detect.js" to be loaded
@@ -1605,7 +1607,7 @@ var jsPanel;
 
                 if ($(this).zIndex() > zi) {
 
-                    zi += $(this).zIndex();
+                    zi += 1;
 
                 }
 
