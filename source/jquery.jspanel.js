@@ -1,6 +1,5 @@
 /* global console, MobileDetect */
 /* jQuery Plugin jsPanel
- Version: 2.3.2 2015-02-04 19:22
  Dependencies:
      jQuery library ( > 1.7.0 incl. 2.1.1 )
      jQuery.UI library ( > 1.9.0 ) - (at least UI Core, Mouse, Widget, Draggable, Resizable)
@@ -32,6 +31,8 @@
  */
 
 /*
+ ### changes in 2.3.3 ###
+ + bugfix in handling of z-index values
  ### changes in 2.3.2 ###
  + bugfix in handling of z-index values for modals
  ### changes in 2.3.1 ###
@@ -51,7 +52,7 @@ var jsPanel;
 (function($){
     "use strict";
     jsPanel = {
-        version: '2.3.2 2015-02-04 19:22',
+        version: '2.3.3 2015-02-06 09:17',
         device: (function(){
             try {
                 // requires "mobile-detect.js" to be loaded
@@ -1603,21 +1604,14 @@ var jsPanel;
         },
 
         setZi: function () {
-
-            var zi = 100;
-
+            var zi = 100, elmtzi;
             $('.jsPanel').each(function () {
-
-                if ($(this).zIndex() > zi) {
-
-                    zi += 1;
-
+                elmtzi = $(this).zIndex();
+                if (elmtzi >= zi) {
+                    zi = elmtzi + 1;
                 }
-
             });
-
-            return zi + 1;
-
+            return zi;
         },
 
         // toggles jsPanel height between header height and normalized/maximized height
