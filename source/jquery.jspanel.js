@@ -31,6 +31,8 @@
  */
 
 /*
+ ### changes in 2.3.4 ###
+ + replaced jquery.jspanel.min.js
  ### changes in 2.3.3 ###
  + bugfix in handling of z-index values
  ### changes in 2.3.2 ###
@@ -52,7 +54,7 @@ var jsPanel;
 (function($){
     "use strict";
     jsPanel = {
-        version: '2.3.3 2015-02-06 09:17',
+        version: '2.3.4 2015-03-06 10:23',
         device: (function(){
             try {
                 // requires "mobile-detect.js" to be loaded
@@ -1287,7 +1289,7 @@ var jsPanel;
             panel.content.css({
 
                 height: (poh - hdrftr) + 'px',
-                width: '100%'
+				width: panel.outerWidth() + 'px'
 
             });
 

@@ -2,6 +2,13 @@
 
 ---
 
+### Version 2.3.4 ###
+
++ jquery.jspanel.min.js replaced
++ no further changes
+
+---
+
 ### Version 2.3.3 ###
 
 + **bugfix** in handling of z-index values
