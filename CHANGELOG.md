@@ -1,33 +1,33 @@
-## CHANGELOG ##
+## CHANGELOG
 
 ---
 
-### Version 2.3.4 ###
+### Version 2.3.4
 
 + jquery.jspanel.min.js replaced
 + no further changes
 
 ---
 
-### Version 2.3.3 ###
+### Version 2.3.3
 
 + **bugfix** in handling of z-index values
 
 ---
 
-### Version 2.3.2 ###
+### Version 2.3.2
 
 + **bugfix** in handling of z-index values of modal panels
 
 ---
 
-### Version 2.3.1 ###
+### Version 2.3.1
 
 + **bugfix** in handling of z-index values
 
 ---
 
-### Version 2.3.0 ###
+### Version 2.3.0
 
 + **new** method **resize(width, height)** to resize an exsisting jsPanel by code
 + this version adds some "responsiveness" to **tooltips**. Tooltips check whether they overflow the boundaries of the browser viewport and will shift either left/right or up/down. Optionally a new tooltip parameter **shiftwithin** sets another container as reference to check against concerning overflow.
@@ -35,7 +35,7 @@
 
 ---
 
-### Version 2.2.2 ###
+### Version 2.2.2
 
 + solved issue with z-index values when using zurb foundation
 + improved css for disabled controls
@@ -43,14 +43,14 @@
 
 ---
 
-### Version 2.2.1 ###
+### Version 2.2.1
 
 + bugfix: configuration of controls (affected only controls of childpanels)
 + bugfix: handling of jsPanel events
 
 ---
 
-### Version 2.2.0 ###
+### Version 2.2.0
 
 + new **option.iframe** to ease the use of iframes as content
 + new **option.dblclicks** to add doubleclick handlers for title, content and footer sections
@@ -62,7 +62,7 @@
 
 ---
 
-### Version 2.1.0 ###
+### Version 2.1.0
 
 + HTML & CSS for hints improved
 + try/catch block added to catch errors when element chosen by option.selector doesn't exsist
@@ -76,7 +76,7 @@
 
 ---
 
-### Version 2.0 ###
+### Version 2.0
 
 Version 2 is a complete rewrite of the jsPanel jQuery Plugin.
 
@@ -91,7 +91,7 @@ All in all, the new features, improvements and changes are too numerous to list 
 
 ---
 
-### Version 1.11.0 ###
+### Version 1.11.0
 
 Version 1.11 implements a number of changes and improvements. Most of them are just internal issues. But there are some other changes as well. See details below:
 
@@ -107,7 +107,7 @@ Version 1.11 implements a number of changes and improvements. Most of them are j
 
 ---
 
-### Version 1.10.0 ###
+### Version 1.10.0
 
 + **New option.rtl** adds support for RTL text direction on individual jsPanels.
 + **Bugfix in option.modal** when a modal jsPanel is appended directly to the <body> element
@@ -115,13 +115,13 @@ Version 1.11 implements a number of changes and improvements. Most of them are j
 
 ---
 
-### Version 1.9.1 ###
+### Version 1.9.1
 
 Maintainance Release with internal code improvements
 
 ---
 
-### Version 1.9.0 ###
+### Version 1.9.0
 
 + new **option.tooltip** implements a basic tooltip functionality. Tooltips can be positioned either top, right, left or bottom of the element the tooltip is applied to and offers almost all options a normal jsPanel has.
 + **jsPanel.css** integrates some css rules that provide the possibility to generate text only tooltips using only css3
@@ -130,27 +130,27 @@ See the [API](http://jspanel.de/api.html) for more details
 
 ---
 
-### Version 1.8.1 ###
+### Version 1.8.1
 
 + changed **option.toolbarFooter**: footer will be removed when not used instead of display:none
 + some internal adaptions
 
 ---
 
-### Version 1.8.0 ###
+### Version 1.8.0
 
 + added **option.header** allows to remove the header section of a jsPanel completely
 
 ---
 
-### Version 1.7.1 ###
+### Version 1.7.1
 
 + primarily a **maintanance release** where I replaced duplicate code with functions
 + **option.position** and **option.size** are modified slightly. Refer to the api for details please
 
 ---
 
-### Version 1.7.0 ###
+### Version 1.7.0
 
 + added **option.restoreTo** to change default behaviour of minimized jsPanels when maximized again
 + removed option.toolbarContent - use option.toolbarHeader
@@ -158,14 +158,14 @@ See the [API](http://jspanel.de/api.html) for more details
 
 ---
 
-### Version 1.6.2 ###
+### Version 1.6.2
 
 + **option.modal:** Added option to add custom css classes to <code>&lt;button&gt;</code> elements in the footer toolbar when using one of the modal presets
 + general improvements in the js-script
 
 ---
 
-### Version 1.6.1 ###
+### Version 1.6.1
 
 + **Bugfix when using option.toolbarHeader** instead of option.toolbarContent
 + added option in **option.controls**
@@ -175,7 +175,7 @@ For details about the changes please go to http://jspanel.de/api.html
 
 ---
 
-### Version 1.6.0 ###
+### Version 1.6.0
 
 + most important new feature is an **optional footer toolbar**. Each individual item appended to the toolbar can be configured with its own event type and callback
 + the header toolbar now has the same functionality as the footer toolbar
@@ -187,7 +187,7 @@ For details about the changes please go to http://jspanel.de/api.html
 
 ---
 
-### Version 1.5.0 ###
+### Version 1.5.0
 
 + Added option to create a **modal jsPanel**
 + Added basic support for **themes** including various themes
@@ -198,7 +198,7 @@ For details about the changes please go to http://jspanel.de/api.html
 
 ---
 
-### Version 1.4.0 ###
+### Version 1.4.0
 
 **CSS**
 
@@ -213,13 +213,13 @@ Added support for icon fonts in the title/header of the jsPanel. Built in is the
 
 ---
 
-### Version 1.3.1 ###
+### Version 1.3.1
 
 **Bugfix** in the resize behaviour when using option.position with bottom and/or right
 
 ---
 
-### Version 1.3.0 ###
+### Version 1.3.0
 
 **Bugfix** in option.size.width / option.size.height when using a function returning 0
 
@@ -236,7 +236,7 @@ Added support for icon fonts in the title/header of the jsPanel. Built in is the
 
 ---
 
-### Version 1.2.0 ###
+### Version 1.2.0
 
 **Added options**
 
@@ -258,7 +258,7 @@ Added support for icon fonts in the title/header of the jsPanel. Built in is the
 
 ---
 
-### Version 1.1.1 ###
+### Version 1.1.1
 
 + **Bugfix** Content area of the jsPanel did not resize when resizing a maximized jsPanel with the jQuery-UI resize handle.
 + **Change** For z-index management the script internally now uses the jQuery-UI method zIndex()
@@ -266,7 +266,7 @@ Added support for icon fonts in the title/header of the jsPanel. Built in is the
 
 ---
 
-### Version 1.1.0 ###
+### Version 1.1.0
 
 + **Improvement:** Removed the settings for **_containment_** in the default settings objects for **_option.resizable_** and **_option.draggable_**.
 The default settings are unnecessary and caused problems when the jsPanel was bigger in size than the containing parent element.
@@ -278,6 +278,6 @@ See the documentation for details on how to use this settings.
 
 ---
 
-### Version 1.0.1 ###
+### Version 1.0.1
 
 + **Bugfix:** Error when using **_option.id_** with a user defined function to generate an id for the jsPanel.

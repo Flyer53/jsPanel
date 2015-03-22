@@ -1,4 +1,4 @@
-##[jsPanel 2.3.4 released 2015-03-06](#)##
+## [jsPanel 2.3.4 released 2015-03-06](#)
 
 **A jQuery plugin to create multifunctional floating panels.**
 
@@ -14,28 +14,28 @@ Existing jsPanel sections and contents are easily accessed via various propertie
 
 **Current version 2.3.4**
 
-###jsPanel homepage: [http://jspanel.de](http://jspanel.de/)###
+### jsPanel homepage: [http://jspanel.de](http://jspanel.de/)
 
-#### API and examples: [http://jspanel.de/api.html](http://jspanel.de/api.html)####
+#### API and examples: [http://jspanel.de/api.html](http://jspanel.de/api.html)
 
-#### more documentation: [http://jspanel.de/documentation](http://jspanel.de/documentation/)####
+#### more documentation: [http://jspanel.de/documentation](http://jspanel.de/documentation/)
 
 Copyright &copy; 2014-15 Stefan Sträßer | [stefanstraesser.eu](http://stefanstraesser.eu)
 
 ---
 
-###NOTES:###
+### NOTES:
 
-####Bower####
+#### bower
 Using bower don't use the camelcase spelling of jsPanel. Use only lower case **jspanel**
 
-<code>bower install jspanel</code>
+`bower install jspanel`
 
-####npm####
+#### npm
 
-<code>npm install jspanel</code>
+`npm install jspanel`
 
-####Angular####
+#### Angular
 Since I didn't work with Angular so far, I can't say very much about using jsPanel with Angular. Nevertheless I can say that:
 
 + merely loading Angular doesn't affect jsPanel in a negative way
