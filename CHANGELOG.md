@@ -2,28 +2,21 @@
 
 ---
 
-### Version 2.3.4
+### Version 2.4.0
 
-+ jquery.jspanel.min.js replaced
-+ no further changes
++ **new option.maximizedMargin** allows to maximize panels with a configurable "margin" on each side
++ **new method reposition(position)** to reposition an already exsisting jsPanel. Accepts the same parameters as option.position
++ **new method reloadContent()** to reload content that was loaded with either option.load, option.ajax or option.iframe
++ **new option.panelstatus** to create a panel in minimized, maximized or smallified status
++ **new option.config** allows to preconfigure panel configurations for later use
++ **new option.template** supports custom templates for the jsPanel to a certain degree
++ **new events** *jspanelbeforeclose, jspanelbeforenormalize, jspanelbeforeminimize, jspanelbeforemaximize*
++ **new property option** gives access to the complete options object
++ **new methods jsPanel.exportPanels()/importPanels()** to export/save/import panel layout
++ a lot of internal code modifications/improvements
 
----
-
-### Version 2.3.3
-
-+ **bugfix** in handling of z-index values
-
----
-
-### Version 2.3.2
-
-+ **bugfix** in handling of z-index values of modal panels
-
----
-
-### Version 2.3.1
-
-+ **bugfix** in handling of z-index values
+For more details please refer to the API [http://jspanel.de/api.html](http://jspanel.de/api.html)
+and documentation pages [http://jspanel.de/documentation](http://jspanel.de/documentation/)
 
 ---
 

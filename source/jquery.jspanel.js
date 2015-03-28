@@ -1,13 +1,11 @@
-/* global console, MobileDetect */
+/* global console, MobileDetect, jQuery */
 /* jQuery Plugin jsPanel
  Dependencies:
-     jQuery library ( > 1.7.0 incl. 2.1.1 )
-     jQuery.UI library ( > 1.9.0 ) - (at least UI Core, Mouse, Widget, Draggable, Resizable)
-     mobile-detect.js for the responsive features <https://github.com/hgoebl/mobile-detect.js>
-     bootstrap (required only when using the bootstrap features)
+     jQuery library ( > 1.9.1 incl. 2.1.3 )
+     jQuery.UI library ( > 1.9.2 ) - (at least UI Core, Mouse, Widget, Draggable, Resizable)
      HTML5/CSS3 compatible browser
 
- Copyright (c) 2014 Stefan Sträßer, <http://stefanstraesser.eu/>
+ Copyright (c) 2014-15 Stefan Sträßer, <http://stefanstraesser.eu/>
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -30,31 +28,22 @@
  You should have received a copy of the MIT License along with this program.  If not, see <http://opensource.org/licenses/MIT>.
  */
 
-/*
- ### changes in 2.3.4 ###
- + replaced jquery.jspanel.min.js
- ### changes in 2.3.3 ###
- + bugfix in handling of z-index values
- ### changes in 2.3.2 ###
- + bugfix in handling of z-index values for modals
- ### changes in 2.3.1 ###
- + bugfix in handling of z-index values
- ### changes in 2.3.0 ###
- + new method .resize(width, height) to resize an exsisting jsPanel by code
- + new jsPanel property "device" return NULL if device is not a mobile
- + new jsPanel.getMargins() to calculate panel margins either relative to browser viewport or panel.parent
- + functions to shift tooltips horizontally or vertically depending on position used
- + rewriteOPaneltype slightly adjusted
- + Tooltips: option.paneltype NEW property "shiftwithin" to set the element witin a tooltip is to be repositioned; default "body"
- + jsPanel function calcPosTooltipLeft und calcPosTooltipTop improved to consider possible margins of tooltrip trigger
-*/
+// check for jQuery and jQuery UI
+if (!$.fn.jquery || !$.fn.uniqueId || !$.widget || !$.ui.mouse || !$.ui.draggable || !$.ui.resizable) {
+    console.log("Error: jQuery or at least one jQuery UI component is not loaded! You need at least jQuery 1.9.1 and jQuery UI 1.9.2 (modules Core, Mouse, Widget, Draggable and Resizable).");
+} else {
+    console.log("Loaded: jQuery " + $.fn.jquery + ", jQuery UI " + $.ui.version +
+    "\nUI core: " + $.isFunction($.fn.uniqueId) + ", UI widget: " + $.isFunction($.widget) + ", UI mouse: " +$.isFunction($.ui.mouse) +
+    ", UI draggable: " + $.isFunction($.ui.draggable) + ", UI resizable: " + $.isFunction($.ui.resizable));
+}
 
 var jsPanel;
 
 (function($){
     "use strict";
+
     jsPanel = {
-        version: '2.3.4 2015-03-06 10:23',
+        version: '2.4.0 2015-03-28 07:44',
         device: (function(){
             try {
                 // requires "mobile-detect.js" to be loaded
@@ -67,16 +56,15 @@ var jsPanel;
                 return {mobile: mobile, tablet: tablet, phone: phone, os: os, userAgent: userAgent};
             } catch (e) {
                 console.log(e + "; Seems like mobile-detect.js is not loaded");
-                return false;
+                return {mobile: undefined, tablet: undefined, phone: undefined, os: undefined, userAgent: undefined};
             }
         })(),
         ID: 0,                  // kind of a counter to add to automatically generated id attribute
-        widthForMinimized: 150, // default width of minimized panels
+        widthForMinimized: 180, // default width of minimized panels
         hintsTc: [],            // arrays that log hints for option.position 'top center', 'top left' and 'top right'
         hintsTl: [],
         hintsTr: [],
-
-        template: '<div class="jsPanel jsPanel-theme-default">' +
+        template: '<div class="jsPanel jsPanel-theme-default jsPanel-state-initialized">' +
                     '<div class="jsPanel-hdr jsPanel-theme-default">' +
                         '<h3 class="jsPanel-title"></h3>' +
                         '<div class="jsPanel-hdr-r">' +
@@ -98,16 +86,12 @@ var jsPanel;
 
             if (place === 'header') {
 
-                jsPanel.configToolbar(items, panel.header.toolbar, panel);
+                this.configToolbar(items, panel.header.toolbar, panel);
 
             } else if (place === 'footer') {
 
-                panel.footer.css({
-                    display: 'block',
-                    padding: '5px 20px 5px 5px'
-                });
-
-                jsPanel.configToolbar(items, panel.footer, panel);
+                panel.footer.css({display: 'block'});
+                this.configToolbar(items, panel.footer, panel);
 
             }
 
@@ -115,92 +99,267 @@ var jsPanel;
 
         },
 
-        // used in option.autoclose and checks prior use of .close() whether the panel is still there
-        autoclose: function (panel, id, optionAutoclose) {
+        // loads content using jQuery.ajax();
+        ajax: function(panel) {
 
-                window.setTimeout(function () {
+            $.ajax(panel.option.ajax)
 
-                    var elmt = $('#' + id);
+                .done(function (data, textStatus, jqXHR) {
 
-                        if (elmt.length > 0) {
+                    panel.content.empty().append(data);
 
-                            elmt.fadeOut('slow', function () {
+                    if (panel.option.ajax.done && $.isFunction(panel.option.ajax.done)) {
 
-                                panel.close(); // elmt geht hier nicht weil .close() nicht für elmt definiert ist
 
-                            });
+                        panel.option.ajax.done(data, textStatus, jqXHR, panel);
+                    }
+
+                })
+
+                .fail(function (jqXHR, textStatus, errorThrown) {
+
+                    if (panel.option.ajax.fail && $.isFunction(panel.option.ajax.fail)) {
+
+                        panel.option.ajax.fail(jqXHR, textStatus, errorThrown, panel);
+
+                    }
+
+                })
+
+                .always(function (arg1, textStatus, arg3) {
+                    //In response to a successful request, the function's arguments are the same as those of .done(): data(hier: arg1), textStatus, and the jqXHR object(hier: arg3)
+                    //For failed requests the arguments are the same as those of .fail(): the jqXHR object(hier: arg1), textStatus, and errorThrown(hier: arg3)
+                    // fix for a bug in jQuery-UI draggable? that causes the jsPanel to reduce width when dragged beyond boundary of containing element and option.size.width is 'auto'
+
+                    panel.content.css('width', function () {
+
+                        return panel.content.outerWidth() + 'px';
+
+                    });
+
+                    if (panel.option.ajax.always && $.isFunction(panel.option.ajax.always)) {
+
+                        panel.option.ajax.always(arg1, textStatus, arg3, panel);
+
+                    }
+
+                    // title h3 might be to small: load() is async!
+                    jsPanel.resizeTitle(panel);
+
+                    // update option.size (content might come delayed)
+                    jsPanel.updateOptionSize(panel, panel.option.size);
+
+                })
+
+                .then(function (data, textStatus, jqXHR) {
+
+                    if (panel.option.ajax.then && $.isArray(panel.option.ajax.then)) {
+
+                        if (panel.option.ajax.then[0] && $.isFunction(panel.option.ajax.then[0])) {
+
+                            panel.option.ajax.then[0](data, textStatus, jqXHR, panel);
 
                         }
 
-                }, optionAutoclose);
+                        // title h3 might be to small: load() is async!
+                        jsPanel.resizeTitle(panel);
+
+                        // update option.size (content might come delayed)
+                        jsPanel.updateOptionSize(panel, panel.option.size);
+
+                    }
+                }, function (jqXHR, textStatus, errorThrown) {
+
+                    if (panel.option.ajax.then && $.isArray(panel.option.ajax.then)) {
+
+                        if (panel.option.ajax.then[1] && $.isFunction(panel.option.ajax.then[1])) {
+
+                            panel.option.ajax.then[1](jqXHR, textStatus, errorThrown, panel);
+
+                        }
+
+                        // title h3 might be to small: load() is async!
+                        jsPanel.resizeTitle(panel);
+
+                    }
+
+                }
+
+            );
+
+            panel.data("ajaxURL", panel.option.ajax.url); // needed for exportPanels()
 
         },
 
-        calcPos: function (prop, option, count, panel) {
+        // used in option.autoclose and checks prior use of .close() whether the panel is still there
+        autoclose: function (panel) {
 
-            if (option.position[prop] === 'auto') {
+                window.setTimeout(function () {
 
-                option.position[prop] = count * 30 + 'px';
+                    if(panel) {
 
-            } else if ($.isFunction(option.position[prop])) {
+                        $(panel).fadeOut('slow', function () {
+                            panel.close();
+                        });
 
-                option.position[prop] = option.position[prop](panel);
+                    }
 
-            } else if (option.position[prop] === 0) {
+                }, panel.option.autoclose);
 
-                option.position[prop] = '0';
+        },
+
+        calcPanelposition: function (jsP) {
+            // when using option.size = 'auto' and option.position = 'center' consider use of option.ajax with
+            // async: false -> size will be known when position is calculated
+            // value "center" not allowed for option.position.bottom & option.position.right -> use top and/or left
+            var panelpos = {};
+
+            // get px values for panel size in case option.size is 'auto' - results will be incorrect whenever content
+            // is not loaded yet ( e.g. option.load, option.ajax ) -> centering can't work correctly
+            jsP.option.size.width = $(jsP).outerWidth();
+            jsP.option.size.height = $(jsP).innerHeight();
+
+            // delete option.position.top and/or left if option.position.bottom and/or right (top & left values come from defaults object)
+            if (jsP.option.position.bottom) {
+
+                delete jsP.option.position.top;
+
+            }
+            if (jsP.option.position.right) {
+
+                delete jsP.option.position.left;
+
+            }
+
+            // calculate top | bottom values != center
+            // if not checked for 0 as well code would not be executed!
+            if (jsP.option.position.bottom || jsP.option.position.bottom === 0) {
+
+                this.calcPos('bottom', jsP);
+
+            } else if (jsP.option.position.top || jsP.option.position.top === 0) {
+
+                if (jsP.option.position.top === 'center') {
+
+                    jsP.option.position.top = this.calcPosCenter(jsP.option).top;
+
+                } else {
+
+                    this.calcPos('top', jsP);
+
+                }
+            }
+
+            // calculate left | right values != center
+            if (jsP.option.position.right || jsP.option.position.right === 0) {
+
+                this.calcPos('right', jsP);
+
+            } else if (jsP.option.position.left || jsP.option.position.left === 0) {
+
+                if (jsP.option.position.left === 'center') {
+
+                    jsP.option.position.left = this.calcPosCenter(jsP.option).left;
+
+                } else {
+
+                    this.calcPos('left', jsP);
+
+                }
+
+            }
+            if (jsP.option.position.top) {
+
+                panelpos.top = parseInt(jsP.option.position.top, 10) + jsP.option.offset.top + 'px';
 
             } else {
 
-                option.position[prop] = parseInt(option.position[prop], 10) + 'px';
+                panelpos.bottom = parseInt(jsP.option.position.bottom, 10) + jsP.option.offset.top + 'px';
+
+            }
+            if (jsP.option.position.left) {
+
+                panelpos.left = parseInt(jsP.option.position.left, 10) + jsP.option.offset.left + 'px';
+
+            } else {
+
+                panelpos.right = parseInt(jsP.option.position.right, 10) + jsP.option.offset.left + 'px';
+
+            }
+
+            jsP.css(panelpos);
+            jsP.option.position = {
+
+                top: jsP.css('top'),
+                left: jsP.css('left')
+
+            };
+        },
+
+        // used in calcPanelposition
+        calcPos: function (prop, panel) {
+
+            var optPosition = panel.option.position;
+
+            if (optPosition[prop] === 'auto') {
+
+                panel.option.position[prop] = panel.count * 30 + 'px';
+
+            } else if ($.isFunction(optPosition[prop])) {
+
+                panel.option.position[prop] = optPosition[prop](panel);
+
+            } else if (optPosition[prop] === 0) {
+
+                panel.option.position[prop] = '0';
+
+            } else {
+
+                panel.option.position[prop] = parseInt(optPosition[prop], 10) + 'px';
 
             }
 
             // corrections if jsPanel is appended to the body element
-            if (option.selector === 'body') {
+            if (panel.option.selector === 'body') {
 
                 if (prop === 'top') {
 
-                    option.position.top = parseInt(option.position.top, 10) + jsPanel.winscrollTop() + 'px';
+                    panel.option.position.top = parseInt(optPosition.top, 10) + $(window).scrollTop() + 'px';
 
-                }
+                } else if (prop === 'bottom') {
 
-                if (prop === 'bottom') {
+                    panel.option.position.bottom = parseInt(optPosition.bottom, 10) - $(window).scrollTop() + 'px';
 
-                    option.position.bottom = parseInt(option.position.bottom, 10) - jsPanel.winscrollTop() + 'px';
+                } else if (prop === 'left') {
 
-                }
+                    panel.option.position.left = parseInt(optPosition.left, 10) + $(window).scrollLeft() + 'px';
 
-                if (prop === 'left') {
+                } else if (prop === 'right') {
 
-                    option.position.left = parseInt(option.position.left, 10) + jsPanel.winscrollLeft() + 'px';
-
-                }
-
-                if (prop === 'right') {
-
-                    option.position.right = parseInt(option.position.right, 10) - jsPanel.winscrollLeft() + 'px';
+                    panel.option.position.right = parseInt(optPosition.right, 10) - $(window).scrollLeft() + 'px';
 
                 }
             }
 
-            return option.position[prop];
+            return panel.option.position[prop];
 
         },
 
         // calculate position center for option.position == 'center'
         calcPosCenter: function (option) {
 
-            var posL = ($(option.selector).outerWidth() / 2) - ((parseInt(option.size.width, 10) / 2)),
+            var optSelector = option.selector,
+                optSize = option.size,
+                posL = ($(optSelector).outerWidth() / 2) - ((parseInt(optSize.width, 10) / 2)),
                 posT;
 
-            if (option.selector === 'body') {
+            if (optSelector === 'body') {
 
-                posT = ($(window).outerHeight() / 2) - ((parseInt(option.size.height, 10) / 2) - jsPanel.winscrollTop());
+                posT = ($(window).outerHeight() / 2) - ((parseInt(optSize.height, 10) / 2) - $(window).scrollTop());
 
             } else {
 
-                posT = ($(option.selector).outerHeight() / 2) - ((parseInt(option.size.height, 10) / 2));
+                posT = ($(optSelector).outerHeight() / 2) - ((parseInt(optSize.height, 10) / 2));
 
             }
 
@@ -211,39 +370,34 @@ var jsPanel;
         // calculate position for maximized panels using option.controls.maxtoScreen (for devmondo)
         calcPosmaxtoScreen: function(panel) {
 
-            var offset = panel.offset(),
-                newPos = {
-                    top: parseInt(panel.css('top')) - (offset.top - $(document).scrollTop()) + 5 + 'px',
-                    left: parseInt(panel.css('left')) - (offset.left - $(document).scrollLeft()) + 5 + 'px'
-                };
-
-            return newPos;
+            var offset = panel.offset();
+            return {
+                top: parseInt(panel.css('top')) - (offset.top - $(document).scrollTop()) + 5 + 'px',
+                left: parseInt(panel.css('left')) - (offset.left - $(document).scrollLeft()) + 5 + 'px'
+            };
 
         },
 
         // calculates css left for tooltips
-        calcPosTooltipLeft: function (pos, jsPparent, option) {
+        calcPosTooltipLeft: function (jsPparent, option) {
 
             // width of element serving as trigger for the tooltip
             var parW = jsPparent.outerWidth(),
-                // check possible margins of  trigger
+            // check possible margins of  trigger
                 mL = parseInt(jsPparent.css('margin-left')),
-                // check whether offset is set
-                oX = option.offset.left || 0;
+            // check whether offset is set
+                oX = option.offset.left || 0,
+                optptPosition = option.paneltype.position;
 
-            if (pos === 'top' || pos === 'bottom') {
+            if (optptPosition === 'top' || optptPosition === 'bottom') {
 
                 return (parW - option.size.width) / 2 + mL + oX + 'px';
 
-            }
-
-            if (pos === 'left') {
+            } else if (optptPosition === 'left') {
 
                 return -(option.size.width) + mL + oX + 'px';
 
-            }
-
-            if (pos === 'right') {
+            } else if (optptPosition === 'right') {
 
                 return parW + mL + oX + 'px';
 
@@ -254,25 +408,22 @@ var jsPanel;
         },
 
         // calculates css top for tooltips
-        calcPosTooltipTop: function (pos, jsPparent, option) {
+        calcPosTooltipTop: function (jsPparent, option) {
 
             var parH = jsPparent.innerHeight(),
                 mT = parseInt(jsPparent.css('margin-top')),
-                oY = option.offset.top || 0;
+                oY = option.offset.top || 0,
+                optptPosition = option.paneltype.position;
 
-            if (pos === 'left' || pos === 'right') {
+            if (optptPosition === 'left' || optptPosition === 'right') {
 
                 return -(option.size.height / 2) + (parH / 2) + mT + oY + 'px';
 
-            }
-
-            if (pos === 'top') {
+            } else if (optptPosition === 'top') {
 
                 return -(option.size.height + oY) + mT + 'px';
 
-            }
-
-            if (pos === 'bottom') {
+            } else if (optptPosition === 'bottom') {
 
                 return parH + mT + oY + 'px';
 
@@ -285,35 +436,10 @@ var jsPanel;
         // calculate final tooltip position
         calcToooltipPosition: function(jsPparent, option) {
 
-            if (option.paneltype.position === 'top') {
-
-                option.position = {
-                    top: jsPanel.calcPosTooltipTop('top', jsPparent, option),
-                    left: jsPanel.calcPosTooltipLeft('top', jsPparent, option)
-                };
-
-            } else if (option.paneltype.position === 'bottom') {
-
-                option.position = {
-                    top: jsPanel.calcPosTooltipTop('bottom', jsPparent, option),
-                    left: jsPanel.calcPosTooltipLeft('bottom', jsPparent, option)
-                };
-
-            } else if (option.paneltype.position === 'left') {
-
-                option.position = {
-                    top: jsPanel.calcPosTooltipTop('left', jsPparent, option),
-                    left: jsPanel.calcPosTooltipLeft('left', jsPparent, option)
-                };
-
-            } else if (option.paneltype.position === 'right') {
-
-                option.position = {
-                    top: jsPanel.calcPosTooltipTop('right', jsPparent, option),
-                    left: jsPanel.calcPosTooltipLeft('right', jsPparent, option)
-                };
-
-            }
+            option.position = {
+                top: this.calcPosTooltipTop(jsPparent, option),
+                left: this.calcPosTooltipLeft(jsPparent, option)
+            };
 
             return option.position;
 
@@ -321,20 +447,22 @@ var jsPanel;
 
         calcVerticalOffset: function (panel) {
 
-            return panel.offset().top - jsPanel.winscrollTop();
+            return Math.floor(panel.offset().top - $(window).scrollTop());
 
         },
 
         // closes a jsPanel and removes it from the DOM
-        close: function (panel, optionPaneltypeType, jsPparentTagname) {
+        close: function (panel) {
 
             // get parent-element of jsPanel
             var context = panel.parent(),
                 panelID = panel.attr('id'),
-                ind;
+                ind, hints;
+
+            $(panel).trigger('jspanelbeforeclose', panelID);
 
             // delete childpanels ...
-            jsPanel.closeChildpanels(panel);
+            this.closeChildpanels(panel);
 
             // if present remove tooltip wrapper
             if (context.hasClass('jsPanel-tooltip-wrapper')) {
@@ -349,44 +477,29 @@ var jsPanel;
             $('body').trigger('jspanelclosed', panelID);
 
             // remove backdrop only when modal jsPanel is closed
-            if (optionPaneltypeType === 'modal') {
+            if (panel.option.paneltype.type === 'modal') {
 
                 $('.jsPanel-backdrop').remove();
 
             }
             // reposition minimized panels
-            jsPanel.reposMinimized(jsPanel.widthForMinimized);
+            this.reposMinimized(this.widthForMinimized);
 
             // update arrays with hints
-            if (optionPaneltypeType === 'hint') {
+            if (panel.option.paneltype.type === 'hint') {
 
-                ind = jsPanel.hintsTc.indexOf(panelID);
+                hints = [jsPanel.hintsTc, jsPanel.hintsTl, jsPanel.hintsTr];
 
-                if (ind !== -1) {
+                hints.forEach(function(arrayItem){
+                    ind = arrayItem.indexOf(panelID);
+                    if (ind !== -1) {
 
-                    jsPanel.hintsTc.splice(ind, 1);
-                    // reposition hints
-                    jsPanel.reposHints(jsPanel.hintsTc, jsPparentTagname);
+                        arrayItem.splice(ind, 1);
+                        // reposition hints
+                        jsPanel.reposHints(arrayItem, panel.parentElmtTagname);
 
-                }
-
-                ind = jsPanel.hintsTl.indexOf(panelID);
-
-                if (ind !== -1) {
-
-                    jsPanel.hintsTl.splice(ind, 1);
-                    jsPanel.reposHints(jsPanel.hintsTl, jsPparentTagname);
-
-                }
-
-                ind = jsPanel.hintsTr.indexOf(panelID);
-
-                if (ind !== -1) {
-
-                    jsPanel.hintsTr.splice(ind, 1);
-                    jsPanel.reposHints(jsPanel.hintsTr, jsPparentTagname);
-
-                }
+                    }
+                });
 
             }
 
@@ -397,14 +510,11 @@ var jsPanel;
         // close all tooltips
         closeallTooltips: function () {
 
-            var pID;
-
             $('.jsPanel-tt').each(function () {
 
-                pID = $(this).attr('id');
-                // if present remove tooltip wrapper and than remove tooltip
-                $('#' + pID).unwrap().remove();
-                $('body').trigger('jspanelclosed', pID);
+                // remove tooltip wrapper and than remove tooltip
+                $(this).unwrap().remove();
+                $('body').trigger('jspanelclosed', $(this).attr('id'));
 
             });
 
@@ -413,13 +523,12 @@ var jsPanel;
         // closes/removes all childpanels within the parent jsPanel
         closeChildpanels: function (panel) {
 
-            var pID;
-
             $('.jsPanel', panel).each(function () {
 
-                pID = $(this).attr('id');
-                $('#' + pID).remove();
-                $('body').trigger('jspanelclosed', pID);
+                $(panel).trigger('jspanelbeforeclose', $(this).attr('id'));
+
+                $(this).remove();
+                $('body').trigger('jspanelclosed', $(this).attr('id'));
 
             });
 
@@ -428,51 +537,53 @@ var jsPanel;
         },
 
         // configure controls
-        configControls: function(optionControls, panel) {
+        configControls: function(panel) {
 
-            if (optionControls.buttons === 'closeonly') {
+            var controls = ["close", "maximize", "minimize", "normalize", "smallify"];
 
-                $(".jsPanel-btn-min, .jsPanel-btn-norm, .jsPanel-btn-max, .jsPanel-btn-small, .jsPanel-btn-smallrev", panel.header.controls).remove();
+            if (panel.option.controls.buttons === 'closeonly') {
+
+                $(".jsPanel-btn-min, .jsPanel-btn-norm, .jsPanel-btn-max, .jsPanel-btn-small, .jsPanel-btn-smallrev, .jsPanel-btn-hide", panel.header.controls).remove();
                 panel.header.title.css("width", "calc(100% - 30px)");
 
-            } else if (optionControls.buttons === 'none') {
+            } else if (panel.option.controls.buttons === 'none') {
 
                 $('*', panel.header.controls).remove();
                 panel.header.title.css("width", "100%");
 
             }
+
             // disable controls individually
-            if (optionControls.close) {panel.control('disable', 'close');}
-            if (optionControls.maximize) {panel.control('disable', 'maximize');}
-            if (optionControls.minimize) {panel.control('disable', 'minimize');}
-            if (optionControls.normalize) {panel.control('disable', 'normalize');}
-            if (optionControls.smallify) {panel.control('disable', 'smallify');}
+            controls.forEach(function(ctrl){
+                if (panel.option.controls[ctrl]) {panel.control('disable', ctrl);}
+            });
 
         },
 
         // configure iconfonts
-        configIconfont: function(optionControlsIconfont, panel) {
+        configIconfont: function(panel) {
+
+            var controlsArray = ["close", "max", "norm", "min", "small", "smallrev"],
+                bootstrapArray = ["remove", "fullscreen", "resize-full", "minus", "chevron-up", "chevron-down"],
+                fontawesomeArray = ["times", "arrows-alt", "expand", "minus", "chevron-up", "chevron-down"],
+                optIconfont = panel.option.controls.iconfont,
+                controls = panel.header.controls;
 
             // remove icon sprites
-            $('*', panel.header.controls).css('background-image', 'none');
+            $('*', controls).css('background-image', 'none');
 
-            if (optionControlsIconfont === 'bootstrap') {
+            // set icons
+            if (optIconfont === 'bootstrap') {
 
-                $('.jsPanel-btn-close', panel.header.controls).empty().append('<span class="glyphicon glyphicon-remove"></span>');
-                $('.jsPanel-btn-max', panel.header.controls).empty().append('<span class="glyphicon glyphicon-fullscreen"></span>');
-                $('.jsPanel-btn-norm', panel.header.controls).empty().append('<span class="glyphicon glyphicon-resize-full"></span>');
-                $('.jsPanel-btn-min', panel.header.controls).empty().append('<span class="glyphicon glyphicon-minus"></span>');
-                $('.jsPanel-btn-small', panel.header.controls).empty().append('<span class="glyphicon glyphicon-chevron-up"></span>');
-                $('.jsPanel-btn-smallrev', panel.header.controls).empty().append('<span class="glyphicon glyphicon-chevron-down"></span>');
+                controlsArray.forEach(function(item, i){
+                    $('.jsPanel-btn-' + item, controls).empty().append('<span class="glyphicon glyphicon-' + bootstrapArray[i] + '"></span>');
+                });
 
-            } else if (optionControlsIconfont === 'font-awesome') {
+            } else if (optIconfont === 'font-awesome') {
 
-                $('.jsPanel-btn-close', panel.header.controls).empty().append('<i class="fa fa-times"></i>');
-                $('.jsPanel-btn-max', panel.header.controls).empty().append('<i class="fa fa-arrows-alt"></i>');
-                $('.jsPanel-btn-norm', panel.header.controls).empty().append('<i class="fa fa-expand"></i>');
-                $('.jsPanel-btn-min', panel.header.controls).empty().append('<i class="fa fa-minus"></i>');
-                $('.jsPanel-btn-small', panel.header.controls).empty().append('<i class="fa fa-chevron-up"></i>');
-                $('.jsPanel-btn-smallrev', panel.header.controls).empty().append('<i class="fa fa-chevron-down"></i>');
+                controlsArray.forEach(function(item, i){
+                    $('.jsPanel-btn-' + item, controls).empty().append('<span class="fa fa-' + fontawesomeArray[i] + '"></span>');
+                });
 
             }
 
@@ -481,50 +592,41 @@ var jsPanel;
         // builds toolbar
         configToolbar: function (toolbaritems, toolbarplace, panel) {
 
-            var i,
-                el,
-                type,
-                max = toolbaritems.length;
+            var el;
 
-            for (i = 0; i < max; i += 1) {
+            toolbaritems.forEach(function(item){
 
-                if (typeof toolbaritems[i] === 'object') {
+                if(typeof item === "object") {
+                    el = $(item.item);
 
-                    el = $(toolbaritems[i].item);
-                    type = el.prop('tagName').toLowerCase();
-
-                    if (type === 'button') {
-
+                    if (el.prop('tagName').toLowerCase() === 'button') {
                         // set text of button
-                        el.append(toolbaritems[i].btntext);
+                        el.append(item.btntext);
 
                         // add class to button
-                        if (typeof toolbaritems[i].btnclass === 'string') {
-
-                            el.addClass(toolbaritems[i].btnclass);
-
+                        if (typeof item.btnclass === 'string') {
+                            el.addClass(item.btnclass);
                         }
-
                     }
 
                     toolbarplace.append(el);
 
                     // bind handler to the item
-                    if ($.isFunction(toolbaritems[i].callback)) {
-
-                        el.on(toolbaritems[i].event, panel, toolbaritems[i].callback);
+                    if ($.isFunction(item.callback)) {
+                        el.on(item.event, panel, item.callback);
                         // jsP is accessible in the handler as "event.data"
-
                     }
-
                 }
 
-            }
+            });
 
         },
 
         // disable/enable individual controls
         control: function (panel, action, btn) {
+
+            var controls = panel.header.controls,
+                controlbtn;
 
             if (arguments.length === 3) {
 
@@ -532,68 +634,50 @@ var jsPanel;
 
                     if (btn === 'close') {
 
-                        btn = $('.jsPanel-btn-close', panel.header.controls);
+                        controlbtn = $('.jsPanel-btn-close', controls);
 
-                    }
+                    } else if (btn === 'maximize') {
 
-                    if (btn === 'maximize') {
+                        controlbtn = $('.jsPanel-btn-max', controls);
 
-                        btn = $('.jsPanel-btn-max', panel.header.controls);
+                    } else if (btn === 'minimize') {
 
-                    }
+                        controlbtn = $('.jsPanel-btn-min', controls);
 
-                    if (btn === 'minimize') {
+                    } else if (btn === 'normalize') {
 
+                        controlbtn = $('.jsPanel-btn-norm', controls);
 
-                        btn = $('.jsPanel-btn-min', panel.header.controls);
-                    }
+                    } else if (btn === 'smallify') {
 
-                    if (btn === 'normalize') {
-
-                        btn = $('.jsPanel-btn-norm', panel.header.controls);
-
-                    }
-
-                    if (btn === 'smallify') {
-
-                        btn = $('.jsPanel-btn-small', panel.header.controls);
+                        controlbtn = $('.jsPanel-btn-small', controls);
 
                     }
 
                     // unbind handler and set styles
-                    btn.off().css({opacity:0.5, cursor: 'default'});
+                    controlbtn.off().css({opacity:0.5, cursor: 'default'});
 
                 } else if (arguments[1] === 'enable') {
 
-                    var controlbtn;
-
                     if (btn === 'close') {
 
-                        controlbtn = $('.jsPanel-btn-close', panel.header.controls);
+                        controlbtn = $('.jsPanel-btn-close', controls);
 
-                    }
+                    } else if (btn === 'maximize') {
 
-                    if (btn === 'maximize') {
+                        controlbtn = $('.jsPanel-btn-max', controls);
 
-                        controlbtn = $('.jsPanel-btn-max', panel.header.controls);
+                    } else if (btn === 'minimize') {
 
-                    }
+                        controlbtn = $('.jsPanel-btn-min', controls);
 
-                    if (btn === 'minimize') {
+                    } else if (btn === 'normalize') {
 
-                        controlbtn = $('.jsPanel-btn-min', panel.header.controls);
+                        controlbtn = $('.jsPanel-btn-norm', controls);
 
-                    }
+                    } else if (btn === 'smallify') {
 
-                    if (btn === 'normalize') {
-
-                        controlbtn = $('.jsPanel-btn-norm', panel.header.controls);
-
-                    }
-
-                    if (btn === 'smallify') {
-
-                        controlbtn = $('.jsPanel-btn-small', panel.header.controls);
+                        controlbtn = $('.jsPanel-btn-small', controls);
 
                     }
 
@@ -619,7 +703,7 @@ var jsPanel;
 
                 if (odcs === "maximize" || odcs === "normalize") {
 
-                    if (panel.status !== "maximized") {
+                    if (panel.status === "normalized" || panel.option.panelstatus === "normalized") {
 
                         panel.maximize();
 
@@ -639,20 +723,144 @@ var jsPanel;
 
         },
 
-        docOuterHeight: function () {
+        // export a panel layout to localStorage and returns array with an object for each panel
+        exportPanels: function() {
+            var elmtOffset, elmtPosition, elmtTop, elmtLeft, elmtWidth, elmtHeight, elmtStatus, panelParent,
+                panelArr = [], exportedPanel,
+                panels = $(".jsPanel").not(".jsPanel-tt, .jsPanel-hint, .jsPanel-modal");
 
-            return $(document).outerHeight();
+            panels.each(function(index, elmt){
+
+                exportedPanel = {
+                    panelstatus: $(elmt).data("panelstatus"),
+                    id: $(elmt).prop("id"),
+                    title: $(".jsPanel-title", elmt).html(),
+                    custom: $(elmt).data("custom"),
+                    offset: { top: 0, left: 0 },
+                    content: $(elmt).data("content")
+                };
+
+                // normalize minimized/maximized panels before export
+                // status to restore is saved in exportedPanel.panelstatus
+                if ($(elmt).data("panelstatus") !== "normalized") {
+                    $(".jsPanel-btn-norm", elmt).trigger("click");
+                }
+
+                panelParent = $(elmt).data("selector");
+                elmtOffset = $(elmt).offset();
+                elmtPosition = $(elmt).position();
+
+                if (elmtStatus === "minimized") {
+
+                    if (panelParent.toLowerCase() === "body") {
+                        elmtTop = $(elmt).data("paneltop") - $(window).scrollTop() + "px";
+                        elmtLeft = $(elmt).data("panelleft") - $(window).scrollLeft() + "px";
+                    } else {
+                        elmtTop = $(elmt).data("paneltop") + "px";
+                        elmtLeft = $(elmt).data("panelleft") + "px";
+                    }
+                    elmtWidth = $(elmt).data("panelwidth") + "px";
+                    elmtHeight = $(elmt).data("panelheight") + "px";
+
+                } else {
+
+                    if (panelParent.toLowerCase() === "body") {
+                        elmtTop = Math.floor(elmtOffset.top - $(window).scrollTop()) + "px";
+                        elmtLeft = Math.floor(elmtOffset.left - $(window).scrollLeft()) + "px";
+                    } else {
+                        elmtTop = Math.floor(elmtPosition.top) + "px";
+                        elmtLeft = Math.floor(elmtPosition.left) + "px";
+                    }
+                    elmtWidth = $(elmt).css("width");
+                    elmtHeight = $(".jsPanel-content", elmt).css("height");
+
+                }
+
+                exportedPanel.size = {
+                    width: elmtWidth,
+                    height: elmtHeight
+                };
+                exportedPanel.position = {
+                    top: elmtTop,
+                    left: elmtLeft
+                };
+
+                if ($(elmt).data("loadURL")) {
+                    exportedPanel.load = {};
+                    exportedPanel.load.url = $(elmt).data("loadURL");
+                }
+                if ($(elmt).data("ajaxURL")) {
+                    exportedPanel.ajax = {};
+                    exportedPanel.ajax.url = $(elmt).data("ajaxURL");
+                }
+                if ($(elmt).data("iframeDOC") || $(elmt).data("iframeSRC")) {
+                    exportedPanel.iframe = {};
+                    if ($(elmt).data("iframeDOC")) {
+                        exportedPanel.iframe.srcdoc = $(elmt).data("iframeDOC");
+                    }
+                    if ($(elmt).data("iframeSRC")) {
+                        exportedPanel.iframe.src = $(elmt).data("iframeSRC");
+                    }
+                }
+
+                panelArr.push(exportedPanel);
+
+                // restore status that is saved
+                switch (exportedPanel.panelstatus) {
+                    case "minimized":
+                        $(".jsPanel-btn-min", elmt).trigger("click");
+                        break;
+                    case "maximized":
+                        $(".jsPanel-btn-max", elmt).trigger("click");
+                        break;
+                    case "smallified":
+                        $(".jsPanel-btn-small", elmt).trigger("click");
+                        break;
+                    case "smallifiedMax":
+                        $(".jsPanel-btn-small", elmt).trigger("click");
+                        break;
+                }
+
+            });
+
+            //window.localStorage.setItem("jspanels", panelArr);
+            window.localStorage.setItem("jspanels", JSON.stringify(panelArr));
+            return panelArr;
+
+        },
+
+        // imports panel layout from localStorage.jspanels and restores panels
+        importPanels: function(predefinedConfigs) {
+            /* panelConfig needs to be an object with predefined configs.
+             * A config named "default" will be applied to ALL panels
+             *
+             *       panelConfig = { default: { } [, config1 [, config2 [, configN ]]] };
+             */
+            var savedPanels,restoredConfig, defaultConfig;
+            savedPanels = JSON.parse(localStorage.jspanels) || {};
+            defaultConfig = predefinedConfigs["default"] || {};
+
+            savedPanels.forEach(function(savedconfig){
+                // safedconfig represents one item in safedPanels
+                if (typeof savedconfig.custom.config === "string") {
+                    restoredConfig = $.extend(true, {}, defaultConfig, predefinedConfigs[savedconfig.custom.config], savedconfig);
+                } else {
+                    restoredConfig = $.extend(true, {}, defaultConfig, savedconfig);
+                }
+                // restore panel
+                $.jsPanel(restoredConfig);
+            });
 
         },
 
         // maintains panel position relative to window on scroll of page
         fixPosition: function (panel) {
 
-            var jspaneldiff = panel.offset().top - jsPanel.winscrollTop();
+            var jspaneldiff = panel.offset().top - $(window).scrollTop();
 
             panel.jsPanelfixPos = function () {
 
-                panel.css('top', jsPanel.winscrollTop() + jspaneldiff + 'px');
+                panel.css('top', $(window).scrollTop() + jspaneldiff + 'px');
 
             };
 
@@ -661,18 +869,23 @@ var jsPanel;
         },
 
         // calculate panel margins
-        getMargins: function(panel, selector) {
+        getMargins: function(panel) {
 
-            var off, elmtOff, mR, mL, mB, mT;
+            var off, elmtOff, mR, mL, mB, mT,
+                selector = panel.option.paneltype.shiftwithin,
+                winWidth = $(window).outerWidth(),
+                winHeight = $(window).outerHeight(),
+                panelWidth = panel.outerWidth(),
+                panelHeight = panel.outerHeight();
 
             if(!selector || selector === "body") {
 
                 // panel margins relative to browser viewport
                 off = panel.offset();
-                mR = jsPanel.winouterWidth() - off.left - panel.outerWidth() + jsPanel.winscrollLeft();
-                mL = jsPanel.winouterWidth() - panel.outerWidth() - mR;
-                mB = jsPanel.winouterHeight() - off.top - panel.outerHeight() + jsPanel.winscrollTop();
-                mT = jsPanel.winouterHeight() - panel.outerHeight() - mB;
+                mR = winWidth - off.left - panelWidth + $(window).scrollLeft();
+                mL = winWidth - panelWidth - mR;
+                mB = winHeight - off.top - panelHeight + $(window).scrollTop();
+                mT = winHeight - panelHeight - mB;
 
             } else {
 
@@ -690,160 +903,51 @@ var jsPanel;
 
         },
 
+        // return max value of an array with numbers
+        getMaxOfArray: function (numArray) {
+            return Math.max.apply(null, numArray);
+        },
+
         // calculate max horizontal and vertical tooltip shift
         getMaxpanelshift: function(panel) {
 
-            var horiz = parseInt( panel.outerWidth()/2 ) + parseInt( panel.parent().outerWidth()/2 ) - 20,
-                vert = parseInt( panel.outerHeight()/2 ) + parseInt( panel.parent().outerHeight()/2 ) - 20,
-                cornerHoriz = parseInt( panel.outerWidth()/2 ) - 16,
-                cornerVert = parseInt( panel.outerHeight()/2 ) - 16;
+            var panelWidth = panel.outerWidth(),
+                panelHeight = panel.outerHeight(),
+                horiz = parseInt( panelWidth/2 ) + parseInt( panel.parent().outerWidth()/2 ) - 20,
+                vert = parseInt( panelHeight/2 ) + parseInt( panel.parent().outerHeight()/2 ) - 20,
+                cornerHoriz = parseInt( panelWidth/2 ) - 16,
+                cornerVert = parseInt( panelHeight/2 ) - 16;
 
             return {maxshiftH: horiz, maxshiftV: vert, maxCornerH: cornerHoriz, maxCornerV: cornerVert};
 
         },
 
-        // shift tooltip left/right if it overflows window
-        // when using horizontal offsets of panel and/or corner result might be not as expected
-        shiftTooltipHorizontal: function(panel, optionPaneltypeshiftwithin){
-
-            var margins = jsPanel.getMargins(panel, optionPaneltypeshiftwithin),
-                leftShiftRequired = 0,
-                maxShift = jsPanel.getMaxpanelshift(panel),
-                maxLeftShift = maxShift.maxshiftH,
-                shift = 0,
-                maxCornerLeft = maxShift.maxCornerH,
-                cornerShift = 0,
-                newPanelLeft = 0,
-                newCornerLeft = 0;
-
-            if (margins.marginLeft < 0 && margins.marginRight > 0) {
-                // if panel overflows left window border
-                leftShiftRequired = Math.abs(margins.marginLeft) + 5;
-                shift = Math.min(leftShiftRequired, maxLeftShift);
-                cornerShift = Math.min(maxCornerLeft, shift);
-                newPanelLeft = parseInt(panel.css('left')) + shift + "px";
-                newCornerLeft = parseInt($('.jsPanel-corner', panel).css('left')) - cornerShift + "px";
-
-            } else if (margins.marginRight < 0 && margins.marginLeft > 0) {
-                // if panel overflows right window border
-                leftShiftRequired = Math.abs(margins.marginRight) + 5;
-                shift = Math.min(leftShiftRequired, maxLeftShift);
-                cornerShift = Math.min(maxCornerLeft, shift);
-                newPanelLeft = parseInt(panel.css('left')) - shift + "px";
-                newCornerLeft = parseInt($('.jsPanel-corner', panel).css('left')) + cornerShift + "px";
-
-            }
-
-            if ((margins.marginLeft < 0 && margins.marginRight > 0) || (margins.marginRight < 0 && margins.marginLeft > 0)) {
-                // shift panel
-                panel.animate({
-                    "left": newPanelLeft
-                },{ queue: false /* to have both animation run simultaneously */ });
-
-                // shift corner if present
-                if ($('.jsPanel-corner', panel)) {
-                    $('.jsPanel-corner', panel).animate({
-                        "left": newCornerLeft
-                    },{ queue: false /* to have both animation run simultaneously */ });
-                }
-            }
-
-        },
-
-        // shift tooltip up/down if it overflows window
-        // when using vertical offsets of panel and/or corner result might be not as expected
-        shiftTooltipVertical: function(panel, optionPaneltypeshiftwithin){
-
-            //console.log( parseInt($('*:first-child', panel.parent()).css('margin-left')) );
-
-            var margins = jsPanel.getMargins(panel, optionPaneltypeshiftwithin),
-                topShiftRequired = 0,
-                maxShift = jsPanel.getMaxpanelshift(panel),
-                maxTopShift = maxShift.maxshiftV,
-                shift = 0,
-                maxCornerTop = maxShift.maxCornerV,
-                cornerShift = 0,
-                newPanelTop = 0,
-                newCornerTop = 0;
-
-            if (margins.marginTop < 0 && margins.marginBottom > 0) {
-                // if panel overflows top window border
-                topShiftRequired = Math.abs(margins.marginTop) + 5;
-                shift = Math.min(topShiftRequired, maxTopShift);
-                cornerShift = Math.min(maxCornerTop, shift);
-                newPanelTop = parseInt(panel.css('top')) + shift + "px";
-                newCornerTop = parseInt($('.jsPanel-corner', panel).css('top')) - cornerShift + "px";
-
-            } else if (margins.marginBottom < 0 && margins.marginTop > 0) {
-                // if panel overflows bottom window border
-                topShiftRequired = Math.abs(margins.marginBottom) + 5;
-                shift = Math.min(topShiftRequired, maxTopShift);
-                cornerShift = Math.min(maxCornerTop, shift);
-                newPanelTop = parseInt(panel.css('top')) - shift + "px";
-                newCornerTop = parseInt($('.jsPanel-corner', panel).css('top')) + cornerShift + "px";
-
-            }
-
-            if ((margins.marginTop < 0 && margins.marginBottom > 0) || (margins.marginBottom < 0 && margins.marginTop > 0)) {
-                // shift panel
-                panel.animate({
-                    "top": newPanelTop
-                },{ queue: false /* to have both animation run simultaneously */ });
-
-                // shift corner if present
-                if ($('.jsPanel-corner', panel)) {
-                    $('.jsPanel-corner', panel).animate({
-                        "top": newCornerTop
-                    },{ queue: false /* to have both animation run simultaneously */ });
-                }
-            }
-
-        },
-
-        // get title text
-        getTitle: function (panel) {
-
-            return panel.header.title.html();
-
-        },
-
         // hide controls specified by param "sel" of the jsPanel "panel"
         hideControls: function (sel, panel) {
-
-            var controls = ".jsPanel-btn-close, .jsPanel-btn-norm, .jsPanel-btn-min, .jsPanel-btn-max, .jsPanel-btn-small, .jsPanel-btn-smallrev";
-
-            $(controls, panel.header.controls).css('display', 'block');
-
+            var controlsArr = ".jsPanel-btn-close, .jsPanel-btn-norm, .jsPanel-btn-min, .jsPanel-btn-max, .jsPanel-btn-small, .jsPanel-btn-smallrev, .jsPanel-btn-hide";
+            // add class "jsPanel-btn-hide" to extra icons to hide them when panel is minimized
+            $(controlsArr, panel.header.controls).css('display', 'block');
             $(sel, panel.header.controls).css('display', 'none');
-
         },
 
         // calculates option.position for hints using 'top left', 'top center' or 'top right'
         hintTop: function (hintGroup) {
 
-            var i,
-                hintH = 0,
-                max = hintGroup.length;
+            var hintH = 0;
 
-            for (i = 0; i < max; i += 1) {
+            hintGroup.forEach(function(item){
+                hintH += $('#' + item).outerHeight(true);
+            });
 
-                hintH += $('#' + hintGroup[i]).outerHeight(true);
-
-            }
-
-            if (hintGroup === jsPanel.hintsTr) {
+            if (hintGroup === this.hintsTr) {
 
                 return {top: hintH, right: 0};
 
-            }
-
-            if (hintGroup === jsPanel.hintsTl) {
+            } else if (hintGroup === this.hintsTl) {
 
                 return {top: hintH, left: 0};
 
-            }
-
-            if (hintGroup === jsPanel.hintsTc) {
+            } else if (hintGroup === this.hintsTc) {
 
                 return {top: hintH, left: 'center'};
 
@@ -853,146 +957,210 @@ var jsPanel;
 
         },
 
+        // loads content in an iFrame
+        iframe: function(panel) {
+
+            var iFrame = $("<iframe></iframe>");
+
+            // iframe content
+            if (panel.option.iframe.srcdoc) {
+
+                iFrame.prop("srcdoc", panel.option.iframe.srcdoc);
+                panel.data("iframeDOC", panel.option.iframe.srcdoc); // needed for exportPanels()
+
+            }
+
+            if (panel.option.iframe.src) {
+
+                iFrame.prop("src", panel.option.iframe.src);
+                panel.data("iframeSRC", panel.option.iframe.src); // needed for exportPanels()
+
+            }
+
+            //iframe size
+            if (panel.option.size.width !== "auto" && !panel.option.iframe.width) {
+
+                iFrame.prop("width", "100%");
+
+            } else if (typeof panel.option.iframe.width === 'string' && panel.option.iframe.width.slice(-1) === '%') {
+
+                iFrame.prop("width", panel.option.iframe.width);
+
+            } else {
+
+                iFrame.prop("width", parseInt(panel.option.iframe.width) + 'px');
+
+            }
+
+            if (panel.option.size.height !== "auto" && !panel.option.iframe.height) {
+
+                iFrame.prop("height", "100%");
+
+            } else if (typeof panel.option.iframe.height === 'string' && panel.option.iframe.height.slice(-1) === '%') {
+
+                iFrame.prop("height", panel.option.iframe.height);
+
+            } else {
+
+                iFrame.prop("height", parseInt(panel.option.iframe.height) + 'px');
+
+            }
+
+            //iframe name
+            if (typeof panel.option.iframe.name === 'string') {
+
+                iFrame.prop("name", panel.option.iframe.name);
+
+            }
+
+            //iframe id
+            if (typeof panel.option.iframe.id === 'string') {
+
+                iFrame.prop("id", panel.option.iframe.id);
+
+            }
+
+            //iframe seamless (not yet supported by any browser)
+            if (panel.option.iframe.seamless) {
+
+                iFrame.prop("seamless", "seamless");
+
+            }
+
+            //iframe sandbox
+            if (typeof panel.option.iframe.sandbox === 'string') {
+
+                iFrame.prop("sandox", panel.option.iframe.sandbox);
+
+            }
+
+            //iframe style
+            if ($.isPlainObject(panel.option.iframe.style)) {
+
+                iFrame.css(panel.option.iframe.style);
+
+            }
+
+            //iframe css classes
+            if (typeof panel.option.iframe.classname === 'string') {
+
+                iFrame.addClass(panel.option.iframe.classname);
+
+            } else if ($.isFunction(panel.option.iframe.classname)) {
+
+                iFrame.addClass(panel.option.iframe.classname());
+
+            }
+
+            panel.content.empty().append(iFrame);
+
+        },
+
         // append modal backdrop
         insertModalBackdrop: function () {
 
-            var backdrop = '<div class="jsPanel-backdrop" style="height:' + jsPanel.docOuterHeight() + 'px;"></div>';
+            var backdrop = '<div class="jsPanel-backdrop" style="height:' + $(document).outerHeight() + 'px;"></div>';
 
             $('body').append(backdrop);
+
+            $(document).on("keydown", ".jsPanel-backdrop", function(e){
+                e.preventDefault();
+                return false;
+            });
 
         },
 
         // check whether a bootstrap compatible theme is used
         isBootstrapTheme: function(optionBootstrap) {
 
-            var arr = ["default", "primary", "info", "success", "warning", "danger"];
-
-            if ($.inArray(optionBootstrap, arr) > -1) {
+            if ($.inArray(optionBootstrap, ["default", "primary", "info", "success", "warning", "danger"]) > -1) {
 
                 return optionBootstrap;
 
-            } else {
-
-                return "default";
-
             }
+
+            return "default";
 
         },
 
-        // check for positive integer
-        isPosInt: function(arg) {
+        // loads content using jQuery.load()
+        load: function(panel) {
 
-            var regex = /^\+?[1-9]\d*$/;
+            panel.content.load(panel.option.load.url, panel.option.load.data || undefined, function (responseText, textStatus, jqXHR) {
 
-            if (arg.toString().match(regex) !== null) {
+                if (panel.option.load.complete) {
+                    panel.option.load.complete(responseText, textStatus, jqXHR, panel);
+                }
+                // title h3 might be to small: load() is async!
+                jsPanel.resizeTitle(panel);
+                // update option.size (content might come delayed)
+                jsPanel.updateOptionSize(panel, panel.option.size);
+                // fix for a bug in jQuery-UI draggable? that causes the jsPanel to reduce width when dragged beyond boundary of containing element and option.size.width is 'auto'
+                panel.content.css('width', function () {
+                    return panel.content.outerWidth() + 'px';
+                });
 
-                return true;
+            });
 
-            } else {
+            panel.data("loadURL", panel.option.load.url); // needed for exportPanels()
 
-                return false;
-
-            }
         },
 
         // maximizes a panel within the body element
-        maxWithinBody: function (panel, option) {
+        maxWithinBody: function (panel) {
+            var newPos, newTop, newLeft;
 
-            if (panel.status !== "maximized" && option.paneltype.mode !== 'default') {
-
-                var newPos, newTop, newLeft;
+            if ((panel.status !== "maximized" || panel.option.panelstatus !== "maximized") && panel.option.paneltype.mode !== 'default') {
 
                 // remove window.scroll handler, is added again later in this function
                 $(window).off('scroll', panel.jsPanelfixPos);
 
-                // restore minimized panel to initial container
-                jsPanel.restoreFromMinimized(panel, option);
+                // restore minimized panel to initial container if necessary
+                if (panel.status === "minimized" || panel.option.panelstatus === "minimized") {
+                    this.restoreFromMinimized(panel);
+                }
 
                 // test to enable fullscreen maximize for panels in a parent other than body
-                if (option.controls.maxtoScreen === true) {
-
-                    newPos = jsPanel.calcPosmaxtoScreen(panel);
-                    newTop = newPos.top;
-                    newLeft = newPos.left;
-
+                if (panel.option.controls.maxtoScreen === true) {
+                    newPos = this.calcPosmaxtoScreen(panel);
+                    newTop = newPos.top + parseInt(panel.option.maximizedMargin.top) + 'px';
+                    newLeft = newPos.left + parseInt(panel.option.maximizedMargin.left) + 'px';
                 } else {
-
-                    newTop = jsPanel.winscrollTop() + 5 + 'px';
-                    newLeft = jsPanel.winscrollLeft() + 5 + 'px';
-
+                    newTop = $(window).scrollTop() + parseInt(panel.option.maximizedMargin.top) + 'px';
+                    newLeft = $(window).scrollLeft() + parseInt(panel.option.maximizedMargin.left) + 'px';
                 }
-                panel.animate({
 
+                panel.css({
                     top: newTop,
                     left: newLeft,
-                    width: jsPanel.winouterWidth() - 10 + 'px',
-                    height: jsPanel.winouterHeight() - 10 + 'px'
-
-                }, {
-                    done: function () {
-
-                        jsPanel.resizeContent(panel);
-                        panel.animate({opacity: 1}, {duration: 150});
-
-                        // hier kein fadeIn() einbauen, funktioniert nicht mit jsPanel.fixPosition(jsP)
-                        jsPanel.hideControls(".jsPanel-btn-max, .jsPanel-btn-smallrev", panel);
-                        panel.status = "maximized";
-                        $(panel).trigger('jspanelmaximized', panel.attr('id'));
-                        $(panel).trigger('jspanelstatechange', panel.attr('id'));
-
-                        if (!option.controls.maxtoScreen || (option.controls.maxtoScreen && option.selector === 'body')) {
-
-                            // test to enable fullscreen maximize for panels in a parent other than body
-                            jsPanel.fixPosition(panel, option);
-
-                        }
-
-                        //jsPanel.fixPosition(panel);
-                        jsPanel.resizeTitle(panel);
-
-                    }
+                    width: $(window).outerWidth() - parseInt(panel.option.maximizedMargin.left) - parseInt(panel.option.maximizedMargin.right) + 'px',
+                    height: $(window).outerHeight() - parseInt(panel.option.maximizedMargin.top) - parseInt(panel.option.maximizedMargin.bottom) + 'px'
                 });
+
+                if (!panel.option.controls.maxtoScreen || (panel.option.controls.maxtoScreen && panel.option.selector === 'body')) {
+                    // test to enable fullscreen maximize for panels in a parent other than body
+                    this.fixPosition(panel);
+                }
 
             }
 
         },
 
         // maximizes a panel within an element other than body
-        maxWithinElement: function (panel, option) {
+        maxWithinElement: function (panel) {
 
-            if (panel.status !== "maximized" && option.paneltype.mode !== 'default') {
+            if ((panel.status !== "maximized" || panel.option.panelstatus !== "maximized") && panel.option.paneltype.mode !== 'default') {
 
-                var width,
-                    height;
+                // restore minimized panel to initial container if necessary
+                if (panel.status === "minimized" || panel.option.panelstatus === "minimized") {
+                    this.restoreFromMinimized(panel);
+                }
 
-                // restore minimized panel to initial container
-                jsPanel.restoreFromMinimized(panel, option);
-
-                width = parseInt(panel.parent().outerWidth(), 10) - 10 + 'px';
-                height = parseInt(panel.parent().outerHeight(), 10) - 10 + 'px';
-
-                panel.animate({
-
-                    top: '5px',
-                    left: '5px',
-                    width: width,
-                    height: height
-
-                }, {
-                    done: function () {
-
-                        jsPanel.resizeContent(panel);
-                        panel.animate({opacity: 1}, {duration: 150});
-                        jsPanel.hideControls(".jsPanel-btn-max, .jsPanel-btn-smallrev", panel);
-                        panel.status = "maximized";
-
-                        $(panel).trigger('jspanelmaximized', panel.attr('id'));
-                        $(panel).trigger('jspanelstatechange', panel.attr('id'));
-
-                        jsPanel.resizeTitle(panel);
-
-                    }
-
+                panel.css({
+                    top: parseInt(panel.option.maximizedMargin.top) + 'px',
+                    left: parseInt(panel.option.maximizedMargin.left) + 'px',
+                    width: parseInt(panel.parent().outerWidth(), 10) - parseInt(panel.option.maximizedMargin.left) - parseInt(panel.option.maximizedMargin.right) + 'px',
+                    height: parseInt(panel.parent().outerHeight(), 10) - parseInt(panel.option.maximizedMargin.top) - parseInt(panel.option.maximizedMargin.bottom) + 'px'
                 });
 
             }
@@ -1000,31 +1168,44 @@ var jsPanel;
         },
 
         // calls functions to maximize a jsPanel
-        maximize: function (panel, jsPparentTagname, option) {
+        maximize: function (panel) {
 
-            //  || option.controls.maxtoScreen === true - test to enable fullscreen maximize for panels in a parent other than body
-            if (jsPparentTagname === 'body' || option.controls.maxtoScreen === true) {
+            $(panel).trigger('jspanelbeforemaximize', panel.attr('id'));
 
-                jsPanel.maxWithinBody(panel, option);
+            if (panel.parentElmtTagname === 'body' || panel.option.controls.maxtoScreen === true) {
+
+                this.maxWithinBody(panel);
 
             } else {
 
-                jsPanel.maxWithinElement(panel, option);
+                this.maxWithinElement(panel);
 
             }
+
+            $(panel).trigger('jspanelmaximized', panel.attr('id'));
+            $(panel).trigger('jspanelstatechange', panel.attr('id'));
 
             return panel;
 
         },
 
         // minimizes a jsPanel to the lower left corner of the browser viewport
-        minimize: function (panel, optionSize) {
+        minimize: function (panel) {
+
+            $(panel).trigger('jspanelbeforeminimize', panel.attr('id'));
+
+            panel.data({ // needed for method exportPanels()
+                "paneltop": parseInt(panel.option.position.top),
+                "panelleft": parseInt(panel.option.position.left),
+                "panelwidth": parseInt(panel.option.size.width),
+                "panelheight": parseInt($(".jsPanel-content", panel).css("height"))
+            });
 
             // update panel size to have correct values when normalizing again
-            if (panel.status === "normalized") {
+            if (panel.status === "normalized" || panel.option.panelstatus === "normalized") {
 
-                optionSize.width = panel.outerWidth() + 'px';
-                optionSize.height = panel.outerHeight() + 'px';
+                panel.option.size.width = panel.outerWidth() + 'px';
+                panel.option.size.height = panel.outerHeight() + 'px';
 
             }
             panel.animate({
@@ -1037,7 +1218,7 @@ var jsPanel;
 
                     panel.animate({
 
-                        width: '150px',
+                        width: jsPanel.widthForMinimized + "px",
                         height: '28px'
 
                     }, {
@@ -1062,20 +1243,18 @@ var jsPanel;
         // moves a panel to the minimized container
         movetoMinified: function (panel) {
 
-            var mincount = $('#jsPanel-min-container > .jsPanel').length;
-
             // wenn der Container für die minimierten jsPanels noch nicht existiert -> erstellen
             if ($('#jsPanel-min-container').length === 0) {
 
                 $('body').append('<div id="jsPanel-min-container"></div>');
 
             }
-            if (panel.status !== "minimized") {
+            if (panel.status !== "minimized" || panel.option.panelstatus !== "minimized") {
 
                 // jsPanel in vorgesehenen Container verschieben
                 panel.css({
 
-                    left: (mincount * jsPanel.widthForMinimized) + 'px',
+                    left: ($('.jsPanel', '#jsPanel-min-container').length * jsPanel.widthForMinimized) + 'px',
                     top: 0,
                     opacity: 1
 
@@ -1084,97 +1263,67 @@ var jsPanel;
                     .resizable({disabled: true})
                     .draggable({disabled: true});
 
-                // buttons show or hide
-                jsPanel.hideControls(".jsPanel-btn-min, .jsPanel-btn-small, .jsPanel-btn-smallrev", panel);
-
                 $(panel).trigger('jspanelminimized', panel.attr('id'));
                 $(panel).trigger('jspanelstatechange', panel.attr('id'));
-
-                panel.status = "minimized";
-
-                $(window).off('scroll', panel.jsPanelfixPos);
 
             }
 
         },
 
         // restores a panel to its "normalized" (not minimized, maximized or smallified) position & size
-        normalize: function (panel, option, jsPparentTagname, verticalOffset) {
+        normalize: function (panel) {
 
-            var panelTop;
+            var panelTop,
+                interactions = ["resizable", "draggable"];
+
+            $(panel).trigger('jspanelbeforenormalize', panel.attr('id'));
 
             // remove window.scroll handler, is added again later in this function
             $(window).off('scroll', panel.jsPanelfixPos);
 
-            // restore minimized panel to initial container
-            jsPanel.restoreFromMinimized(panel, option);
-
-            // correction for panels maximized in body after page was scrolled
-            if (jsPparentTagname === 'body') {
-
-                panelTop = jsPanel.winscrollTop() + verticalOffset + 'px';
-
-            } else {
-
-                panelTop = option.position.top;
-
+            // restore minimized panel to initial container if necessary
+            if (panel.status === "minimized" || panel.option.panelstatus === "minimized") {
+                this.restoreFromMinimized(panel);
             }
 
-            panel.animate({
+            // correction for panels maximized in body after page was scrolled
+            if (panel.parentElmtTagname === 'body') {
+                panelTop = $(window).scrollTop() + panel.verticalOffset + 'px';
+            } else {
+                panelTop = panel.option.position.top;
+            }
 
-                width: option.size.width,
-                height: option.size.height,
+            panel.css({
+                width: panel.option.size.width,
+                height: panel.option.size.height,
                 top: panelTop,
-                left: option.position.left
-
-            }, {
-                done: function () {
-
-                    // hier kein fadeIn() einbauen, funktioniert nicht mit jsPanel.fixPosition(jsP);
-                    panel.animate({opacity: 1}, {duration: 150});
-
-                    jsPanel.hideControls(".jsPanel-btn-norm, .jsPanel-btn-smallrev", panel);
-                    jsPanel.resizeTitle(panel);
-
-                    if (option.resizable !== 'disabled') {
-
-                        panel.resizable("enable");
-
-                    }
-
-                    if (option.draggable !== 'disabled') {
-
-                        panel.draggable("enable");
-
-                    }
-
-                    panel.status = "normalized";
-
-                    $(panel).trigger('jspanelnormalized', panel.attr('id'));
-                    $(panel).trigger('jspanelstatechange', panel.attr('id'));
-
-                    if (jsPparentTagname === 'body') {
-
-                        jsPanel.fixPosition(panel);
-
-                    }
-
-                    jsPanel.resizeContent(panel); // to get the scrollbars back
-
-                }
-
+                left: panel.option.position.left
             });
+
+            interactions.forEach(function(action){
+                if (panel.option[action] !== "disabled") {
+                    panel[action]("enable");
+                    // get resizer and cursor for resizable back
+                    $('.ui-icon-gripsmall-diagonal-se', panel).css({'background-image': 'none', 'text-indent': 0});
+                    $('.ui-resizable-handle', panel).css({'cursor': ''});
+                }
+            });
+
+            $(panel).trigger('jspanelnormalized', panel.attr('id'));
+            $(panel).trigger('jspanelstatechange', panel.attr('id'));
+
+            if (panel.parentElmtTagname === 'body') {
+                this.fixPosition(panel);
+            }
 
             return panel;
 
         },
 
         // replace bottom/right values with corresponding top/left values if necessary and update option.position
-        replaceCSSBottomRight: function (panel, optionPosition) {
+        replaceCSSBottomRight: function (panel) {
 
-            var panelPosition = panel.position(),
-                panelPosTop = parseInt(panelPosition.top, 10),
-                panelPosLeft = parseInt(panelPosition.left, 10);
+            var panelPosition = panel.position();
 
             if (panel.css('bottom')) {
 
@@ -1184,8 +1333,7 @@ var jsPanel;
                     'bottom': ''
 
                 });
-
-                optionPosition.top = panelPosTop;
+                panel.option.position.top = parseInt(panelPosition.top, 10);
 
             }
             if (panel.css('right')) {
@@ -1196,8 +1344,7 @@ var jsPanel;
                     'right': ''
 
                 });
-
-                optionPosition.left = panelPosLeft;
+                panel.option.position.left = parseInt(panelPosition.left, 10);
 
             }
 
@@ -1206,14 +1353,11 @@ var jsPanel;
         // reposition hint upon closing
         reposHints: function (hintGroup, jsPtagname) {
 
-            var hintH,
-                el,
-                i,
-                max = hintGroup.length;
+            var hintH, elmt;
 
             if (jsPtagname === 'body') {
 
-                hintH = jsPanel.winscrollTop();
+                hintH = $(window).scrollTop();
 
             } else {
 
@@ -1221,76 +1365,118 @@ var jsPanel;
 
             }
 
-            for (i = 0; i < max; i += 1) {
+            hintGroup.forEach(function(item){
 
-                el = $('#' + hintGroup[i]);
-
-                el.animate({
-
+                elmt = $('#' + item);
+                elmt.animate({
                     top: hintH + 'px'
-
                 });
+                hintH += elmt.outerHeight(true);
 
-                hintH += el.outerHeight(true);
-
-            }
+            });
 
         },
 
         // reposition hints on window scroll
         reposHintsScroll: function(panel) {
 
-            var dif = panel.offset().top - jsPanel.winscrollTop();
+            var dif = panel.offset().top - $(window).scrollTop();
 
             // with window.onscroll only the last added hint would stay in position
             $(window).scroll(function () {
 
-                panel.css('top', jsPanel.winscrollTop() + dif + 'px');
+                panel.css('top', $(window).scrollTop() + dif + 'px');
 
             });
 
         },
 
+        // repositions a panel and optionally moves it to another container
+        reposition: function(panel, position, selector) {
+
+            if (selector && typeof selector === "string") {
+
+                panel.option.selector = selector;
+                panel.appendTo(selector);
+                panel.parentElmt = $(selector).first();
+                panel.parentElmtTagname = panel.parentElmt[0].tagName.toLowerCase();
+
+            }
+
+            if (panel.option.paneltype.type !== 'tooltip' && panel.option.paneltype.type !== 'hint') {
+
+                // rewrite passed position to be a proper object
+                panel.option.position = jsPanel.rewriteOPosition(position);
+                // delete element styles concerning position, otherwise you might end up with left &right and/or top & bottom values
+                panel.css({top: "", right: "", bottom: "", left: ""});
+
+                this.calcPanelposition(panel);
+                panel.verticalOffset = jsPanel.calcVerticalOffset(panel) || 0;
+                this.replaceCSSBottomRight(panel);
+
+                if (panel.parentElmtTagname === "body") {
+
+                    this.fixPosition(panel);
+
+                } else {
+
+                    $(window).off('scroll', panel.jsPanelfixPos);
+
+                }
+
+                this.updateOptionPosition(panel);
+
+            }
+
+            return panel;
+        },
+
         // repositions minimized jsPanels
         reposMinimized: function () {
 
-            var minimized = $('#jsPanel-min-container > .jsPanel'),
-                minimizedCount = minimized.length,
-                i;
+            $('.jsPanel', '#jsPanel-min-container').each(function(index, elmt){
 
-            for (i = 0; i < minimizedCount; i += 1) {
-
-                minimized.eq(i).animate({
-
-                    left: (i * jsPanel.widthForMinimized) + 'px'
-
+                $(elmt).animate({
+                    left: (index * jsPanel.widthForMinimized) + 'px'
                 });
 
+            });
+
+        },
+
+        // resize exsisting jsPanel; resizes the full panel (not content section only)
+        resize: function(panel, width, height) {
+
+            if(width && width !== null) {
+                panel.css("width", width);
+            } else {
+                panel.css("width", panel.content.css("width"));
             }
+
+            if(height && height !== null) {
+                panel.css("height", height);
+            }
+
+            this.resizeContent(panel);
+            this.resizeTitle(panel);
+            this.updateOptionSize(panel);
 
         },
 
         // reset dimensions of content section after resize and so on
         resizeContent: function (panel) {
 
-            var hdrftr,
-                poh = panel.outerHeight();
+            var hdrftr;
 
             if (panel.footer.css('display') === 'none') {
-
                 hdrftr = panel.header.outerHeight();
-
             } else {
-
                 hdrftr = panel.header.outerHeight() + panel.footer.outerHeight();
-
             }
 
             panel.content.css({
-
-                height: (poh - hdrftr) + 'px',
-				width: panel.outerWidth() + 'px'
-
+                height: (panel.outerHeight() - hdrftr) + 'px',
+                width: panel.outerWidth() + 'px'
             });
 
             return panel;
@@ -1300,40 +1486,34 @@ var jsPanel;
         // resize the title h3 to use full width minus controls width (and prevent being longer than panel)
         resizeTitle: function(panel) {
 
-            var contWidth = $(panel.header.controls).outerWidth(),
-                panelWidth = $(panel).outerWidth(),
-                titleWidth = (panelWidth - contWidth - 15) + 'px';
-
+            var titleWidth = ($(panel).outerWidth() - $(panel.header.controls).outerWidth() - 15) + 'px';
             panel.header.title.css('width', titleWidth);
 
         },
 
         // restores minimized panels to their initial container, reenables resizable and draggable, repositions minimized panels
-        restoreFromMinimized: function (panel, option) {
+        restoreFromMinimized: function (panel) {
+
+            var interactions = ["resizable", "draggable"];
 
             // restore minimized panel to initial container
-            if (panel.status === "minimized") {
+            if (panel.status === "minimized" || panel.option.panelstatus === "minimized") {
 
-                // hier kein fadeOut() einbauen, funktioniert nicht mit jsPanel.fixPosition(jsP)
-                panel.animate({opacity: 0}, {duration: 50});
-                panel.appendTo(option.selector);
+                panel.appendTo(panel.option.selector);
 
             }
 
-            if (option.resizable !== 'disabled') {
-
-                panel.resizable("enable");
-
-            }
-
-            if (option.draggable !== 'disabled') {
-
-                panel.draggable("enable");
-
-            }
+            interactions.forEach(function(action){
+                if (panel.option[action] !== "disabled") {
+                    panel[action]("enable");
+                    // get resizer and cursor for resizable back
+                    $('.ui-icon-gripsmall-diagonal-se', panel).css({'background-image': 'none', 'text-indent': 0});
+                    $('.ui-resizable-handle', panel).css({'cursor': ''});
+                }
+            });
 
             // reposition minimized panels
-            jsPanel.reposMinimized(jsPanel.widthForMinimized);
+            this.reposMinimized(jsPanel.widthForMinimized);
 
         },
 
@@ -1356,28 +1536,19 @@ var jsPanel;
 
             } else if (op.type === 'modal') {
 
-                op.mode = op.mode || 'default';
-                return {type: 'modal', mode: op.mode};
+                return {type: 'modal', mode: op.mode || 'default'};
 
             } else if (op.type === 'tooltip') {
 
-                op.mode = op.mode || false;
-                op.position = op.position || false;
-                op.shiftwithin = op.shiftwithin || "body";
-                op.solo = op.solo || false;
-                op.cornerBG = op.cornerBG || false;
-                op.cornerOX = op.cornerOX || false;
-                op.cornerOY = op.cornerOY || false;
-
                 return {
                     type: 'tooltip',
-                    mode: op.mode,
-                    position: op.position,
-                    shiftwithin: op.shiftwithin,
-                    solo: op.solo,
-                    cornerBG: op.cornerBG,
-                    cornerOX: op.cornerOX,
-                    cornerOY: op.cornerOY
+                    mode: op.mode || false,
+                    position: op.position || false,
+                    shiftwithin: op.shiftwithin || "body",
+                    solo: op.solo || false,
+                    cornerBG: op.cornerBG || false,
+                    cornerOX: op.cornerOX || false,
+                    cornerOY: op.cornerOY || false
                 };
 
             } else {
@@ -1397,93 +1568,98 @@ var jsPanel;
 
                 return {top: 'center', left: 'center'};
 
-
-            }
-            if (op === 'auto') {
+            } else if (op === 'auto') {
 
                 return {top: 'auto', left: 'auto'};
 
-            }
-
-            if (op === 'top left') {
+            } else if (op === 'top left') {
 
                 return {top: '0', left: '0'};
 
-            }
-
-
-            if (op === 'top center') {
+            } else if (op === 'top center') {
                 return {top: '0', left: 'center'};
 
-            }
-
-            if (op === 'top right') {
+            } else if (op === 'top right') {
 
                 return {top: '0', right: '0'};
 
-            }
-
-            if (op === 'center right') {
+            } else if (op === 'center right') {
 
                 return {top: 'center', right: '0'};
 
-            }
-
-            if (op === 'bottom right') {
+            } else if (op === 'bottom right') {
 
                 return {bottom: '0', right: '0'};
 
-            }
-
-            if (op === 'bottom center') {
+            } else if (op === 'bottom center') {
 
                 return {bottom: '0', left: 'center'};
 
-            }
-
-            if (op === 'bottom left') {
+            } else if (op === 'bottom left') {
 
                 return {bottom: '0', left: '0'};
 
-            }
-
-            if (op === 'center left') {
+            } else if (op === 'center left') {
 
                 return {top: 'center', left: '0'};
 
+            }
+
+            // if bottom and/or right is set to "center" change that to top and/or left set to "center"
+            if (op.bottom === "center") {
+                delete op.bottom;
+                op.top = "center";
+            }
+            if (op.right === "center") {
+                delete op.right;
+                op.left = "center";
             }
 
             return optionPosition;
 
         },
 
-        // set default options for hints and add necessary classes
-        setHintDefaults: function(option, panel) {
+        // converts option.size string to object
+        rewriteOSize: function(optionSize) {
+            var oSize = optionSize;
 
-            option.resizable = false;
-            option.draggable = false;
-            option.removeHeader = true;
-            option.toolbarFooter = false;
-            option.show = 'fadeIn';
+            if (typeof oSize === 'string' && oSize === 'auto') {
+
+                oSize = {
+                    width: 'auto',
+                    height: 'auto'
+                };
+            }
+            return oSize;
+        },
+
+        // set default options for hints and add necessary classes
+        setHintDefaults: function(panel) {
+
+            panel.option.resizable = false;
+            panel.option.draggable = false;
+            panel.option.removeHeader = true;
+            panel.option.toolbarFooter = false;
+            panel.option.show = 'fadeIn';
 
             panel.addClass('jsPanel-hint');
             panel.content.addClass('jsPanel-hint-content');
 
             // autoclose default 8 sec | or -1 to deactivate
-            if (!option.autoclose) {
+            if (!panel.option.autoclose) {
 
-                option.autoclose = 8000;
+                panel.option.autoclose = 8000;
 
-            } else if (option.autoclose < 0) {
+            } else if (panel.option.autoclose < 0) {
 
-                option.autoclose = false;
+                panel.option.autoclose = false;
 
             }
             // add class according option.theme to color the hint background
-            panel.content.addClass('jsPanel-hint-' + option.theme);
+            panel.content.addClass('jsPanel-hint-' + panel.option.theme);
 
             // add class according option.theme to color the hint background
-            if (option.theme === 'default' || option.theme === 'light') {
+            if (panel.option.theme === 'default' || panel.option.theme === 'light') {
 
                 panel.content.append('<div class="jsPanel-hint-close-dark"></div>');
 
@@ -1496,20 +1672,20 @@ var jsPanel;
         },
 
         // set default options for standard modal
-        setModalDefaults: function (option, panel) {
+        setModalDefaults: function (panel) {
 
-            option.selector = 'body';
-            option.show = 'fadeIn';
+            panel.option.selector = 'body';
+            panel.option.show = 'fadeIn';
             panel.addClass('jsPanel-modal');
 
-            if (option.paneltype.mode === 'default') {
+            if (panel.option.paneltype.mode === 'default') {
 
-                option.resizable = false;
-                option.draggable = false;
-                option.removeHeader = false;
-                option.position = {top: 'center', left: 'center'};
-                option.offset = {top: 0, left: 0};
-                option.controls.buttons = 'closeonly'; //do not delete else "modal" with no close button possible
+                panel.option.resizable = false;
+                panel.option.draggable = false;
+                panel.option.removeHeader = false;
+                panel.option.position = {top: 'center', left: 'center'};
+                panel.option.offset = {top: 0, left: 0};
+                panel.option.controls.buttons = 'closeonly'; //do not delete else "modal" with no close button possible
 
                 $(".jsPanel-btn-min, .jsPanel-btn-norm, .jsPanel-btn-max, .jsPanel-btn-small, .jsPanel-btn-smallrev", panel).remove();
                 $(panel.header, panel.header.title, panel.footer).css('cursor', 'default');
@@ -1519,52 +1695,20 @@ var jsPanel;
 
         },
 
-        // set panel id
-        setPanelId: function (panel, optionID) {
-
-            if (typeof optionID === 'string') {
-
-                // id doesn't exist yet -> use it
-                if ($('#' + optionID).length < 1) {
-
-                    panel.attr('id', optionID);
-
-                } else {
-
-                    jsPanel.ID += 1;
-                    panel.attr('id', 'jsPanel-' + jsPanel.ID);
-
-                    // write new id as notification in title
-                    $('.jsPanel-title', panel).html($('.jsPanel-title', panel).text() + ' AUTO-ID: ' + panel.attr('id'));
-
-                }
-
-            } else if ($.isFunction(optionID)) {
-
-                panel.attr('id', optionID);
-
-            }
-
-        },
-
         // set right-to-left text direction and language; set styles and reoorder controls for rtl
-        setRTL: function(panel, optionRtlLang) {
+        setRTL: function(panel) {
 
-            var elmts = [ panel.header.title, panel.content, panel.header.toolbar, panel.footer ],
-                i,
-                max = elmts.length;
+            var elmts = [ panel.header.title, panel.content, panel.header.toolbar, panel.footer ];
 
-            for (i = 0; i < max; i += 1) {
+            elmts.forEach(function(item){
 
-                elmts[i].prop('dir', 'rtl');
+                item.prop('dir', 'rtl');
 
-                if (optionRtlLang) {
-
-                    elmts[i].prop('lang', optionRtlLang);
-
+                if (panel.option.rtl.lang) {
+                    item.prop('lang', panel.option.rtl.lang);
                 }
 
-            }
+            });
 
             panel.header.title.css('text-align', 'right');
             $('.jsPanel-btn-close', panel.header.controls).insertAfter($('.jsPanel-btn-min', panel.header.controls));
@@ -1579,203 +1723,280 @@ var jsPanel;
 
         },
 
-        // set title text
-        setTitle: function (panel, text) {
-
-            if (text && typeof text === "string") {
-
-                panel.header.title.html(text);
-
-                return panel;
-
+        // sets css width and height of the panel
+        setSize: function(panel, dimension) {
+            if (Number.isInteger(panel.option.size[dimension])) {
+                panel.option.size[dimension] += 'px';
+            } else if (typeof panel.option.size[dimension] === 'string' && panel.option.size[dimension] !== 'auto') {
+                panel.option.size[dimension] = Math.abs(parseInt(panel.option.size[dimension], 10)) + 'px';
+            } else if ($.isFunction(panel.option.size[dimension])) {
+                panel.option.size[dimension] = Math.abs(parseInt(panel.option.size[dimension](), 10)) + 'px';
+            } else if (typeof panel.option.size[dimension] === 'string' && panel.option.size[dimension] === 'auto') {
+                panel.option.size[dimension] = 'auto';
+            } else {
+                panel.option.size[dimension] = $.jsPanel.defaults.size[dimension];
             }
-
-            return panel;
-
         },
 
         // set default options for tooltips
-        setTooltipDefaults: function(option) {
+        setTooltipDefaults: function(panel) {
 
-            option.position = {};
-            option.resizable = false;
-            option.draggable = false;
-            option.show = 'fadeIn';
-            option.controls.buttons = 'closeonly';
+            panel.option.position = {};
+            panel.option.resizable = false;
+            panel.option.draggable = false;
+            panel.option.show = 'fadeIn';
+            panel.option.controls.buttons = 'closeonly';
+            panel.addClass('jsPanel-tt');
 
         },
 
-        setZi: function () {
-            var zi = 100, elmtzi;
-            $('.jsPanel').each(function () {
-                elmtzi = $(this).zIndex();
-                if (elmtzi >= zi) {
-                    zi = elmtzi + 1;
+        // returns a z-index value for a panel in order to have it on top
+        setZi: function (panel) {
+            var jspanel, allZi = [], maxZi;
+
+            if (typeof panel === "string") {
+                jspanel = $(panel);
+            } else {
+                jspanel = panel;
+            }
+            // build array with all z-index values
+            $(".jsPanel:not('.jsPanel-modal, .jsPanel-nofront')").each(function(i, elmt){
+                if (jspanel.attr("id") !== $(elmt).attr("id")) {
+                    allZi.push($(elmt).css("z-index"));
                 }
             });
-            return zi;
+            //allZi.sort(function(a, b) {return a - b}); // sort array ascending
+            //console.log(allZi);
+            maxZi = this.getMaxOfArray(allZi);
+            return maxZi + 1;
         },
 
-        // toggles jsPanel height between header height and normalized/maximized height
-        smallify: function (panel) {
+        // shift tooltip left/right if it overflows window; when using horizontal offsets of panel and/or corner result might be not as expected
+        shiftTooltipHorizontal: function(panel){
 
-            if (panel.status !== "smallified" && panel.status !== "smallifiedMax") {
+            var margins = this.getMargins(panel),
+                leftShiftRequired,
+                maxShift = this.getMaxpanelshift(panel),
+                maxLeftShift = maxShift.maxshiftH,
+                shift,
+                maxCornerLeft = maxShift.maxCornerH,
+                cornerShift,
+                newPanelLeft = 0,
+                newCornerLeft = 0;
 
-                var statusNew;
+            if (margins.marginLeft < 0 && margins.marginRight > 0) {
+                // if panel overflows left window border
+                leftShiftRequired = Math.abs(margins.marginLeft) + 5 || 0;
+                shift = Math.min(leftShiftRequired, maxLeftShift) || 0;
+                cornerShift = Math.min(maxCornerLeft, shift) || 0;
+                newPanelLeft = parseInt(panel.css('left')) + shift + "px";
+                newCornerLeft = parseInt($('.jsPanel-corner', panel).css('left')) - cornerShift + "px";
 
-                if (panel.status === "maximized") {
+            } else if (margins.marginRight < 0 && margins.marginLeft > 0) {
+                // if panel overflows right window border
+                leftShiftRequired = Math.abs(margins.marginRight) + 5 || 0;
+                shift = Math.min(leftShiftRequired, maxLeftShift) || 0;
+                cornerShift = Math.min(maxCornerLeft, shift) || 0;
+                newPanelLeft = parseInt(panel.css('left')) - shift + "px";
+                newCornerLeft = parseInt($('.jsPanel-corner', panel).css('left')) + cornerShift + "px";
 
-                    statusNew = "smallifiedMax";
+            }
 
-                } else {
+            if ((margins.marginLeft < 0 && margins.marginRight > 0) || (margins.marginRight < 0 && margins.marginLeft > 0)) {
+                // shift panel
+                panel.animate({
+                    "left": newPanelLeft
+                },{ queue: false /* to have both animation run simultaneously */ });
 
-                    statusNew = "smallified";
-
+                // shift corner if present
+                if ($('.jsPanel-corner', panel)) {
+                    $('.jsPanel-corner', panel).animate({
+                        "left": newCornerLeft
+                    },{ queue: false /* to have both animation run simultaneously */ });
                 }
+            }
 
+        },
+
+        // shift tooltip up/down if it overflows window; when using vertical offsets of panel and/or corner result might be not as expected
+        shiftTooltipVertical: function(panel){
+
+            //console.log( parseInt($('*:first-child', panel.parent()).css('margin-left')) );
+
+            var margins = this.getMargins(panel),
+                topShiftRequired,
+                maxShift = this.getMaxpanelshift(panel),
+                maxTopShift = maxShift.maxshiftV,
+                shift,
+                maxCornerTop = maxShift.maxCornerV,
+                cornerShift,
+                newPanelTop = 0,
+                newCornerTop = 0;
+
+            if (margins.marginTop < 0 && margins.marginBottom > 0) {
+                // if panel overflows top window border
+                topShiftRequired = Math.abs(margins.marginTop) + 5 || 0;
+                shift = Math.min(topShiftRequired, maxTopShift) || 0;
+                cornerShift = Math.min(maxCornerTop, shift) || 0;
+                newPanelTop = parseInt(panel.css('top')) + shift + "px";
+                newCornerTop = parseInt($('.jsPanel-corner', panel).css('top')) - cornerShift + "px";
+
+            } else if (margins.marginBottom < 0 && margins.marginTop > 0) {
+                // if panel overflows bottom window border
+                topShiftRequired = Math.abs(margins.marginBottom) + 5 || 0;
+                shift = Math.min(topShiftRequired, maxTopShift) || 0;
+                cornerShift = Math.min(maxCornerTop, shift) || 0;
+                newPanelTop = parseInt(panel.css('top')) - shift + "px";
+                newCornerTop = parseInt($('.jsPanel-corner', panel).css('top')) + cornerShift + "px";
+
+            }
+
+            if ((margins.marginTop < 0 && margins.marginBottom > 0) || (margins.marginBottom < 0 && margins.marginTop > 0)) {
+                // shift panel
+                panel.animate({
+                    "top": newPanelTop
+                },{ queue: false /* to have both animation run simultaneously */ });
+
+                // shift corner if present
+                if ($('.jsPanel-corner', panel)) {
+                    $('.jsPanel-corner', panel).animate({
+                        "top": newCornerTop
+                    },{ queue: false /* to have both animation run simultaneously */ });
+                }
+            }
+
+        },
+
+        smallify: function(panel) {
+            var statusNew;
+            if ((panel.status !== "smallified" || panel.option.panelstatus !== "smallified") && (panel.status !== "smallifiedMax" || panel.option.panelstatus !== "smallifiedMax")) {
+                if (panel.status === "maximized" || panel.option.panelstatus === "maximized") {
+                    statusNew = "smallifiedMax";
+                } else {
+                    statusNew = "smallified";
+                }
                 // store panel height in function property
                 panel.smallify.height = panel.outerHeight() + 'px';
                 panel.panelheaderheight = panel.header.outerHeight() - 2;
                 panel.panelfooterheight = panel.footer.outerHeight();
                 panel.panelcontentheight = panel.content.outerHeight();
                 panel.animate({
-
-                        height: panel.panelheaderheight + 'px'
-
-                    },
-                    {
-                        done: function () {
-
-                            if (panel.status === 'maximized') {
-
-                                jsPanel.hideControls(".jsPanel-btn-max, .jsPanel-btn-small", panel);
-
-                            } else {
-
-                                jsPanel.hideControls(".jsPanel-btn-norm, .jsPanel-btn-small", panel);
-
-                            }
-
-                            panel.status = statusNew;
-
-                            $(panel).trigger('jspanelsmallified', panel.attr('id'));
-                            $(panel).trigger('jspanelstatechange', panel.attr('id'));
-
+                    height: panel.panelheaderheight + 'px'
+                },
+                {
+                    done: function () {
+                        if (panel.status === 'maximized' || panel.option.panelstatus === 'maximized') {
+                            jsPanel.hideControls(".jsPanel-btn-max, .jsPanel-btn-small", panel);
+                        } else {
+                            jsPanel.hideControls(".jsPanel-btn-norm, .jsPanel-btn-small", panel);
                         }
-
-                    });
-
-            } else {
-                panel.animate({
-
-                        height: panel.smallify.height
-
-                    },
-                    {
-                        done: function () {
-
-                            if (panel.status === 'smallified') {
-
-                                jsPanel.hideControls(".jsPanel-btn-norm, .jsPanel-btn-smallrev", panel);
-                                panel.status = "normalized";
-                                $(panel).trigger('jspanelnormalized', panel.attr('id'));
-                                $(panel).trigger('jspanelstatechange', panel.attr('id'));
-
-                            } else {
-
-                                jsPanel.hideControls(".jsPanel-btn-max, .jsPanel-btn-smallrev", panel);
-                                panel.status = "maximized";
-                                $(panel).trigger('jspanelmaximized', panel.attr('id'));
-                                $(panel).trigger('jspanelstatechange', panel.attr('id'));
-
-                            }
-
-                        }
-
+                        jsPanel.updateStateProps(panel, statusNew);
+                        $(panel).trigger('jspanel' + statusNew, panel.attr('id'));
+                        $(panel).trigger('jspanelstatechange', panel.attr('id'));
                     }
-
-                );
-
+                });
             }
+        },
 
-            return panel;
-
+        unsmallify: function(panel) {
+            panel.animate({
+                    height: panel.smallify.height
+                },
+                {
+                    done: function () {
+                        if (panel.status === 'smallified' || panel.option.panelstatus === 'smallified') {
+                            jsPanel.hideControls(".jsPanel-btn-norm, .jsPanel-btn-smallrev", panel);
+                            jsPanel.updateStateProps(panel, "normalized");
+                            $(panel).trigger('jspanelnormalized', panel.attr('id'));
+                            $(panel).trigger('jspanelstatechange', panel.attr('id'));
+                        } else {
+                            jsPanel.hideControls(".jsPanel-btn-max, .jsPanel-btn-smallrev", panel);
+                            jsPanel.updateStateProps(panel, "maximized");
+                            $(panel).trigger('jspanelmaximized', panel.attr('id'));
+                            $(panel).trigger('jspanelstatechange', panel.attr('id'));
+                        }
+                    }
+                }
+            );
         },
 
         // updates option.position to hold actual values
-        updateOptionPosition: function(panel, optionPosition) {
+        updateOptionPosition: function(panel) {
 
-            optionPosition.top = panel.css('top');
-            optionPosition.left = panel.css('left');
+            panel.option.position.top = panel.css('top');
+            panel.option.position.left = panel.css('left');
 
         },
 
         // updates option.size to hold actual values
-        updateOptionSize: function(panel, optionSize) {
+        updateOptionSize: function(panel) {
 
-            optionSize.width = panel.css('width');
-            optionSize.height = panel.css('height');
-
-        },
-
-        winouterHeight: function () {
-
-            return $(window).outerHeight();
+            panel.option.size.width = panel.css('width');
+            panel.option.size.height = $(".jsPanel-content", panel).css("height");
 
         },
 
-        winouterWidth: function () {
-
-            return $(window).outerWidth();
-
+        updateCustomData: function(panel, key, val) {
+            var custom = panel.data("custom");
+            custom[key] = val;
+            panel.data("custom", custom);
         },
 
-        winscrollLeft: function () {
-
-            return $(window).scrollLeft();
-
-        },
-
-        winscrollTop: function () {
-
-            return $(window).scrollTop();
-
+        updateStateProps: function(panel, status) {
+            panel.status = status;
+            panel.option.panelstatus = status;
+            panel.data("panelstatus", status);
+            panel.alterClass("jsPanel-state-*", "jsPanel-state-" + status);
         }
 
     };
 
-}(jQuery));
-
-(function ($) {
-    "use strict";
+    console.log("jsPanel version: " + jsPanel.version);
 
     $.jsPanel = function (config) {
 
-        var jsP = $(jsPanel.template),
-            // Extend our default config with those provided.
-            // Note that the first arg to extend is an empty object - this is to keep from overriding our "defaults" object.
-            option = $.extend(true, {}, $.jsPanel.defaults, config),
-            anim = option.show,
-            verticalOffset = 0,
-            jsPparent,
-            jsPparentTagname,
-            count;
+        var jsP, template, id,
+            panelconfig = config || {},
+            optConfig = panelconfig.config || {};
+
+        // use custom jsPanel template if present else standard template
+        template = panelconfig.template || jsPanel.template;
+        jsP = $(template);
+
+        // Extend our default config with those provided. Note that the first arg to extend is an empty object - this is to keep from overriding our "defaults" object.
+        jsP.option = $.extend(true, {}, $.jsPanel.defaults, optConfig, panelconfig);
+
+        // option.id ---------------------------------------------------------------------------------------------------
+        if (typeof jsP.option.id === "string") {
+            id = jsP.option.id;
+        } else if ($.isFunction(jsP.option.id)) {
+            id = jsP.option.id();
+        } else {
+            jsPanel.ID += 1;
+            id = jsPanel.ID;
+        }
+        if ($("#" + id).length > 0) {
+            console.log("Error: No jsPanel created - id attribute passed with option.id already exists in document");
+            return false;
+        } else {
+            jsP.attr("id", id);
+        }
+
+        jsP.data("custom", jsP.option.custom);
+
+        jsP.verticalOffset = 0; // always use 0 ... not "0" !
 
         try {
-
-            jsPparent = $(option.selector).first();
-            jsPparentTagname = jsPparent[0].tagName.toLowerCase();
-            count = jsPparent.children('.jsPanel').length;
-
+            jsP.parentElmt = $(jsP.option.selector).first();
+            jsP.parentElmtTagname = jsP.parentElmt[0].tagName.toLowerCase();
+            jsP.count = jsP.parentElmt.children('.jsPanel').length;
         } catch (e) {
-
             console.log(e);
             console.log('The element you want to append the jsPanel to does not exist!');
-            option.selector = 'body';
-            jsPparent = $('body');
-            jsPparentTagname = 'body';
-            count = jsPparent.children('.jsPanel').length;
-
+            jsP.option.selector = 'body';
+            jsP.parentElmt = $('body');
+            jsP.parentElmtTagname = 'body';
+            jsP.count = jsP.parentElmt.children('.jsPanel').length;
         }
 
         jsP.status = "initialized";
@@ -1794,14 +2015,14 @@ var jsPanel;
 
         jsP.normalize = function() {
 
-            jsPanel.normalize(jsP, option, jsPparentTagname, verticalOffset);
+            jsPanel.normalize(jsP);
             return jsP;
 
         };
 
         jsP.close = function () {
 
-            jsPanel.close(jsP, option.paneltype.type, jsPparentTagname);
+            jsPanel.close(jsP);
             // no need to return something
 
         };
@@ -1815,28 +2036,30 @@ var jsPanel;
 
         jsP.minimize = function () {
 
-            jsPanel.minimize(jsP, option.size);
+            jsPanel.minimize(jsP);
             return jsP;
 
         };
 
         jsP.maximize = function () {
 
-            jsPanel.maximize(jsP, jsPparentTagname, option);
+            jsPanel.maximize(jsP);
             return jsP;
 
         };
 
         jsP.smallify = function () {
-
-            jsPanel.smallify(jsP);
+            if ((jsP.status === "normalized" || jsP.option.panelstatus === "normalized") || (jsP.status === "maximized" || jsP.option.panelstatus === "maximized")) {
+                jsPanel.smallify(jsP);
+            } else if ((jsP.status !== "minimized" || jsP.option.panelstatus !== "minimized")) {
+                jsPanel.unsmallify(jsP);
+            }
             return jsP;
-
         };
 
         jsP.front = function () {
 
-            jsP.css('z-index', jsPanel.setZi());
+            jsP.css('z-index', jsPanel.setZi(jsP));
             return jsP;
 
         };
@@ -1845,12 +2068,12 @@ var jsPanel;
 
             if (text && typeof text === "string") {
 
-                jsPanel.setTitle(jsP, text);
+                jsP.header.title.html(text);
                 return jsP;
 
             } else if (arguments.length === 0) {
 
-                return jsPanel.getTitle(jsP);
+                return jsP.header.title.html();
 
             }
 
@@ -1862,7 +2085,7 @@ var jsPanel;
             return jsP;
 
         };
-        
+
         jsP.control = function (action, btn) {
 
             jsPanel.control(jsP, action, btn);
@@ -1872,38 +2095,48 @@ var jsPanel;
 
         jsP.resize = function (width, height) {
             // method resizes the full panel (not content section only)
-
-            if(width && width !== null) {
-                jsP.css("width", width);
-            } else {
-                jsP.css("width", jsP.content.css("width"));
-            }
-            if(height && height !== null) {
-                jsP.css("height", height);
-            }
-            jsPanel.resizeContent(jsP);
-            jsPanel.resizeTitle(jsP);
+            jsPanel.resize(jsP, width, height);
             return jsP;
 
         };
 
-        /*
-         * handlers for the controls -----------------------------------------------------------------------------------
-         */
-        // handler to move panel to foreground on
-        jsP.on('click', function () {
+        jsP.reposition = function (position, selector) {
 
-            if (!jsP.hasClass("jsPanel-modal")) {
-                jsP.css('z-index', jsPanel.setZi());
+            jsPanel.reposition(jsP, position, selector);
+            return jsP;
+
+        };
+
+        jsP.reloadContent = function() {
+
+            if (jsP.option.content) {
+                jsP.content.empty().append(jsP.option.content);
+            } else if (jsP.option.load) {
+                jsP.content.empty();
+                jsPanel.load(jsP);
+            } else if (jsP.option.ajax) {
+                jsPanel.ajax(jsP);
+            } else if (jsP.option.iframe) {
+                jsPanel.iframe(jsP);
             }
 
+        };
+
+        // handler to move panel to foreground on click
+        jsP.on('click', function (e) {
+            e.preventDefault();
+            if (!$(e.target).is("a[href], button, .jsPanel-nofront, .jsPanel-nofront *")) {
+                if (!jsP.hasClass("jsPanel-modal")) {
+                    jsP.css('z-index', jsPanel.setZi(jsP));
+                }
+            }
         });
 
         // jsPanel close
         $('.jsPanel-btn-close', jsP).on('click', function (e) {
 
             e.preventDefault();
-            jsPanel.close(jsP, option.paneltype.type, jsPparentTagname);
+            jsPanel.close(jsP, jsP.parentElmtTagname);
 
         });
 
@@ -1911,7 +2144,7 @@ var jsPanel;
         $('.jsPanel-btn-min', jsP).on('click', function (e) {
 
             e.preventDefault();
-            jsPanel.minimize(jsP, option.size);
+            jsPanel.minimize(jsP);
 
         });
 
@@ -1919,7 +2152,7 @@ var jsPanel;
         $('.jsPanel-btn-max', jsP).on('click', function (e) {
 
             e.preventDefault();
-            jsPanel.maximize(jsP, jsPparentTagname, option);
+            jsPanel.maximize(jsP);
 
         });
 
@@ -1927,33 +2160,40 @@ var jsPanel;
         $('.jsPanel-btn-norm', jsP).on('click', function (e) {
 
             e.preventDefault();
-            jsPanel.normalize(jsP, option, jsPparentTagname, verticalOffset);
+            jsPanel.normalize(jsP);
 
         });
 
         // jsPanel smallify
-        $('.jsPanel-btn-small, .jsPanel-btn-smallrev', jsP).on('click', function (e) {
+        $('.jsPanel-btn-small', jsP).on('click', function (e) {
 
             e.preventDefault();
             jsPanel.smallify(jsP);
 
         });
 
+        // jsPanel unsmallify
+        $('.jsPanel-btn-smallrev', jsP).on('click', function (e) {
+
+            e.preventDefault();
+            jsPanel.unsmallify(jsP);
+
+        });
+
         // rewrite option.paneltype strings to objects and set defaults for option.paneltype
-        option.paneltype = jsPanel.rewriteOPaneltype(option.paneltype);
+        jsP.option.paneltype = jsPanel.rewriteOPaneltype(jsP.option.paneltype);
 
         // converts option.position string to object
-        option.position = jsPanel.rewriteOPosition(option.position);
+        jsP.option.position = jsPanel.rewriteOPosition(jsP.option.position);
 
-        /* option.id ------------------------------------------------------------------------------------------------ */
-        // wenn option.id -> string oder function?
-        jsPanel.setPanelId(jsP, option.id);
+        // converts option.size string to object
+        jsP.option.size = jsPanel.rewriteOSize(jsP.option.size);
 
         /* option.paneltype - override or set various settings depending on option.paneltype ------------------------ */
-        if (option.paneltype.type === 'modal') {
+        if (jsP.option.paneltype.type === 'modal') {
 
             // set defaults for standard modal
-            jsPanel.setModalDefaults(option, jsP);
+            jsPanel.setModalDefaults(jsP);
 
             // insert backdrop
             if ($('.jsPanel-backdrop').length < 1) {
@@ -1962,58 +2202,57 @@ var jsPanel;
 
             }
 
-        } else if (option.paneltype.type === 'tooltip') {
+        } else if (jsP.option.paneltype.type === 'tooltip') {
 
-            jsPanel.setTooltipDefaults(option);
+            jsPanel.setTooltipDefaults(jsP);
 
             // optionally remove all other tooltips
-            if (option.paneltype.solo) {
+            if (jsP.option.paneltype.solo) {
 
                 jsPanel.closeallTooltips();
 
             }
 
             // calc top & left for the various tooltip positions
-            option.position = jsPanel.calcToooltipPosition(jsPparent, option);
+            jsP.option.position = jsPanel.calcToooltipPosition(jsP.parentElmt, jsP.option);
 
             // position the tooltip & add tooltip class
             jsP.css({
-                top: option.position.top,
-                left: option.position.left
-            }).addClass('jsPanel-tt');
+                top: jsP.option.position.top,
+                left: jsP.option.position.left
+            });
 
-            if (!jsPparent.parent().hasClass('jsPanel-tooltip-wrapper')) {
+            if (!jsP.parentElmt.parent().hasClass('jsPanel-tooltip-wrapper')) {
 
                 // wrap element serving as trigger in a div - will take the tooltip
-                jsPparent.wrap('<div class="jsPanel-tooltip-wrapper">');
+                jsP.parentElmt.wrap('<div class="jsPanel-tooltip-wrapper">');
 
                 // append tooltip (jsPanel) to the wrapper div
-                jsPparent.parent().append(jsP);
+                jsP.parentElmt.parent().append(jsP);
 
-                if (option.paneltype.mode === 'semisticky') {
+                if (jsP.option.paneltype.mode === 'semisticky') {
 
                     jsP.hover(
                         function () {
                             $.noop();
                         },
                         function () {
-                            jsPanel.close(jsP, option.paneltype.type, jsPparentTagname);
+                            jsPanel.close(jsP);
                         }
                     );
 
-                } else if (option.paneltype.mode === 'sticky') {
+                } else if (jsP.option.paneltype.mode === 'sticky') {
 
                     $.noop();
 
                 } else {
 
-                    option.controls.buttons = 'none';
-
+                    jsP.option.controls.buttons = 'none';
                     // tooltip will be removed whenever mouse leaves trigger
-                    jsPparent.off('mouseout'); // to prevent mouseout from firing several times
-                    jsPparent.mouseout(function () {
+                    jsP.parentElmt.off('mouseout'); // to prevent mouseout from firing several times
+                    jsP.parentElmt.mouseout(function () {
 
-                        jsPanel.close(jsP, option.paneltype.type, jsPparentTagname);
+                        jsPanel.close(jsP);
 
                     });
 
@@ -2023,16 +2262,16 @@ var jsPanel;
             // corners
             jsP.css('overflow', 'visible');
 
-            if (option.paneltype.cornerBG) {
+            if (jsP.option.paneltype.cornerBG) {
 
                 var corner = $("<div></div>"),
-                    cornerLoc = "jsPanel-corner-" + option.paneltype.position,
+                    cornerLoc = "jsPanel-corner-" + jsP.option.paneltype.position,
                     cornerPos,
-                    cornerOX = parseInt(option.paneltype.cornerOX) || 0,
-                    cornerOY = parseInt(option.paneltype.cornerOY) || 0,
-                    cornerBG = option.paneltype.cornerBG;
+                    cornerOX = parseInt(jsP.option.paneltype.cornerOX) || 0,
+                    cornerOY = parseInt(jsP.option.paneltype.cornerOY) || 0,
+                    cornerBG = jsP.option.paneltype.cornerBG;
 
-                if (option.paneltype.position !== "bottom") {
+                if (jsP.option.paneltype.position !== "bottom") {
 
                     corner.addClass("jsPanel-corner " + cornerLoc).appendTo(jsP);
 
@@ -2042,65 +2281,65 @@ var jsPanel;
 
                 }
 
-                if (option.paneltype.position === "top") {
+                if (jsP.option.paneltype.position === "top") {
 
-                    cornerPos = parseInt(option.size.width)/2 - 12 + (cornerOX) + "px";
+                    cornerPos = parseInt(jsP.option.size.width)/2 - 12 + (cornerOX) + "px";
                     corner.css({borderTopColor: cornerBG, left: cornerPos});
 
-                } else if (option.paneltype.position === "right") {
+                } else if (jsP.option.paneltype.position === "right") {
 
-                    cornerPos = parseInt(option.size.height)/2 - 12 + (cornerOY) + "px";
+                    cornerPos = parseInt(jsP.option.size.height)/2 - 12 + (cornerOY) + "px";
                     corner.css({borderRightColor: cornerBG, left: "-22px", top: cornerPos});
 
-                } else if (option.paneltype.position === "bottom") {
+                } else if (jsP.option.paneltype.position === "bottom") {
 
-                    cornerPos = parseInt(option.size.width)/2 - 12 + (cornerOX) + "px";
+                    cornerPos = parseInt(jsP.option.size.width)/2 - 12 + (cornerOX) + "px";
                     corner.css({borderBottomColor: cornerBG, left: cornerPos, top: "-22px"});
 
-                } else if (option.paneltype.position === "left") {
+                } else if (jsP.option.paneltype.position === "left") {
 
-                    cornerPos = parseInt(option.size.height)/2 - 12 + (cornerOY) + "px";
-                    corner.css({borderLeftColor: cornerBG, left: option.size.width, top: cornerPos});
+                    cornerPos = parseInt(jsP.option.size.height)/2 - 12 + (cornerOY) + "px";
+                    corner.css({borderLeftColor: cornerBG, left: jsP.option.size.width, top: cornerPos});
 
                 }
 
             }
-        } else if (option.paneltype.type === 'hint') {
+        } else if (jsP.option.paneltype.type === 'hint') {
 
-            jsPanel.setHintDefaults(option, jsP);
+            jsPanel.setHintDefaults(jsP);
 
             // bind callback for close button
             $('.jsPanel-hint-close-dark, .jsPanel-hint-close-white', jsP).on('click', jsP, function (event) {
 
-                event.data.close(jsP, option.paneltype.type, jsPparentTagname);
+                event.data.close(jsP);
 
             });
 
             // set option.position for hints using 'top left', 'top center' or 'top right'
-            if (option.position.top === '0' && option.position.left === 'center') {
+            if (jsP.option.position.top === '0' && jsP.option.position.left === 'center') {
                 // Schleife über alle hints in jsPanel.hintsTc, Höhen aufsummieren und als top für option.position verwenden
                 if (jsPanel.hintsTc.length > 0) {
 
-                    option.position = jsPanel.hintTop(jsPanel.hintsTc);
+                    jsP.option.position = jsPanel.hintTop(jsPanel.hintsTc);
 
                 }
                 // populate array with hints
                 jsPanel.hintsTc.push(jsP.attr('id'));
 
-            } else if (option.position.top === '0' && option.position.left === '0') {
+            } else if (jsP.option.position.top === '0' && jsP.option.position.left === '0') {
 
                 if (jsPanel.hintsTl.length > 0) {
 
-                    option.position = jsPanel.hintTop(jsPanel.hintsTl);
+                    jsP.option.position = jsPanel.hintTop(jsPanel.hintsTl);
 
                 }
                 jsPanel.hintsTl.push(jsP.attr('id'));
 
-            } else if (option.position.top === '0' && option.position.right === '0') {
+            } else if (jsP.option.position.top === '0' && jsP.option.position.right === '0') {
 
                 if (jsPanel.hintsTr.length > 0) {
 
-                    option.position = jsPanel.hintTop(jsPanel.hintsTr);
+                    jsP.option.position = jsPanel.hintTop(jsPanel.hintsTr);
 
                 }
                 jsPanel.hintsTr.push(jsP.attr('id'));
@@ -2109,172 +2348,152 @@ var jsPanel;
         }
 
         /* option.selector - append jsPanel only to the first object in selector ------------------------------------ */
-        if (option.paneltype.type !== 'tooltip') {
+        jsP.data("selector", jsP.option.selector);  // needed for exportPanels()
+        if (jsP.option.paneltype.type !== 'tooltip') {
 
-            jsP.appendTo(jsPparent);
+            jsP.appendTo(jsP.parentElmt);
 
         }
-        if (option.paneltype.type === 'modal') {
+        if (jsP.option.paneltype.type === 'modal') {
 
-            jsP.css('zIndex', '1100');
+            jsP.css('zIndex', 10001);
 
-            if (option.paneltype.mode === 'extended') {
-
-                $('.jsPanel-backdrop').css('z-index', '999');
-
+            if (jsP.option.paneltype.mode === 'extended') {
+                $('.jsPanel-backdrop').css('z-index', '9998');
             }
 
         } else {
 
             if (!jsP.hasClass("jsPanel-modal")) {
-                jsP.css('z-index', jsPanel.setZi());
+                jsP.css('z-index', jsPanel.setZi(jsP));
             }
 
         }
 
         /* option.bootstrap & option.theme -------------------------------------------------------------------------- */
-        if (option.bootstrap) {
-
+        if (jsP.option.bootstrap) {
             // check whether a bootstrap compatible theme is used and set option.theme accordingly
-            option.theme = jsPanel.isBootstrapTheme(option.bootstrap);
-            option.controls.iconfont = 'bootstrap';
-
-            jsP.alterClass('jsPanel-theme-*', 'panel panel-' + option.theme);
+            jsP.option.theme = jsPanel.isBootstrapTheme(jsP.option.bootstrap);
+            jsP.option.controls.iconfont = 'bootstrap';
+            jsP.alterClass('jsPanel-theme-*', 'panel panel-' + jsP.option.theme);
             jsP.header.alterClass('jsPanel-theme-*', 'panel-heading');
             jsP.header.title.addClass('panel-title');
             jsP.content.alterClass('jsPanel-theme-*', 'panel-body');
             jsP.footer.addClass('panel-footer');
-
             // fix css problems for panels nested in other bootstrap panels
             jsP.header.title.css('color', function () {
-
                 return jsP.header.css('color');
-
             });
             jsP.content.css('border-top-color', function () {
-
                 return jsP.header.css('border-top-color');
             });
-
         } else {
-
             // activate normal non bootstrap themes
-            jsP.alterClass('jsPanel-theme-*', 'jsPanel-theme-' + option.theme);
-            jsP.header.alterClass('jsPanel-theme-*', 'jsPanel-theme-' + option.theme);
-            jsP.content.alterClass('jsPanel-theme-*', 'jsPanel-theme-' + option.theme);
-            jsP.footer.alterClass('jsPanel-theme-*', 'jsPanel-theme-' + option.theme);
-
+            var components = [jsP, jsP.header, jsP.content, jsP.footer];
+            components.forEach(function(elmt){
+                $(elmt).alterClass('jsPanel-theme-*', 'jsPanel-theme-' + jsP.option.theme);
+            });
         }
 
-        /* option.removeHeader -------------------------------------------------------------------------------------- */
-        if (option.removeHeader) {
+        /* option.removeHeader; option.controls (buttons in header right) ------------------------------------------- */
+        if (jsP.option.removeHeader) {
 
             jsP.header.remove();
 
-        }
+        } else {
 
-        /* option.controls (buttons in header right) | default: object ---------------------------------------------- */
-        if (!option.removeHeader) {
-
-            jsPanel.configControls(option.controls, jsP);
+            jsPanel.configControls(jsP);
 
         }
 
         /* insert iconfonts if option.iconfont set (default is "jsglyph") */
-        if (option.controls.iconfont) {
+        if (jsP.option.controls.iconfont) {
 
-            jsPanel.configIconfont(option.controls.iconfont, jsP);
+            jsPanel.configIconfont(jsP);
 
-        }
-
-        // if option.controls.iconfont === false restore old icon sprite
-        if (!option.controls.iconfont) {
-
+        } else {
+            // if option.controls.iconfont === false restore old icon sprite
             $('.jsPanel-btn-close, .jsPanel-btn-max, .jsPanel-btn-norm, .jsPanel-btn-min, .jsPanel-btn-small, .jsPanel-btn-smallrev', jsP.header.controls).empty();
 
         }
 
         /* option.toolbarHeader | default: false -------------------------------------------------------------------- */
-        if (option.toolbarHeader && option.removeHeader === false) {
+        if (jsP.option.toolbarHeader && jsP.option.removeHeader === false) {
 
-            if (typeof option.toolbarHeader === 'string') {
+            if (typeof jsP.option.toolbarHeader === 'string') {
 
-                jsP.header.toolbar.append(option.toolbarHeader);
+                jsP.header.toolbar.append(jsP.option.toolbarHeader);
 
-            } else if ($.isFunction(option.toolbarHeader)) {
+            } else if ($.isFunction(jsP.option.toolbarHeader)) {
 
-                jsP.header.toolbar.append(option.toolbarHeader(jsP.header));
+                jsP.header.toolbar.append(jsP.option.toolbarHeader(jsP.header));
 
-            } else if ($.isArray(option.toolbarHeader)) {
+            } else if ($.isArray(jsP.option.toolbarHeader)) {
 
-                jsPanel.configToolbar(option.toolbarHeader, jsP.header.toolbar, jsP);
+                jsPanel.configToolbar(jsP.option.toolbarHeader, jsP.header.toolbar, jsP);
 
             }
         }
 
         /* option.toolbarFooter | default: false -------------------------------------------------------------------- */
-        if (option.toolbarFooter) {
+        if (jsP.option.toolbarFooter) {
 
             jsP.footer.css({
-
                 display: 'block',
                 padding: '0 20px 0 5px'
-
             });
 
-            if (typeof option.toolbarFooter === 'string') {
+            if (typeof jsP.option.toolbarFooter === 'string') {
 
-                jsP.footer.append(option.toolbarFooter);
+                jsP.footer.append(jsP.option.toolbarFooter);
 
-            } else if ($.isFunction(option.toolbarFooter)) {
+            } else if ($.isFunction(jsP.option.toolbarFooter)) {
 
-                jsP.footer.append(option.toolbarFooter(jsP.footer));
+                jsP.footer.append(jsP.option.toolbarFooter(jsP.footer));
 
-            } else if ($.isArray(option.toolbarFooter)) {
+            } else if ($.isArray(jsP.option.toolbarFooter)) {
 
-                jsPanel.configToolbar(option.toolbarFooter, jsP.footer, jsP);
+                jsPanel.configToolbar(jsP.option.toolbarFooter, jsP.footer, jsP);
 
             }
         }
 
         /* option.rtl | default: false ------------------------------------------------------------------------------ */
-        if (option.rtl.rtl === true) {
-
-            jsPanel.setRTL(jsP, option.rtl.lang);
-
+        if (jsP.option.rtl.rtl === true) {
+            jsPanel.setRTL(jsP, jsP.option.rtl.lang);
         }
 
         /* option.overflow  | default: 'hidden' --------------------------------------------------------------------- */
-        if (typeof option.overflow === 'string') {
+        if (typeof jsP.option.overflow === 'string') {
 
-            jsP.content.css('overflow', option.overflow);
+            jsP.content.css('overflow', jsP.option.overflow);
 
-        } else if ($.isPlainObject(option.overflow)) {
+        } else if ($.isPlainObject(jsP.option.overflow)) {
 
             jsP.content.css({
 
-                'overflow-y': option.overflow.vertical,
-                'overflow-x': option.overflow.horizontal
+                'overflow-y': jsP.option.overflow.vertical,
+                'overflow-x': jsP.option.overflow.horizontal
 
             });
 
         }
 
         /* option.draggable ----------------------------------------------------------------------------------------- */
-        if ($.isPlainObject(option.draggable)) {
+        if ($.isPlainObject(jsP.option.draggable)) {
 
             // if jsPanel is childpanel
             if (jsP.parent().hasClass('jsPanel-content')) {
 
-                option.draggable.containment = 'parent';
+                jsP.option.draggable.containment = 'parent';
 
             }
 
             // merge draggable settings and apply
-            option.customdraggable = $.extend(true, {}, $.jsPanel.defaults.draggable, option.draggable);
-            jsP.draggable(option.customdraggable);
+            jsP.option.customdraggable = $.extend(true, {}, $.jsPanel.defaults.draggable, jsP.option.draggable);
+            jsP.draggable(jsP.option.customdraggable);
 
-        } else if (option.draggable === 'disabled') {
+        } else if (jsP.option.draggable === 'disabled') {
 
             // reset cursor, draggable deactivated
             $('.jsPanel-title', jsP).css('cursor', 'inherit');
@@ -2285,217 +2504,50 @@ var jsPanel;
         }
 
         /* option.resizable ----------------------------------------------------------------------------------------- */
-        if ($.isPlainObject(option.resizable)) {
+        if ($.isPlainObject(jsP.option.resizable)) {
 
-            option.customresizable = $.extend(true, {}, $.jsPanel.defaults.resizable, option.resizable);
-            jsP.resizable(option.customresizable);
+            jsP.option.customresizable = $.extend(true, {}, $.jsPanel.defaults.resizable, jsP.option.resizable);
+            jsP.resizable(jsP.option.customresizable);
 
-        } else if (option.resizable === 'disabled') {
+        } else if (jsP.option.resizable === 'disabled') {
 
             // jquery ui resizable initialize disabled to allow to query status
             jsP.resizable({ disabled: true });
-            $('.ui-icon-gripsmall-diagonal-se', jsP).css('background-image', 'none');
+            $('.ui-icon-gripsmall-diagonal-se', jsP).css({'background-image': 'none', 'text-indent': -9999});
+            $('.ui-resizable-handle', jsP).css({'cursor': 'inherit'});
 
         }
 
         /* option.content ------------------------------------------------------------------------------------------- */
         // option.content can be any valid argument for jQuery.append()
-        if (option.content) {
+        if (jsP.option.content) {
 
-            jsP.content.append(option.content);
-
+            jsP.content.append(jsP.option.content);
+            jsP.data("content", jsP.option.content);
 
         }
 
         /* option.load ---------------------------------------------------------------------------------------------- */
-        if ($.isPlainObject(option.load) && option.load.url) {
-
-            if (!option.load.data) {
-
-                option.load.data = undefined;
-
-            }
-
-            jsP.content.load(option.load.url, option.load.data, function (responseText, textStatus, jqXHR) {
-
-                if (option.load.complete) {
-                    option.load.complete(responseText, textStatus, jqXHR, jsP);
-                }
-
-                // title h3 might be to small: load() is async!
-                jsPanel.resizeTitle(jsP);
-
-                // update option.size (content might come delayed)
-                jsPanel.updateOptionSize(jsP, option.size);
-
-                // fix for a bug in jQuery-UI draggable? that causes the jsPanel to reduce width when dragged beyond boundary of containing element and option.size.width is 'auto'
-                jsP.content.css('width', function () {
-
-                    return jsP.content.outerWidth() + 'px';
-
-                });
-
-            });
-
+        if ($.isPlainObject(jsP.option.load) && jsP.option.load.url) {
+            jsPanel.load(jsP);
         }
 
         /* option.ajax ---------------------------------------------------------------------------------------------- */
-        if ($.isPlainObject(option.ajax)) {
-
-            $.ajax(option.ajax)
-
-                .done(function (data, textStatus, jqXHR) {
-
-                    jsP.content.empty().append(data);
-
-                    if (option.ajax.done && $.isFunction(option.ajax.done)) {
-
-
-                        option.ajax.done(data, textStatus, jqXHR, jsP);
-                    }
-
-                })
-
-                .fail(function (jqXHR, textStatus, errorThrown) {
-
-                    if (option.ajax.fail && $.isFunction(option.ajax.fail)) {
-
-                        option.ajax.fail(jqXHR, textStatus, errorThrown, jsP);
-
-                    }
-
-                })
-
-                .always(function (arg1, textStatus, arg3) {
-                    //In response to a successful request, the function's arguments are the same as those of .done(): data(hier: arg1), textStatus, and the jqXHR object(hier: arg3)
-                    //For failed requests the arguments are the same as those of .fail(): the jqXHR object(hier: arg1), textStatus, and errorThrown(hier: arg3)
-                    // fix for a bug in jQuery-UI draggable? that causes the jsPanel to reduce width when dragged beyond boundary of containing element and option.size.width is 'auto'
-
-                    jsP.content.css('width', function () {
-
-                        return jsP.content.outerWidth() + 'px';
-
-                    });
-
-                    if (option.ajax.always && $.isFunction(option.ajax.always)) {
-
-                        option.ajax.always(arg1, textStatus, arg3, jsP);
-
-                    }
-
-                    // title h3 might be to small: load() is async!
-                    jsPanel.resizeTitle(jsP);
-
-                    // update option.size (content might come delayed)
-                    jsPanel.updateOptionSize(jsP, option.size);
-
-                })
-
-                .then(function (data, textStatus, jqXHR) {
-
-                    if (option.ajax.then && $.isArray(option.ajax.then)) {
-
-                        if (option.ajax.then[0] && $.isFunction(option.ajax.then[0])) {
-
-                            option.ajax.then[0](data, textStatus, jqXHR, jsP);
-
-                        }
-
-                        // title h3 might be to small: load() is async!
-                        jsPanel.resizeTitle(jsP);
-
-                        // update option.size (content might come delayed)
-                        jsPanel.updateOptionSize(jsP, option.size);
-
-                    }
-                }, function (jqXHR, textStatus, errorThrown) {
-
-                    if (option.ajax.then && $.isArray(option.ajax.then)) {
-
-                        if (option.ajax.then[1] && $.isFunction(option.ajax.then[1])) {
-
-                            option.ajax.then[1](jqXHR, textStatus, errorThrown, jsP);
-
-                        }
-
-                        // title h3 might be to small: load() is async!
-                        jsPanel.resizeTitle(jsP);
-
-                    }
-
-                }
-
-            );
-
+        if ($.isPlainObject(jsP.option.ajax)) {
+            jsPanel.ajax(jsP);
         }
 
         /* option.size ---------------------------------------------------------------------------------------------- */
-        if (typeof option.size === 'string' && option.size === 'auto') {
+        if ($.isPlainObject(jsP.option.size)) {
 
-            option.size = {
-
-                width: 'auto',
-                height: 'auto'
-
-            };
-
-        } else if ($.isPlainObject(option.size)) {
-
-            if (!jsPanel.isPosInt(option.size.width)) {
-
-                if (typeof option.size.width === 'string' && option.size.width !== 'auto') {
-
-                    option.size.width = parseInt(option.size.width, 10);
-
-                    if (option.size.width < 1 || !$.isNumeric(option.size.width)) {
-
-                        option.size.width = $.jsPanel.defaults.size.width;
-
-                    }
-
-                } else if ($.isFunction(option.size.width)) {
-
-                    option.size.width = parseInt(option.size.width(), 10);
-
-                } else if (option.size.width !== 'auto') {
-
-                    option.size.width = $.jsPanel.defaults.size.width;
-
-                }
-
-            }
-
-            if (!jsPanel.isPosInt(option.size.height)) {
-
-                if (typeof option.size.height === 'string' && option.size.height !== 'auto') {
-
-                    option.size.height = parseInt(option.size.height, 10);
-
-                    if (option.size.height < 1 || !$.isNumeric(option.size.height)) {
-
-                        option.size.height = $.jsPanel.defaults.size.height;
-
-                    }
-
-                } else if ($.isFunction(option.size.height)) {
-
-                    option.size.height = parseInt(option.size.height(), 10);
-
-                } else if (option.size.height !== 'auto') {
-
-                    option.size.height = $.jsPanel.defaults.size.height;
-
-                }
-
-            }
+            jsPanel.setSize(jsP, "width");
+            jsPanel.setSize(jsP, "height");
 
         }
 
         jsP.content.css({
-
-            width: option.size.width + 'px',
-            height: option.size.height + 'px'
-
+            width: jsP.option.size.width,
+            height: jsP.option.size.height
         });
 
         // Important! limit title width; final adjustment follows later; otherwise title might be longer than panel width
@@ -2503,253 +2555,72 @@ var jsPanel;
 
         /* option.iframe -------------------------------------------------------------------------------------------- */
         // implemented after option.size because option.size.width/height are either "auto" or pixel values already
-        if ($.isPlainObject(option.iframe) && (option.iframe.src || option.iframe.srcdoc)) {
-
-            var iFrame = $("<iframe></iframe>");
-
-            // iframe content
-            if (option.iframe.srcdoc) {
-
-                iFrame.prop("srcdoc", option.iframe.srcdoc);
-
-            }
-
-            if (option.iframe.src) {
-
-                iFrame.prop("src", option.iframe.src);
-
-            }
-
-            //iframe size
-            if (option.size.width !== "auto" && !option.iframe.width) {
-
-                iFrame.prop("width", option.size.width);
-
-            } else if (typeof option.iframe.width === 'string' && option.iframe.width.slice(-1) === '%') {
-
-                iFrame.prop("width", option.iframe.width);
-
-            } else {
-
-                iFrame.prop("width", parseInt(option.iframe.width) + 'px');
-
-            }
-
-            if (option.size.height !== "auto" && !option.iframe.height) {
-
-                iFrame.prop("height", option.size.height);
-
-            } else if (typeof option.iframe.height === 'string' && option.iframe.height.slice(-1) === '%') {
-
-                iFrame.prop("height", option.iframe.height);
-
-            } else {
-
-                iFrame.prop("height", parseInt(option.iframe.height) + 'px');
-
-            }
-
-            //iframe name
-            if (typeof option.iframe.name === 'string') {
-
-                iFrame.prop("name", option.iframe.name);
-
-            }
-
-            //iframe id
-            if (typeof option.iframe.id === 'string') {
-
-                iFrame.prop("id", option.iframe.id);
-
-            }
-
-            //iframe seamless (not yet supported by any browser)
-            if (option.iframe.seamless) {
-
-                iFrame.prop("seamless", "seamless");
-
-            }
-
-            //iframe sandbox
-            if (typeof option.iframe.sandbox === 'string') {
-
-                iFrame.prop("sandox", option.iframe.sandbox);
-
-            }
-
-            //iframe style
-            if ($.isPlainObject(option.iframe.style)) {
-
-                iFrame.css(option.iframe.style);
-
-            }
-
-            //iframe css classes
-            if (typeof option.iframe.classname === 'string') {
-
-                iFrame.addClass(option.iframe.classname);
-
-            } else if ($.isFunction(option.iframe.classname)) {
-
-                iFrame.addClass(option.iframe.classname());
-
-            }
-
-            jsP.content.append(iFrame);
+        if ($.isPlainObject(jsP.option.iframe) && (jsP.option.iframe.src || jsP.option.iframe.srcdoc)) {
+            jsPanel.iframe(jsP);
         }
 
         /* option.position ------------------------------------------------------------------------------------------ */
-        if (option.paneltype.type !== 'tooltip') {
+        if (jsP.option.paneltype.type !== 'tooltip') {
             // when using option.size = 'auto' and option.position = 'center' consider use of option.ajax with
             // async: false -> size will be known when position is calculated
             // value "center" not allowed for option.position.bottom & option.position.right -> use top and/or left
-
-            jsP.calcPanelposition = function (jsP, selector) {
-
-                var panelpos = {};
-
-                // get px values for panel size in case option.size is 'auto' - results will be incorrect whenever content
-                // is not loaded yet ( e.g. option.load, option.ajax ) -> centering can't work correctly
-                option.size.width = $(jsP).outerWidth();
-                option.size.height = $(jsP).innerHeight();
-
-                // delete op.top and/or left if option.position.bottom and/or right
-                if (option.position.bottom) {
-
-                    delete option.position.top;
-
-                }
-                if (option.position.right) {
-
-                    delete option.position.left;
-
-                }
-
-                // calculate top | bottom values != center
-                // if not checked for 0 as well code would not be executed!
-                if (option.position.bottom || option.position.bottom === 0) {
-
-                    delete option.position.top;
-                    jsPanel.calcPos('bottom', option, count, jsP);
-
-                } else if (option.position.top || option.position.top === 0) {
-
-                    if (option.position.top === 'center') {
-
-                        option.position.top = jsPanel.calcPosCenter(option).top;
-
-                    } else {
-
-                        jsPanel.calcPos('top', option, count, jsP);
-
-                    }
-                }
-
-                // calculate left | right values != center
-                if (option.position.right || option.position.right === 0) {
-
-                    delete option.position.left;
-                    jsPanel.calcPos('right', option, count, jsP);
-
-                } else if (option.position.left || option.position.left === 0) {
-
-                    if (option.position.left === 'center') {
-
-                        option.position.left = jsPanel.calcPosCenter(option).left;
-
-                    } else {
-
-                        jsPanel.calcPos('left', option, count, jsP);
-
-                    }
-
-                }
-                if (option.position.top) {
-
-                    panelpos.top = parseInt(option.position.top, 10) + option.offset.top + 'px';
-
-                } else {
-
-                    panelpos.bottom = parseInt(option.position.bottom, 10) + option.offset.top + 'px';
-
-                }
-                if (option.position.left) {
-
-                    panelpos.left = parseInt(option.position.left, 10) + option.offset.left + 'px';
-
-                } else {
-
-                    panelpos.right = parseInt(option.position.right, 10) + option.offset.left + 'px';
-
-                }
-
-                jsP.css(panelpos);
-                option.position = {
-
-                    top: jsP.css('top'),
-                    left: jsP.css('left')
-
-                };
-            };
-
             // finally calculate & position the jsPanel
-            jsP.calcPanelposition(jsP, option.selector);
-
+            jsPanel.calcPanelposition(jsP);
         }
 
         /* option.addClass ------------------------------------------------------------------------------------------ */
-        if (typeof option.addClass.header === 'string') {
+        if (typeof jsP.option.addClass.header === 'string') {
 
-            jsP.header.addClass(option.addClass.header);
-
-        }
-
-        if (typeof option.addClass.content === 'string') {
-
-            jsP.content.addClass(option.addClass.content);
+            jsP.header.addClass(jsP.option.addClass.header);
 
         }
 
-        if (typeof option.addClass.footer === 'string') {
+        if (typeof jsP.option.addClass.content === 'string') {
 
-            jsP.footer.addClass(option.addClass.footer);
+            jsP.content.addClass(jsP.option.addClass.content);
 
         }
 
-        // handlers for doubleclicks -------------------------------------------------------------------------------- */
+        if (typeof jsP.option.addClass.footer === 'string') {
+
+            jsP.footer.addClass(jsP.option.addClass.footer);
+
+        }
+
+        // handlers for doubleclicks -----------------------------------------------------------------------------------
         // dblclicks disabled for normal modals, hints and tooltips
-        if (option.paneltype.mode !== "default") {
+        if (jsP.option.paneltype.mode !== "default") {
 
-            if (option.dblclicks) {
+            if (jsP.option.dblclicks) {
 
-                if (option.dblclicks.title) {
+                if (jsP.option.dblclicks.title) {
 
                     jsP.header.title.on('dblclick', function (e) {
 
                         e.preventDefault();
-                        jsPanel.dblclickhelper(option.dblclicks.title, jsP);
+                        jsPanel.dblclickhelper(jsP.option.dblclicks.title, jsP);
 
                     });
 
                 }
 
-                if (option.dblclicks.content) {
+                if (jsP.option.dblclicks.content) {
 
                     jsP.content.on('dblclick', function (e) {
 
                         e.preventDefault();
-                        jsPanel.dblclickhelper(option.dblclicks.content, jsP);
+                        jsPanel.dblclickhelper(jsP.option.dblclicks.content, jsP);
 
                     });
 
                 }
 
-                if (option.dblclicks.footer) {
+                if (jsP.option.dblclicks.footer) {
 
                     jsP.footer.on('dblclick', function (e) {
 
                         e.preventDefault();
-                        jsPanel.dblclickhelper(option.dblclicks.footer, jsP);
+                        jsPanel.dblclickhelper(jsP.option.dblclicks.footer, jsP);
 
                     });
 
@@ -2760,24 +2631,31 @@ var jsPanel;
         }
 
         /* option.show ---------------------------------------------------------------------------------------------- */
-        if (anim.indexOf(" ") === -1) {
+        if (!jsP.option.show) {
+            jsP.css({
+                display: 'block',
+                opacity: 1
+            })
+                .trigger('jspanelloaded', jsP.attr('id'))
+                .trigger('jspanelstatechange', jsP.attr('id'));
+            jsP.option.size = {
+                width: jsP.outerWidth() + 'px',
+                height: jsP.outerHeight() + 'px'
+            };
+        } else if (jsP.option.show.indexOf(" ") === -1) {
 
-            // if no space is found in "anim" -> function anwenden
-            jsP[anim]({
+            // if no space is found in "jsP.option.show" -> function anwenden
+            jsP[jsP.option.show]({
 
                 done: function () {
-
-                    jsP.status = "normalized";
 
                     // trigger custom event
                     $(jsP).trigger('jspanelloaded', jsP.attr('id'));
                     $(jsP).trigger('jspanelstatechange', jsP.attr('id'));
 
-                    option.size = {
-
+                    jsP.option.size = {
                         width: jsP.outerWidth() + 'px',
                         height: jsP.outerHeight() + 'px'
-
                     };
 
                 }
@@ -2786,8 +2664,6 @@ var jsPanel;
 
         } else {
 
-            jsP.status = "normalized";
-
             // does not work with certain combinations of type of animation and positioning
             jsP.css({
 
@@ -2795,72 +2671,71 @@ var jsPanel;
                 opacity: 1
 
             })
-                .addClass(option.show)
+                .addClass(jsP.option.show)
                 .trigger('jspanelloaded', jsP.attr('id'))
                 .trigger('jspanelstatechange', jsP.attr('id'));
 
-            option.size = {
-
+            jsP.option.size = {
                 width: jsP.outerWidth() + 'px',
                 height: jsP.outerHeight() + 'px'
-
             };
 
         }
 
         /* needed if a maximized panel in body is normalized again -------------------------------------------------- */
         // don't put this under $('body').on('jspanelloaded', function () { ... }
-        verticalOffset = jsPanel.calcVerticalOffset(jsP);
+        jsP.verticalOffset = jsPanel.calcVerticalOffset(jsP) || 0;
 
         /* replace bottom/right values with corresponding top/left values if necessary ------------------------------ */
-        jsPanel.replaceCSSBottomRight(jsP, option.position);
+        jsPanel.replaceCSSBottomRight(jsP);
 
         /* option.title | needs to be late in the file! ------------------------------------------------------------- */
-        jsP.header.title.prepend(option.title);
+        jsP.header.title.empty().prepend(jsP.option.title);
         jsPanel.resizeTitle(jsP);
 
         /* reposition hints while scrolling window, must be after normalization of position ------------------------- */
-        if (option.paneltype.type === 'hint') {
+        if (jsP.option.paneltype.type === 'hint') {
 
             jsPanel.reposHintsScroll(jsP);
 
         }
 
         /* reposition jsPanel appended to body while scrolling window ----------------------------------------------- */
-        if (jsPparentTagname === 'body' && (option.paneltype.type !== 'tooltip' || option.paneltype.type !== 'hint')) {
+        if (jsP.parentElmtTagname === 'body' && (jsP.option.paneltype.type !== 'tooltip' || jsP.option.paneltype.type !== 'hint')) {
 
             jsPanel.fixPosition(jsP);
 
         }
 
-        /* option.callback & option.autoclose and a jQuery-UI draggable bugfix -------------------------------------- */
         /* resizestart & resizestop & dragstop callbacks ------------------------------------------------------------ */
-        // features activated for extended modals only for @genachka
-        if (!option.paneltype || option.paneltype.mode !== 'default') {
+        if (!jsP.option.paneltype || jsP.option.paneltype.mode !== 'default') {
             // not needed for modals, hints and tooltips
 
-            $(jsP).on("resize", function () {
+            $(jsP).on("resizestart", function () {
+                $("iframe", jsP.content).css("display", "none"); // on test
+            });
 
+            $(jsP).on("resize", function () {
+                // jquery ui resize event is also fired when panel is maximized or normalized (on request of Gareth Bult)
                 jsPanel.resizeContent(jsP);
                 jsPanel.resizeTitle(jsP);
-
             });
 
             $(jsP).on("resizestop", function () {
 
-                option.size = {
-
+                jsP.option.size = {
                     width: jsP.outerWidth() + 'px',
                     height: jsP.outerHeight() + 'px'
-
                 };
 
-                jsP.status = "normalized";
+                jsPanel.updateStateProps(jsP, "normalized");
                 $(jsP).trigger('jspanelnormalized', jsP.attr('id'));
                 $(jsP).trigger('jspanelstatechange', jsP.attr('id'));
 
                 // controls und title zurücksetzen
                 jsPanel.hideControls(".jsPanel-btn-norm, .jsPanel-btn-smallrev", jsP);
+
+                $("iframe", jsP.content).css("display", "block"); // on test
 
             });
 
@@ -2869,69 +2744,117 @@ var jsPanel;
                 // remove window.scroll handler, is added again on dragstop
                 $(window).off('scroll', jsP.jsPanelfixPos);
 
-                if (option.paneltype.mode === 'extended') {
-
-                    jsP.css('z-index', '1100');
-
+                if (jsP.option.paneltype.mode === 'extended') {
+                    jsP.css('z-index', '10000');
                 }
 
             });
 
             $(jsP).on("dragstop", function () {
 
-                option.position = {
-
+                jsP.option.position = {
                     top: jsP.css('top'),
                     left: jsP.css('left')
-
                 };
 
-                verticalOffset = jsPanel.calcVerticalOffset(jsP);
+                jsP.verticalOffset = jsPanel.calcVerticalOffset(jsP) || 0;
 
-                if (jsPparentTagname === 'body') {
-
+                if (jsP.parentElmtTagname === 'body') {
                     jsPanel.fixPosition(jsP);
-
                 }
 
             });
+
+            $(jsP).on( "jspanelminimized", function(){
+                jsPanel.hideControls(".jsPanel-btn-min, .jsPanel-btn-small, .jsPanel-btn-smallrev, .jsPanel-btn-hide", jsP);
+                jsPanel.updateStateProps(jsP, "minimized");
+                $(window).off('scroll', jsP.jsPanelfixPos);
+            });
+
+            $(jsP).on( "jspanelmaximized", function(){
+                jsPanel.resizeContent(jsP);
+                jsPanel.resizeTitle(jsP);
+                jsPanel.hideControls(".jsPanel-btn-max, .jsPanel-btn-smallrev", jsP);
+                jsPanel.updateStateProps(jsP, "maximized");
+                // additionally trigger the jQuery UI resize event (on request of Gareth Bult)
+                jsP.trigger("resize");
+            });
+
+            $(jsP).on( "jspanelnormalized", function(){
+                jsPanel.hideControls(".jsPanel-btn-norm, .jsPanel-btn-smallrev", jsP);
+                jsPanel.resizeTitle(jsP);
+                jsPanel.resizeContent(jsP);
+                jsPanel.updateStateProps(jsP, "normalized");
+                // additionally trigger the jQuery UI resize event (on request of Gareth Bult)
+                jsP.trigger("resize");
+            });
+
         }
 
         /* option.autoclose | default: false --------------------------------------- */
-        if (typeof option.autoclose === 'number' && option.autoclose > 0) {
+        if (typeof jsP.option.autoclose === 'number' && jsP.option.autoclose > 0) {
 
-            jsPanel.autoclose(jsP, jsP.attr('id'), option.autoclose);
+            jsPanel.autoclose(jsP);
 
         }
 
         /* tooltip corrections ----------------------------------------------------- */
-        if (option.paneltype.type === "tooltip" && (option.paneltype.position === "top" || option.paneltype.position === "bottom")) {
+        if (jsP.option.paneltype.type === "tooltip" && (jsP.option.paneltype.position === "top" || jsP.option.paneltype.position === "bottom")) {
 
-            jsPanel.shiftTooltipHorizontal(jsP, option.paneltype.shiftwithin);
+            jsPanel.shiftTooltipHorizontal(jsP, jsP.option.paneltype.shiftwithin);
 
-        } else if (option.paneltype.position === "left" || option.paneltype.position === "right") {
+        } else if (jsP.option.paneltype.position === "left" || jsP.option.paneltype.position === "right") {
 
-            jsPanel.shiftTooltipVertical(jsP, option.paneltype.shiftwithin);
+            jsPanel.shiftTooltipVertical(jsP, jsP.option.paneltype.shiftwithin);
 
         }
 
-        /* option.callback --------------------------------------------------------- */
-        if (option.callback && $.isFunction(option.callback)) {
+        /* option.panelstatus -------------------------------------------------------------------------------------------- */
+        if (jsP.option.panelstatus) {
 
-            option.callback(jsP);
+            switch (jsP.option.panelstatus) {
 
-        } else if ($.isArray(option.callback)) {
-            var j,
-                max = option.callback.length;
+                case "minimized":
+                    jsPanel.minimize(jsP);
+                    break;
 
-            for (j = 0; j < max; j += 1) {
+                case "maximized":
+                    jsPanel.maximize(jsP);
+                    break;
 
-                if ($.isFunction(option.callback[j])) {
+                case ("smallified"):
+                    jsPanel.smallify(jsP);
+                    break;
 
-                    option.callback[j](jsP);
+                case ("smallifiedMax"):
+                    jsPanel.maximize(jsP);
+                    jsPanel.smallify(jsP);
+                    break;
+
+            }
+
+        } else {
+
+            jsPanel.updateStateProps(jsP, "normalized");
+
+        }
+
+        /* jsP.option.callback --------------------------------------------------------- */
+        if (jsP.option.callback && $.isFunction(jsP.option.callback)) {
+
+            jsP.option.callback(jsP);
+
+        } else if ($.isArray(jsP.option.callback)) {
+
+            jsP.option.callback.forEach(function(item){
+
+                if ($.isFunction(item)) {
+
+                    item(jsP);
 
                 }
-            }
+
+            });
 
         }
 
@@ -2960,6 +2883,7 @@ var jsPanel;
             smallify: false,
             maxtoScreen: false
         },
+        "custom": false,
         "dblclicks": false,
         "draggable": {
             handle: 'div.jsPanel-hdr, div.jsPanel-ftr',
@@ -2972,16 +2896,23 @@ var jsPanel;
         },
         "iframe": false,
         "load": false,
+        "maximizedMargin": {
+            top: 5,
+            right: 5,
+            bottom: 5,
+            left: 5
+        },
         "offset": {
             top: 0,
             left: 0
         },
+        "panelstatus": false,
         "paneltype": false,
         "overflow": 'hidden',
         "position": 'auto',
         "removeHeader": false,
         "resizable": {
-            handles: 'e, s, w, se, sw',
+            handles: 'n, e, s, w, ne, se, sw, nw',
             autoHide: false,
             minWidth: 150,
             minHeight: 93
@@ -2990,9 +2921,10 @@ var jsPanel;
         "selector": 'body',
         "show": 'fadeIn',
         "size": {
-            width: 400,
-            height: 222
+            width: '400px',
+            height: '222px'
         },
+        "template": false,
         "theme": 'default',
         "title": 'jsPanel',
         "toolbarFooter": false,
@@ -3050,3 +2982,14 @@ var jsPanel;
     });
 
 }(jQuery));
+
+/*
+  :: Number.isInteger() polyfill ::
+  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isInteger
+*/
+if (!Number.isInteger) {
+    Number.isInteger = function isInteger(nVal) {
+        "use strict";
+        return typeof nVal === 'number' && isFinite(nVal) && nVal > -9007199254740992 && nVal < 9007199254740992 && Math.floor(nVal) === nVal;
+    };
+}
