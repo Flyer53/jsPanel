@@ -2,6 +2,12 @@
 
 ---
 
+### Version 2.4.1
+
++ **fix** issue with some links/events not working properly inside a jsPanel
+
+---
+
 ### Version 2.4.0
 
 + **new option.maximizedMargin** allows to maximize panels with a configurable "margin" on each side
