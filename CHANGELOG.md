@@ -2,6 +2,12 @@
 
 ---
 
+### Version 2.5.0
+
++ new **option.controls.confirmClose**. If set to a text value this text will be used for a **window.confirm()** and panel will only be closed if true is returned (only for close button of panel)
+
+---
+
 ### Version 2.4.1
 
 + **fix** issue with some links/events not working properly inside a jsPanel

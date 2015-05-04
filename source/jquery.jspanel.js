@@ -25,16 +25,17 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
 
-    You should have received a copy of the MIT License along with this program.  If not, see <http://opensource.org/licenses/MIT>.
+    <http://opensource.org/licenses/MIT>.
  */
 
 /*
-    CHANGES IN 2.4.1:
-    + jsPanel.resize() altered to exclude minimized panels
-    + fix of broken events inside panels
+    CHANGES IN 2.5.0:
+    + new "option.controls.confirmClose". If set to a text value this text will be used for a "window.confirm()" and panel will only
+      be closed if true is returned (only for close button of panel)
+    + arrays with hints obsolete (replaced with jquery collections)
  */
 
-// check for jQuery and jQuery UI
+// check for jQuery and jQuery UI components
 if (!$.fn.jquery || !$.fn.uniqueId || !$.widget || !$.ui.mouse || !$.ui.draggable || !$.ui.resizable) {
     console.log("Error: jQuery or at least one jQuery UI component is not loaded! You need at least jQuery 1.9.1 and jQuery UI 1.9.2 (modules Core, Mouse, Widget, Draggable and Resizable).");
 } else {
@@ -48,7 +49,7 @@ var jsPanel;
 (function($){
     "use strict";
     jsPanel = {
-        version: '2.4.1 2015-04-09 11:39',
+        version: '2.5.0 2015-05-02 16:08',
         device: (function(){
             try {
                 // requires "mobile-detect.js" to be loaded
@@ -64,11 +65,8 @@ var jsPanel;
                 return {mobile: undefined, tablet: undefined, phone: undefined, os: undefined, userAgent: undefined};
             }
         })(),
-        ID: 0,                  // kind of a counter to add to automatically generated id attribute
-        widthForMinimized: 180, // default width of minimized panels
-        hintsTc: [],            // arrays that log hints for option.position 'top center', 'top left' and 'top right'
-        hintsTl: [],
-        hintsTr: [],
+        ID: 0,                              // kind of a counter to add to automatically generated id attribute
+        widthForMinimized: 180,             // default width of minimized panels
         template: '<div class="jsPanel jsPanel-theme-default jsPanel-state-initialized">' +
                     '<div class="jsPanel-hdr jsPanel-theme-default">' +
                         '<h3 class="jsPanel-title"></h3>' +
@@ -229,13 +227,13 @@ var jsPanel;
             // corrections if jsPanel is appended to the body element
             if (panel.option.selector === 'body') {
                 if (prop === 'top') {
-                    panel.option.position.top = parseInt(optPosition.top, 10) + $(window).scrollTop() + 'px';
+                    panel.option.position.top = parseInt(optPosition.top, 10) + window.scrollY + 'px';
                 } else if (prop === 'bottom') {
-                    panel.option.position.bottom = parseInt(optPosition.bottom, 10) - $(window).scrollTop() + 'px';
+                    panel.option.position.bottom = parseInt(optPosition.bottom, 10) - window.scrollY + 'px';
                 } else if (prop === 'left') {
-                    panel.option.position.left = parseInt(optPosition.left, 10) + $(window).scrollLeft() + 'px';
+                    panel.option.position.left = parseInt(optPosition.left, 10) + window.scrollX + 'px';
                 } else if (prop === 'right') {
-                    panel.option.position.right = parseInt(optPosition.right, 10) - $(window).scrollLeft() + 'px';
+                    panel.option.position.right = parseInt(optPosition.right, 10) - window.scrollX + 'px';
                 }
             }
             return panel.option.position[prop];
@@ -248,7 +246,7 @@ var jsPanel;
                 posL = ($(optSelector).outerWidth() / 2) - ((parseInt(optSize.width, 10) / 2)),
                 posT;
             if (optSelector === 'body') {
-                posT = ($(window).outerHeight() / 2) - ((parseInt(optSize.height, 10) / 2) - $(window).scrollTop());
+                posT = ($(window).outerHeight() / 2) - ((parseInt(optSize.height, 10) / 2) - window.scrollY);
             } else {
                 posT = ($(optSelector).outerHeight() / 2) - ((parseInt(optSize.height, 10) / 2));
             }
@@ -308,15 +306,14 @@ var jsPanel;
         },
 
         calcVerticalOffset: function (panel) {
-            return Math.floor(panel.offset().top - $(window).scrollTop());
+            return Math.floor(panel.offset().top - window.scrollY);
         },
 
         // closes a jsPanel and removes it from the DOM
         close: function (panel) {
             // get parent-element of jsPanel
             var context = panel.parent(),
-                panelID = panel.attr('id'),
-                ind, hints;
+                panelID = panel.attr('id');
             panel.trigger('jspanelbeforeclose', panelID);
             // delete childpanels ...
             this.closeChildpanels(panel);
@@ -333,17 +330,15 @@ var jsPanel;
             }
             // reposition minimized panels
             this.reposMinimized(this.widthForMinimized);
-            // update arrays with hints
+            // reposition hints
             if (panel.option.paneltype.type === 'hint') {
-                hints = [jsPanel.hintsTc, jsPanel.hintsTl, jsPanel.hintsTr];
-                hints.forEach(function(arrayItem){
-                    ind = arrayItem.indexOf(panelID);
-                    if (ind !== -1) {
-                        arrayItem.splice(ind, 1);
-                        // reposition hints
-                        jsPanel.reposHints(arrayItem, panel.parentElmtTagname);
-                    }
-                });
+                if (panel.hasClass("jsPanel-hint-tl")) {
+                    jsPanel.reposHints("jsPanel-hint-tl", panel.parentElmtTagname);
+                } else if (panel.hasClass("jsPanel-hint-tc")) {
+                    jsPanel.reposHints("jsPanel-hint-tc", panel.parentElmtTagname);
+                } else if (panel.hasClass("jsPanel-hint-tr")) {
+                    jsPanel.reposHints("jsPanel-hint-tr", panel.parentElmtTagname);
+                }
             }
             return context;
         },
@@ -508,8 +503,8 @@ var jsPanel;
                 elmtPosition = $(elmt).position();
                 if (elmtStatus === "minimized") {
                     if (panelParent.toLowerCase() === "body") {
-                        elmtTop = $(elmt).data("paneltop") - $(window).scrollTop() + "px";
-                        elmtLeft = $(elmt).data("panelleft") - $(window).scrollLeft() + "px";
+                        elmtTop = $(elmt).data("paneltop") - window.scrollY + "px";
+                        elmtLeft = $(elmt).data("panelleft") - window.scrollX + "px";
                     } else {
                         elmtTop = $(elmt).data("paneltop") + "px";
                         elmtLeft = $(elmt).data("panelleft") + "px";
@@ -518,8 +513,8 @@ var jsPanel;
                     elmtHeight = $(elmt).data("panelheight") + "px";
                 } else {
                     if (panelParent.toLowerCase() === "body") {
-                        elmtTop = Math.floor(elmtOffset.top - $(window).scrollTop()) + "px";
-                        elmtLeft = Math.floor(elmtOffset.left - $(window).scrollLeft()) + "px";
+                        elmtTop = Math.floor(elmtOffset.top - window.scrollY) + "px";
+                        elmtLeft = Math.floor(elmtOffset.left - window.scrollX) + "px";
                     } else {
                         elmtTop = Math.floor(elmtPosition.top) + "px";
                         elmtLeft = Math.floor(elmtPosition.left) + "px";
@@ -598,9 +593,9 @@ var jsPanel;
 
         // maintains panel position relative to window on scroll of page
         fixPosition: function (panel) {
-            var jspaneldiff = panel.offset().top - $(window).scrollTop();
+            var jspaneldiff = panel.offset().top - window.scrollY;
             panel.jsPanelfixPos = function () {
-                panel.css('top', $(window).scrollTop() + jspaneldiff + 'px');
+                panel.css('top', window.scrollY + jspaneldiff + 'px');
             };
             $(window).on('scroll', panel.jsPanelfixPos);
         },
@@ -616,9 +611,9 @@ var jsPanel;
             if(!selector || selector === "body") {
                 // panel margins relative to browser viewport
                 off = panel.offset();
-                mR = winWidth - off.left - panelWidth + $(window).scrollLeft();
+                mR = winWidth - off.left - panelWidth + window.scrollX;
                 mL = winWidth - panelWidth - mR;
-                mB = winHeight - off.top - panelHeight + $(window).scrollTop();
+                mB = winHeight - off.top - panelHeight + window.scrollY;
                 mT = winHeight - panelHeight - mB;
             } else {
                 // panel margins relative to element matching selector "selector"
@@ -659,14 +654,14 @@ var jsPanel;
         // calculates option.position for hints using 'top left', 'top center' or 'top right'
         hintTop: function (hintGroup) {
             var hintH = 0;
-            hintGroup.forEach(function(item){
-                hintH += $('#' + item).outerHeight(true);
+            $("." + hintGroup).each(function(){
+                hintH += $(this).outerHeight(true);
             });
-            if (hintGroup === this.hintsTr) {
+            if (hintGroup === "jsPanel-hint-tr") {
                 return {top: hintH, right: 0};
-            } else if (hintGroup === this.hintsTl) {
+            } else if (hintGroup === "jsPanel-hint-tl") {
                 return {top: hintH, left: 0};
-            } else if (hintGroup === this.hintsTc) {
+            } else if (hintGroup === "jsPanel-hint-tc") {
                 return {top: hintH, left: 'center'};
             }
             return {top: 0, left: 0};
@@ -894,7 +889,7 @@ var jsPanel;
             }
             // correction for panels maximized in body after page was scrolled
             if (panel.parentElmtTagname === 'body') {
-                panelTop = $(window).scrollTop() + panel.verticalOffset + 'px';
+                panelTop = window.scrollY + panel.verticalOffset + 'px';
             } else {
                 panelTop = panel.option.position.top;
             }
@@ -941,27 +936,26 @@ var jsPanel;
 
         // reposition hint upon closing
         reposHints: function (hintGroup, jsPtagname) {
-            var hintH, elmt;
+            var hintH;
             if (jsPtagname === 'body') {
-                hintH = $(window).scrollTop();
+                hintH = window.scrollY;
             } else {
                 hintH = 0;
             }
-            hintGroup.forEach(function(item){
-                elmt = $('#' + item);
-                elmt.animate({
+            $("." + hintGroup).each(function(){
+                $(this).animate({
                     top: hintH + 'px'
                 });
-                hintH += elmt.outerHeight(true);
+                hintH += $(this).outerHeight(true);
             });
         },
 
         // reposition hints on window scroll
         reposHintsScroll: function(panel) {
-            var dif = panel.offset().top - $(window).scrollTop();
+            var dif = panel.offset().top - window.scrollY;
             // with window.onscroll only the last added hint would stay in position
             $(window).scroll(function () {
-                panel.css('top', $(window).scrollTop() + dif + 'px');
+                panel.css('top', window.scrollY + dif + 'px');
             });
         },
 
@@ -1560,7 +1554,13 @@ var jsPanel;
         // jsPanel close
         $('.jsPanel-btn-close', jsP).on('click', function (e) {
             e.preventDefault();
-            jsPanel.close(jsP, jsP.parentElmtTagname);
+            if (!jsP.option.controls.confirmClose) {
+                jsPanel.close(jsP, jsP.parentElmtTagname);
+            } else {
+                if (window.confirm(jsP.option.controls.confirmClose) === true) {
+                    jsPanel.close(jsP, jsP.parentElmtTagname);
+                }
+            }
         });
 
         // jsPanel minimize
@@ -1684,22 +1684,20 @@ var jsPanel;
             });
             // set option.position for hints using 'top left', 'top center' or 'top right'
             if (jsP.option.position.top === '0' && jsP.option.position.left === 'center') {
-                // Schleife über alle hints in jsPanel.hintsTc, Höhen aufsummieren und als top für option.position verwenden
-                if (jsPanel.hintsTc.length > 0) {
-                    jsP.option.position = jsPanel.hintTop(jsPanel.hintsTc);
+                jsP.addClass("jsPanel-hint-tc");
+                if ($(".jsPanel-hint-tc").length > 0) {
+                    jsP.option.position = jsPanel.hintTop("jsPanel-hint-tc");
                 }
-                // populate array with hints
-                jsPanel.hintsTc.push(jsP.attr('id'));
             } else if (jsP.option.position.top === '0' && jsP.option.position.left === '0') {
-                if (jsPanel.hintsTl.length > 0) {
-                    jsP.option.position = jsPanel.hintTop(jsPanel.hintsTl);
+                jsP.addClass("jsPanel-hint-tl");
+                if ($(".jsPanel-hint-tl").length > 0) {
+                    jsP.option.position = jsPanel.hintTop("jsPanel-hint-tl");
                 }
-                jsPanel.hintsTl.push(jsP.attr('id'));
             } else if (jsP.option.position.top === '0' && jsP.option.position.right === '0') {
-                if (jsPanel.hintsTr.length > 0) {
-                    jsP.option.position = jsPanel.hintTop(jsPanel.hintsTr);
+                jsP.addClass("jsPanel-hint-tr");
+                if ($(".jsPanel-hint-tr").length > 0) {
+                    jsP.option.position = jsPanel.hintTop("jsPanel-hint-tr");
                 }
-                jsPanel.hintsTr.push(jsP.attr('id'));
             }
         }
 
@@ -1933,7 +1931,6 @@ var jsPanel;
                     };
                 }
             });
-
         } else {
             // does not work with certain combinations of type of animation and positioning
             jsP.css({
@@ -1973,7 +1970,6 @@ var jsPanel;
         /* resizestart & resizestop & dragstop callbacks ------------------------------------------------------------ */
         if (!jsP.option.paneltype || jsP.option.paneltype.mode !== 'default') {
             // not needed for modals, hints and tooltips
-
             $(jsP).on("resizestart", function () {
                 $("iframe", jsP.content).css("display", "none"); // on test
             });
@@ -2105,6 +2101,7 @@ var jsPanel;
             buttons: true,
             iconfont: 'jsglyph',
             close: false,
+            confirmClose: false,
             maximize: false,
             minimize: false,
             normalize: false,
