@@ -2,6 +2,14 @@
 
 ---
 
+### Version 2.5.1
+
++ correction of a minor css issue with footer toolbars
++ draggable cursor removed from footer toolbar when option.draggable is "disabled"
++ **option.toolbarFooter** modified
+
+---
+
 ### Version 2.5.0
 
 + new **option.controls.confirmClose**. If set to a text value this text will be used for a **window.confirm()** and panel will only be closed if true is returned (only for close button of panel)

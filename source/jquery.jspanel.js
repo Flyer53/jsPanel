@@ -29,10 +29,10 @@
  */
 
 /*
-    CHANGES IN 2.5.0:
-    + new "option.controls.confirmClose". If set to a text value this text will be used for a "window.confirm()" and panel will only
-      be closed if true is returned (only for close button of panel)
-    + arrays with hints obsolete (replaced with jquery collections)
+    CHANGES IN 2.5.1:
+    + CSS for toolbarFooter adjusted in both js & css file (max-height removed; padding changed)
+    + draggable cursor removed when option.draggable: "disabled"
+    + jsPanel method configToolbar() changed to accept all elmts (not only <button>)
  */
 
 // check for jQuery and jQuery UI components
@@ -49,7 +49,7 @@ var jsPanel;
 (function($){
     "use strict";
     jsPanel = {
-        version: '2.5.0 2015-05-02 16:08',
+        version: '2.5.1 2015-05-11 08:00',
         device: (function(){
             try {
                 // requires "mobile-detect.js" to be loaded
@@ -405,13 +405,13 @@ var jsPanel;
             toolbaritems.forEach(function(item){
                 if(typeof item === "object") {
                     el = $(item.item);
-                    if (el.prop('tagName').toLowerCase() === 'button') {
-                        // set text of button
+                    // add text to button
+                    if (typeof item.btntext === 'string') {
                         el.append(item.btntext);
-                        // add class to button
-                        if (typeof item.btnclass === 'string') {
-                            el.addClass(item.btnclass);
-                        }
+                    }
+                    // add class to button
+                    if (typeof item.btnclass === 'string') {
+                        el.addClass(item.btnclass);
                     }
                     toolbarplace.append(el);
                     // bind handler to the item
@@ -1771,8 +1771,7 @@ var jsPanel;
         /* option.toolbarFooter | default: false -------------------------------------------------------------------- */
         if (jsP.option.toolbarFooter) {
             jsP.footer.css({
-                display: 'block',
-                padding: '0 20px 0 5px'
+                display: 'block'
             });
             if (typeof jsP.option.toolbarFooter === 'string') {
                 jsP.footer.append(jsP.option.toolbarFooter);
@@ -1809,7 +1808,7 @@ var jsPanel;
             jsP.draggable(jsP.option.customdraggable);
         } else if (jsP.option.draggable === 'disabled') {
             // reset cursor, draggable deactivated
-            $('.jsPanel-title', jsP).css('cursor', 'inherit');
+            $('.jsPanel-title, .jsPanel-ftr', jsP).css('cursor', 'inherit');
             // jquery ui draggable initialize disabled to allow to query status
             jsP.draggable({ disabled: true });
         }

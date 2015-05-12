@@ -1,4 +1,4 @@
-/* jsPanel.css version 2.5.0 - 2015-05-04 14:04 */
+/* jquery.jspanel.css version 2.5.1 - 2015-05-12 08:13 */
 @font-face {
     font-family: 'jsglyphregular';
     src: url('fonts/jsglyph.eot');
@@ -179,7 +179,7 @@ h3.jsPanel-title{
     display: none;
     font-size: 12px;
     height: auto;
-    padding: 5px 20px 5px 5px;
+    padding: 2px 2px 2px 5px;
     text-align: right;
 }
 .jsPanel-ftr button{
@@ -213,7 +213,7 @@ h3.jsPanel-title{
     left:0;
     z-index:10000;
     width:100%;
-    background:rgba(0,0,0,0.8);
+    background:rgba(0,0,0,0.7);
 }
 .jsPanel-backdrop-inner{
     position:absolute;
@@ -247,8 +247,7 @@ h3.jsPanel-title{
 .jsPanel-ftr.jsPanel-theme-default{
     font-size: 12px;
     height: auto;
-    max-height: 40px;
-    padding-right: 25px;
+    padding: 2px 2px 2px 5px;
     text-align: right;
 }
 .jsPanel-theme-default .ui-icon-gripsmall-diagonal-se{
@@ -284,7 +283,6 @@ h3.jsPanel-title{
 .jsPanel-theme-dark .ui-icon-gripsmall-diagonal-se{ color: #000; }
 
 /* black ---------------------------------------------- */
-/* .jsPanel.jsPanel-theme-black{ background: -moz-linear-gradient(center top , #4a4a4a 0px, black 100%) repeat scroll 0 0 #4a4a4a; box-shadow: 0 0 3px #333; } */
 .jsPanel.jsPanel-theme-black{ background: linear-gradient(#4a4a4a 0px, black 100%) repeat scroll 0 0 #4a4a4a; background: -ms-linear-gradient(#4a4a4a 0px, black 100%) repeat scroll 0 0 #4a4a4a; box-shadow: 0 0 3px #333; }
 .jsPanel-hdr.jsPanel-theme-black{ color: #fff; font-family: tahoma,arial,verdana,sans-serif; font-weight: normal; background: transparent; }
 .jsPanel-hdr.jsPanel-theme-black h3{ color: #fff; }
@@ -507,9 +505,7 @@ h3.jsPanel-title{
 /**
  * CSS3 Tips v1.0.1
  * A stylesheet for creating tooltips without using anything other than CSS3.
- * created by c.bavota
- * released under GPL v2
- * March 21st, 2014
+ * created by c.bavota released under GPL v2 March 21st, 2014
  * HTML example code for the tooltip
  * <a href="http://bavotasan.com" class="top-tip" data-tips="Go to bavotasan.com">bavotasan.com</a>
 */
