@@ -2,6 +2,12 @@
 
 ---
 
+### Version 2.5.2
+
++ **fix** of positioning issue with IE
+
+---
+
 ### Version 2.5.1
 
 + correction of a minor css issue with footer toolbars

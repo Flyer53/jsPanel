@@ -29,10 +29,8 @@
  */
 
 /*
-    CHANGES IN 2.5.1:
-    + CSS for toolbarFooter adjusted in both js & css file (max-height removed; padding changed)
-    + draggable cursor removed when option.draggable: "disabled"
-    + jsPanel method configToolbar() changed to accept all elmts (not only <button>)
+    CHANGES IN 2.5.2:
+    + bugfix: replaced window.scrollY with $(window).scrollTop() and window.scrollX with $(window).scrollLeft() due to IE
  */
 
 // check for jQuery and jQuery UI components
@@ -49,7 +47,7 @@ var jsPanel;
 (function($){
     "use strict";
     jsPanel = {
-        version: '2.5.1 2015-05-11 08:00',
+        version: '2.5.2 2015-05-14 21:05',
         device: (function(){
             try {
                 // requires "mobile-detect.js" to be loaded
@@ -227,13 +225,13 @@ var jsPanel;
             // corrections if jsPanel is appended to the body element
             if (panel.option.selector === 'body') {
                 if (prop === 'top') {
-                    panel.option.position.top = parseInt(optPosition.top, 10) + window.scrollY + 'px';
+                    panel.option.position.top = parseInt(optPosition.top, 10) + $(window).scrollTop() + 'px';
                 } else if (prop === 'bottom') {
-                    panel.option.position.bottom = parseInt(optPosition.bottom, 10) - window.scrollY + 'px';
+                    panel.option.position.bottom = parseInt(optPosition.bottom, 10) - $(window).scrollTop() + 'px';
                 } else if (prop === 'left') {
-                    panel.option.position.left = parseInt(optPosition.left, 10) + window.scrollX + 'px';
+                    panel.option.position.left = parseInt(optPosition.left, 10) + $(window).scrollLeft() + 'px';
                 } else if (prop === 'right') {
-                    panel.option.position.right = parseInt(optPosition.right, 10) - window.scrollX + 'px';
+                    panel.option.position.right = parseInt(optPosition.right, 10) - $(window).scrollLeft() + 'px';
                 }
             }
             return panel.option.position[prop];
@@ -246,7 +244,7 @@ var jsPanel;
                 posL = ($(optSelector).outerWidth() / 2) - ((parseInt(optSize.width, 10) / 2)),
                 posT;
             if (optSelector === 'body') {
-                posT = ($(window).outerHeight() / 2) - ((parseInt(optSize.height, 10) / 2) - window.scrollY);
+                posT = ($(window).outerHeight() / 2) - ((parseInt(optSize.height, 10) / 2) - $(window).scrollTop());
             } else {
                 posT = ($(optSelector).outerHeight() / 2) - ((parseInt(optSize.height, 10) / 2));
             }
@@ -306,7 +304,7 @@ var jsPanel;
         },
 
         calcVerticalOffset: function (panel) {
-            return Math.floor(panel.offset().top - window.scrollY);
+            return Math.floor(panel.offset().top - $(window).scrollTop());
         },
 
         // closes a jsPanel and removes it from the DOM
@@ -503,8 +501,8 @@ var jsPanel;
                 elmtPosition = $(elmt).position();
                 if (elmtStatus === "minimized") {
                     if (panelParent.toLowerCase() === "body") {
-                        elmtTop = $(elmt).data("paneltop") - window.scrollY + "px";
-                        elmtLeft = $(elmt).data("panelleft") - window.scrollX + "px";
+                        elmtTop = $(elmt).data("paneltop") - $(window).scrollTop() + "px";
+                        elmtLeft = $(elmt).data("panelleft") - $(window).scrollLeft() + "px";
                     } else {
                         elmtTop = $(elmt).data("paneltop") + "px";
                         elmtLeft = $(elmt).data("panelleft") + "px";
@@ -513,8 +511,8 @@ var jsPanel;
                     elmtHeight = $(elmt).data("panelheight") + "px";
                 } else {
                     if (panelParent.toLowerCase() === "body") {
-                        elmtTop = Math.floor(elmtOffset.top - window.scrollY) + "px";
-                        elmtLeft = Math.floor(elmtOffset.left - window.scrollX) + "px";
+                        elmtTop = Math.floor(elmtOffset.top - $(window).scrollTop()) + "px";
+                        elmtLeft = Math.floor(elmtOffset.left - $(window).scrollLeft()) + "px";
                     } else {
                         elmtTop = Math.floor(elmtPosition.top) + "px";
                         elmtLeft = Math.floor(elmtPosition.left) + "px";
@@ -593,9 +591,9 @@ var jsPanel;
 
         // maintains panel position relative to window on scroll of page
         fixPosition: function (panel) {
-            var jspaneldiff = panel.offset().top - window.scrollY;
+            var jspaneldiff = panel.offset().top - $(window).scrollTop();
             panel.jsPanelfixPos = function () {
-                panel.css('top', window.scrollY + jspaneldiff + 'px');
+                panel.css('top', $(window).scrollTop() + jspaneldiff + 'px');
             };
             $(window).on('scroll', panel.jsPanelfixPos);
         },
@@ -611,9 +609,9 @@ var jsPanel;
             if(!selector || selector === "body") {
                 // panel margins relative to browser viewport
                 off = panel.offset();
-                mR = winWidth - off.left - panelWidth + window.scrollX;
+                mR = winWidth - off.left - panelWidth + $(window).scrollLeft();
                 mL = winWidth - panelWidth - mR;
-                mB = winHeight - off.top - panelHeight + window.scrollY;
+                mB = winHeight - off.top - panelHeight + $(window).scrollTop();
                 mT = winHeight - panelHeight - mB;
             } else {
                 // panel margins relative to element matching selector "selector"
@@ -889,7 +887,7 @@ var jsPanel;
             }
             // correction for panels maximized in body after page was scrolled
             if (panel.parentElmtTagname === 'body') {
-                panelTop = window.scrollY + panel.verticalOffset + 'px';
+                panelTop = $(window).scrollTop() + panel.verticalOffset + 'px';
             } else {
                 panelTop = panel.option.position.top;
             }
@@ -938,7 +936,7 @@ var jsPanel;
         reposHints: function (hintGroup, jsPtagname) {
             var hintH;
             if (jsPtagname === 'body') {
-                hintH = window.scrollY;
+                hintH = $(window).scrollTop();
             } else {
                 hintH = 0;
             }
@@ -952,10 +950,10 @@ var jsPanel;
 
         // reposition hints on window scroll
         reposHintsScroll: function(panel) {
-            var dif = panel.offset().top - window.scrollY;
+            var dif = panel.offset().top - $(window).scrollTop();
             // with window.onscroll only the last added hint would stay in position
             $(window).scroll(function () {
-                panel.css('top', window.scrollY + dif + 'px');
+                panel.css('top', $(window).scrollTop() + dif + 'px');
             });
         },
 
@@ -1598,6 +1596,9 @@ var jsPanel;
 
         // converts option.position string to object
         jsP.option.position = jsPanel.rewriteOPosition(jsP.option.position);
+
+        //console.log(jsP.option.position);
+
 
         // converts option.size string to object
         jsP.option.size = jsPanel.rewriteOSize(jsP.option.size);
