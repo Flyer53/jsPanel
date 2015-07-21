@@ -1,4 +1,4 @@
-/* jquery.jspanel.css version 2.5.1 - 2015-05-12 08:13 */
+/* jquery.jspanel.css version 2.5.3 - 2015-05-16 22:21 */
 @font-face {
     font-family: 'jsglyphregular';
     src: url('fonts/jsglyph.eot');
@@ -103,13 +103,15 @@
     margin: 0; padding: 0; border: 0; font-size: 100%; line-height: 1.5em; vertical-align: baseline;
 }
 .jsPanel{
-    display: none;
+    box-sizing: border-box;
+    /*display: none;  // check bolg entry for jQuery 3.0.0 !! */
     overflow: hidden;
     position: absolute;
     border-radius: 3px;
     z-index: 100;
 }
 .jsPanel-hdr{
+    box-sizing: border-box;
     min-height: 26px;
     padding: 2px 0 4px 2px;
 }
@@ -155,6 +157,7 @@ h3.jsPanel-title{
 
 
 .jsPanel-hdr-toolbar {
+    box-sizing: border-box;
     clear: both;
     font-size: 16px;
     margin-top: 23px;
@@ -175,6 +178,7 @@ h3.jsPanel-title{
     box-sizing: border-box;
 }
 .jsPanel-ftr{
+    box-sizing: border-box;
     cursor: move;
     display: none;
     font-size: 12px;
@@ -440,22 +444,17 @@ h3.jsPanel-title{
 .jsPanel-hint{
     margin-bottom: 4px;
 }
-.jsPanel-hint-close-dark, .jsPanel-hint-close-white{
-    float:right;
-    margin:5px;
+.jsPanel-hint-close{
+    float: right;
+    font-size: 1.5em;
+    margin: 4px 5px 0 0;
     cursor: pointer;
-    width: 20px;
-    height: 20px;
-}
-.jsPanel-hint-close-dark{
-    background: url('images/close-20-333.png');
-}
-.jsPanel-hint-close-white{
-    background: url('images/close-20.png');
 }
 .jsPanel-hint-content.jsPanel-hint-default{
-    background: none repeat scroll 0 0 #fff;
-    color: #000;
+    background: #fff none repeat scroll 0 0;
+    border: 2px solid #222;
+    color: #222;
+    text-shadow: 1px 1px 1px #789;
 }
 .jsPanel-hint-content.jsPanel-hint-light{
     background: linear-gradient(to bottom,  rgba(0,0,0,0) 0%,rgba(250,250,250,0.65) 100%); background: -ms-linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(250,250,250,0.65) 100%);
@@ -482,24 +481,34 @@ h3.jsPanel-title{
     color: #fff;
 }
 .jsPanel-hint-content.jsPanel-hint-primary{
-    background: none repeat scroll 0 0 #2FA4E7;
-    color: #fff;
+    background: #82C8F1 none repeat scroll 0 0;
+    border: 5px solid #02436A;
+    color: #02436A;
+    text-shadow: 2px 2px 2px #fff;
 }
 .jsPanel-hint-content.jsPanel-hint-info{
-    background: none repeat scroll 0 0 #033C73;
+    background: #4594c3 none repeat scroll 0 0;
+    border: 5px solid #033c73;
     color: #fff;
+    text-shadow: 2px 2px 2px #033c73;
 }
 .jsPanel-hint-content.jsPanel-hint-success{
-    background: none repeat scroll 0 0 #73A839;
-    color: #fff;
+    background: #C3EA99 none repeat scroll 0 0;
+    border: 5px solid #034E26;
+    color: #356304;
+    text-shadow: 2px 2px 2px #aaa;
 }
 .jsPanel-hint-content.jsPanel-hint-warning{
-    background: none repeat scroll 0 0 #DD5600;
-    color: #fff;
+    background: #FFC7A3 none repeat scroll 0 0;
+    border: 5px solid #DD5600;
+    color: #AD6537;
+    text-shadow: 2px 2px 2px #fff;
 }
 .jsPanel-hint-content.jsPanel-hint-danger{
-    background: none repeat scroll 0 0 #C71C22;
+    background: #fc7073 none repeat scroll 0 0;
+    border: 5px solid #c71c22;
     color: #fff;
+    text-shadow: 2px 2px 2px #c71c22;
 }
 
 /**
@@ -507,6 +516,7 @@ h3.jsPanel-title{
  * A stylesheet for creating tooltips without using anything other than CSS3.
  * created by c.bavota released under GPL v2 March 21st, 2014
  * HTML example code for the tooltip
+ * http://cbavota.bitbucket.org/css3-tips/
  * <a href="http://bavotasan.com" class="top-tip" data-tips="Go to bavotasan.com">bavotasan.com</a>
 */
 [data-tips] {

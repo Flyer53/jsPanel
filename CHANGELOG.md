@@ -2,6 +2,19 @@
 
 ---
 
+### Version 2.5.3
+
++ **toolbars** now get the same font-family as the title
++ css/styling for **hints** changed
++ **option.load:** inside the complete callback **this** refers to the content property of the panel
++ **option.ajax:** inside the callback functions **this** refers to the content property of the panel
++ **option.ajax:** new parameter **autoload** (if set to *false* returned data is NOT appended to content section by default)
++ **option.callback:** inside the callback functions **this** refers to the jsPanel
++ **tooltips** don't have a drag cursor anymore
++ various internal changes/improvements
+
+---
+
 ### Version 2.5.2
 
 + **fix** of positioning issue with IE
