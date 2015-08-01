@@ -874,11 +874,13 @@ var jsPanel = {
         if (panel.status !== "minimized" || panel.option.panelstatus !== "minimized") {
             // jsPanel in vorgesehenen Container verschieben
             panel.css({
-                left: ($('.jsPanel', '#jsPanel-min-container').length * jsPanel.widthForMinimized),
-                top: 0,
+                //WE WILL ADJUST POSITIONING LATER
+                //left: ($('.jsPanel', '#jsPanel-min-container').length * jsPanel.widthForMinimized),
+                //top: 0,
                 opacity: 1
             })
-                .appendTo('#jsPanel-min-container')
+                //THIS LINE FORCES AN IFRAME TO RELOAD ITS CONTENTS
+                //.appendTo('#jsPanel-min-container')
                 .resizable({disabled: true})
                 .draggable({disabled: true});
             panel.trigger('jspanelminimized', panel.attr('id'));
@@ -1046,7 +1048,8 @@ var jsPanel = {
         var interactions = ["resizable", "draggable"];
         // restore minimized panel to initial container
         if (panel.status === "minimized" || panel.option.panelstatus === "minimized") {
-            panel.appendTo(panel.option.selector);
+            //THIS LINE REALODS THE IFRAME CONTENT
+            //panel.appendTo(panel.option.selector);
         }
         interactions.forEach(function(action){
             if (panel.option[action] !== "disabled") {
@@ -1385,6 +1388,40 @@ var jsPanel = {
         panel.option.panelstatus = status;
         panel.data("panelstatus", status);
         panel.alterClass("jsPanel-state-*", "jsPanel-state-" + status);
+    },
+    
+    updateMinimizedPositioning: function() {
+        //IS THERE ANY MINIMIZED CONTAINER?
+        var container = $("#jsPanel-min-container");
+        
+        //IF THERE ARENT, WE HAVE NOTHING TO DO
+        if(container.length == 0) {
+            return;
+        }
+        
+        //GETTING POSITION OF THE MINIMIZED CONTAINER
+        var containerPosition = container.position();
+        //WE SET THE FIRST POSITION TO THE DEFAULT
+        var lastContainerPosition = containerPosition.left;
+        //DEFAULT DISTANCE BETWEEN MINIMIZED PANELS
+        var distance = 20;
+
+        //WORK ON REPOSITIONING OF THE MINIMIZE PANELS HERE
+        var panels = $(".jsPanel-state-minimized");
+
+        //ADJUST THE TOP POSITION
+        panels.css({
+            top: containerPosition.top
+        });
+
+        //WE NEED TO ADJUST EACH ONE FOR THE LEFT DISTRIBUTION
+        panels.each(function(idx, panel){
+            var $panel = $(panel);
+            //SET THE POSITION
+            $panel.css({left: lastContainerPosition});
+            //ADD THE DISTANCE
+            lastContainerPosition += ($panel.width() + distance);
+        });
     }
 
 };
@@ -2005,6 +2042,9 @@ console.log("jsPanel version: " + jsPanel.version);
                 jsPanel.hideControls(".jsPanel-btn-min, .jsPanel-btn-small, .jsPanel-btn-smallrev, .jsPanel-btn-hide", jsP);
                 jsPanel.updateStateProps(jsP, "minimized");
                 $(window).off('scroll', jsP.jsPanelfixPos);
+                
+                //CALL RESIZE HANDLER HERE
+                jsPanel.updateMinimizedPositioning();
             });
 
             $(jsP).on( "jspanelmaximized", function(){
@@ -2188,6 +2228,9 @@ console.log("jsPanel version: " + jsPanel.version);
             });
         }
     });
+    
+    //WINDOW RESIZE: REPOSITIONING THE MINIMIZED 
+    $(window).on('resize', jsPanel.updateMinimizedPositioning);
 
 }(jQuery));
 
