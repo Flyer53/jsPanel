@@ -1391,36 +1391,39 @@ var jsPanel = {
     },
     
     updateMinimizedPositioning: function() {
-        //IS THERE ANY MINIMIZED CONTAINER?
-        var container = $("#jsPanel-min-container");
+        //ARE THERE ANY MINIMIZED PANELS?
+        var panels = $(".jsPanel-state-minimized");
         
         //IF THERE ARENT, WE HAVE NOTHING TO DO
-        if(container.length == 0) {
+        if(panels.length == 0) {
             return;
         }
         
-        //GETTING POSITION OF THE MINIMIZED CONTAINER
-        var containerPosition = container.position();
-        //WE SET THE FIRST POSITION TO THE DEFAULT
-        var lastContainerPosition = containerPosition.left;
+        //HEIGHT OF THE WINDOW
+        var wHeight = $(window).scrollTop();
+            
         //DEFAULT DISTANCE BETWEEN MINIMIZED PANELS
-        var distance = 20;
-
-        //WORK ON REPOSITIONING OF THE MINIMIZE PANELS HERE
-        var panels = $(".jsPanel-state-minimized");
+        var distance = 40;
+        
+        //LAST MINIMIZED POSITION
+        var lastPosition = 0;
 
         //ADJUST THE TOP POSITION
         panels.css({
-            top: containerPosition.top
+            position: 'fixed', 
+            bottom: 0,
+            top: ''
         });
 
         //WE NEED TO ADJUST EACH ONE FOR THE LEFT DISTRIBUTION
         panels.each(function(idx, panel){
+            
             var $panel = $(panel);
-            //SET THE POSITION
-            $panel.css({left: lastContainerPosition});
-            //ADD THE DISTANCE
-            lastContainerPosition += ($panel.width() + distance);
+            var pWidth = $panel.width();
+            
+            $panel.css({ left: lastPosition});
+            lastPosition += (pWidth + distance);
+            
         });
     }
 
