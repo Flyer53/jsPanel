@@ -10,6 +10,13 @@ Various options allow for a flexible way to add content to a jsPanel, including 
 
 Existing jsPanel sections and contents are easily accessed via various properties. Methods and events offer interaction with it.
 
+### NEWS:
+jsPanel version 3 is in developement. It uses some ES6 features, css flexbox for header and footer sections, a new positioning
+system and a lot more improvements. The preview version incorporates a few polyfills and is transpiled to ES5 using BABEL. So
+it should work with the current versions of EDGE, FF, Chrome, Opera and with IE11/IE10.
+
+Take a look at the alpha preview at [http://beta.jspanel.de](http://beta.jspanel.de/)
+
 ![jsPanel jQuery Plugin](https://github.com/Flyer53/jsPanel/raw/master/jsPanel-comp.png)
 
 ### jsPanel homepage: [http://jspanel.de](http://jspanel.de/)
