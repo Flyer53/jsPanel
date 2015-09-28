@@ -1,5 +1,9 @@
 ## CHANGELOG
 
+### Version 2.5.4
+
++ bugfix **option.position** when using **{ top: 'auto', left: 'auto' }**
+
 ---
 
 ### Version 2.5.3

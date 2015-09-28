@@ -26,20 +26,9 @@
     THE SOFTWARE.
 
     <http://opensource.org/licenses/MIT>.
- */
 
-/*
-    CHANGES IN 2.5.3:
-    + toolbars now get the same font-family as the title (changes in .addToolbar(), option.toolbarHeader and option.toolbarFooter)
-    + css/styling for hints changed
-    + jsPanel.hideControls() modified
-    + almost all 'px' removed
-    + option.load: inside the complete callback 'this' refers to the content property of the panel
-    + option.ajax: inside the callback functions 'this' refers to the content property of the panel
-    + option.ajax: new parameter 'autoload' (if set to 'false' returned data is NOT appended to content section by default)
-    + option.callback: inside the callback functions 'this' refers to the jsPanel
-    + setting size simplified internally and jsPanel.setSize() removed
-    + Tooltips don't have a drag cursor anymore
+    CHANGES IN 2.5.4:
+    + option.position bugfix when using { left: 'auto', top: 'auto' }
  */
 
 "use strict";
@@ -53,7 +42,7 @@ if (!$.fn.jquery || !$.fn.uniqueId || !$.widget || !$.ui.mouse || !$.ui.draggabl
 }
 
 var jsPanel = {
-    version: '2.5.3 2015-07-20 07:37',
+    version: '2.5.4 2015-09-28 10:05',
     device: (function(){
         try {
             // requires "mobile-detect.js" to be loaded
@@ -192,7 +181,7 @@ var jsPanel = {
             if (jsP.option.position.top === 'center') {
                 jsP.option.position.top = this.calcPosCenter(jsP.option).top;
             } else {
-                this.calcPos('top', jsP);
+                panelpos.top = this.calcPos('top', jsP);  // change in 2.5.4
             }
         }
         // calculate left | right values != center
@@ -202,7 +191,7 @@ var jsPanel = {
             if (jsP.option.position.left === 'center') {
                 jsP.option.position.left = this.calcPosCenter(jsP.option).left;
             } else {
-                this.calcPos('left', jsP);
+                panelpos.left = this.calcPos('left', jsP);  // change in 2.5.4
             }
         }
         if (jsP.option.position.top) {
@@ -753,8 +742,7 @@ var jsPanel = {
     // loads content using jQuery.load()
     load: function(panel) {
         panel.content.load(panel.option.load.url, panel.option.load.data || undefined, function (responseText, textStatus, jqXHR) {
-            if (panel.option.load.complete) {
-                //panel.option.load.complete(responseText, textStatus, jqXHR, panel);
+            if ($.isFunction(panel.option.load.complete)) {
                 panel.option.load.complete.call(panel.content, responseText, textStatus, jqXHR, panel);
             }
             // title h3 might be to small: load() is async!
@@ -1900,9 +1888,9 @@ console.log("jsPanel version: " + jsPanel.version);
             jsP.css({
                 display: 'block',
                 opacity: 1
-            })
-                .trigger('jspanelloaded', jsP.attr('id'))
-                .trigger('jspanelstatechange', jsP.attr('id'));
+            });
+            $(jsP).trigger('jspanelloaded', jsP.attr('id'))
+            $(jsP).trigger('jspanelstatechange', jsP.attr('id'));
             jsP.option.size = {
                 width: jsP.outerWidth(),
                 height: jsP.outerHeight()
@@ -1925,10 +1913,10 @@ console.log("jsPanel version: " + jsPanel.version);
             jsP.css({
                 display: 'block',
                 opacity: 1
-            })
-                .addClass(jsP.option.show)
-                .trigger('jspanelloaded', jsP.attr('id'))
-                .trigger('jspanelstatechange', jsP.attr('id'));
+            });
+            $(jsP).addClass(jsP.option.show)
+            $(jsP) .trigger('jspanelloaded', jsP.attr('id'))
+            $(jsP).trigger('jspanelstatechange', jsP.attr('id'));
             jsP.option.size = {
                 width: jsP.outerWidth(),
                 height: jsP.outerHeight()
