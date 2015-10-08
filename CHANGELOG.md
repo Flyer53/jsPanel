@@ -1,5 +1,11 @@
 ## CHANGELOG
 
+### Version 2.5.5
+
++ bugfix **option.ajax** (causing unnecesary get requests whenever a jsPanel is created)
+
+---
+
 ### Version 2.5.4
 
 + bugfix **option.position** when using **{ top: 'auto', left: 'auto' }**

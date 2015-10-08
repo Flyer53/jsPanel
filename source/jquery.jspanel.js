@@ -27,8 +27,8 @@
 
     <http://opensource.org/licenses/MIT>.
 
-    CHANGES IN 2.5.4:
-    + option.position bugfix when using { left: 'auto', top: 'auto' }
+    CHANGES IN 2.5.5:
+    + option.ajax bugfix (unnecessary get requests)
  */
 
 "use strict";
@@ -42,7 +42,7 @@ if (!$.fn.jquery || !$.fn.uniqueId || !$.widget || !$.ui.mouse || !$.ui.draggabl
 }
 
 var jsPanel = {
-    version: '2.5.4 2015-09-28 10:05',
+    version: '2.5.5 2015-10-08 15:47',
     device: (function(){
         try {
             // requires "mobile-detect.js" to be loaded
@@ -1821,7 +1821,7 @@ console.log("jsPanel version: " + jsPanel.version);
         }
 
         /* option.ajax ---------------------------------------------------------------------------------------------- */
-        if ($.isPlainObject(jsP.option.ajax)) {
+        if ($.isPlainObject(jsP.option.ajax) && jsP.option.ajax.url) {
             jsPanel.ajax(jsP);
         }
 
