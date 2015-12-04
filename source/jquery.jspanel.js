@@ -27,8 +27,11 @@
 
     <http://opensource.org/licenses/MIT>.
 
-    CHANGES IN 2.5.5:
-    + option.ajax bugfix (unnecessary get requests)
+    CHANGES IN 2.6.0:
+    + new options onbeforeclose, onclosed
+    + new options onbeforemaximize, onmaximized
+    + new options onbeforeminimize, onminimized
+    + new options onbefornormalize, onnormalized
  */
 
 "use strict";
@@ -42,7 +45,7 @@ if (!$.fn.jquery || !$.fn.uniqueId || !$.widget || !$.ui.mouse || !$.ui.draggabl
 }
 
 var jsPanel = {
-    version: '2.5.5 2015-10-08 15:47',
+    version: '2.6.0 2015-12-04 14:15',
     device: (function(){
         try {
             // requires "mobile-detect.js" to be loaded
@@ -314,6 +317,12 @@ var jsPanel = {
         var context = panel.parent(),
             panelID = panel.attr('id');
         panel.trigger('jspanelbeforeclose', panelID);
+        if ($.isFunction(panel.option.onbeforeclose)) {
+            var close = panel.option.onbeforeclose.call(panel, panel);
+            if (close === false) {
+                return panel;
+            }
+        }
         // delete childpanels ...
         this.closeChildpanels(panel);
         // if present remove tooltip wrapper
@@ -338,6 +347,9 @@ var jsPanel = {
             } else if (panel.hasClass("jsPanel-hint-tr")) {
                 jsPanel.reposHints("jsPanel-hint-tr", panel.parentElmtTagname);
             }
+        }
+        if ($.isFunction(panel.option.onclosed)) {
+            panel.option.onclosed.call(panel, panel);
         }
         return context;
     },
@@ -808,6 +820,12 @@ var jsPanel = {
     // calls functions to maximize a jsPanel
     maximize: function (panel) {
         panel.trigger('jspanelbeforemaximize', panel.attr('id'));
+        if ($.isFunction(panel.option.onbeforemaximize)) {
+            var maximize = panel.option.onbeforemaximize.call(panel, panel);
+            if (maximize === false) {
+                return panel;
+            }
+        }
         if (panel.parentElmtTagname === 'body' || panel.option.controls.maxtoScreen === true) {
             this.maxWithinBody(panel);
         } else {
@@ -815,12 +833,21 @@ var jsPanel = {
         }
         panel.trigger('jspanelmaximized', panel.attr('id'));
         panel.trigger('jspanelstatechange', panel.attr('id'));
+        if ($.isFunction(panel.option.onmaximized)) {
+            panel.option.onmaximized.call(panel, panel);
+        }
         return panel;
     },
 
     // minimizes a jsPanel to the lower left corner of the browser viewport
     minimize: function (panel) {
         panel.trigger('jspanelbeforeminimize', panel.attr('id'));
+        if ($.isFunction(panel.option.onbeforeminimize)) {
+            var minimize = panel.option.onbeforeminimize.call(panel, panel);
+            if (minimize === false) {
+                return panel;
+            }
+        }
         panel.data({ // needed for method exportPanels()
             "paneltop": parseInt(panel.option.position.top),
             "panelleft": parseInt(panel.option.position.left),
@@ -850,6 +877,9 @@ var jsPanel = {
                 });
             }
         });
+        if ($.isFunction(panel.option.onminimized)) {
+            panel.option.onminimized.call(panel, panel);
+        }
         return panel;
     },
 
@@ -879,6 +909,12 @@ var jsPanel = {
         var panelTop,
             interactions = ["resizable", "draggable"];
         panel.trigger('jspanelbeforenormalize', panel.attr('id'));
+        if ($.isFunction(panel.option.onbeforenormalize)) {
+            var normalize = panel.option.onbeforenormalize.call(panel, panel);
+            if (normalize === false) {
+                return panel;
+            }
+        }
         // remove window.scroll handler, is added again later in this function
         $(window).off('scroll', panel.jsPanelfixPos);
         // restore minimized panel to initial container if necessary
@@ -909,6 +945,9 @@ var jsPanel = {
         panel.trigger('jspanelstatechange', panel.attr('id'));
         if (panel.parentElmtTagname === 'body') {
             this.fixPosition(panel);
+        }
+        if ($.isFunction(panel.option.onnormalized)) {
+            panel.option.onnormalized.call(panel, panel);
         }
         return panel;
     },
@@ -1889,7 +1928,7 @@ console.log("jsPanel version: " + jsPanel.version);
                 display: 'block',
                 opacity: 1
             });
-            $(jsP).trigger('jspanelloaded', jsP.attr('id'))
+            $(jsP).trigger('jspanelloaded', jsP.attr('id'));
             $(jsP).trigger('jspanelstatechange', jsP.attr('id'));
             jsP.option.size = {
                 width: jsP.outerWidth(),
@@ -1914,8 +1953,8 @@ console.log("jsPanel version: " + jsPanel.version);
                 display: 'block',
                 opacity: 1
             });
-            $(jsP).addClass(jsP.option.show)
-            $(jsP) .trigger('jspanelloaded', jsP.attr('id'))
+            $(jsP).addClass(jsP.option.show);
+            $(jsP) .trigger('jspanelloaded', jsP.attr('id'));
             $(jsP).trigger('jspanelstatechange', jsP.attr('id'));
             jsP.option.size = {
                 width: jsP.outerWidth(),
@@ -2027,7 +2066,7 @@ console.log("jsPanel version: " + jsPanel.version);
             jsPanel.shiftTooltipVertical(jsP, jsP.option.paneltype.shiftwithin);
         }
 
-        /* option.panelstatus -------------------------------------------------------------------------------------------- */
+        /* option.panelstatus --------------------------------------------------------------------------------------- */
         if (jsP.option.panelstatus) {
             switch (jsP.option.panelstatus) {
                 case "minimized":
@@ -2110,9 +2149,17 @@ console.log("jsPanel version: " + jsPanel.version);
             top: 0,
             left: 0
         },
+        "onbeforeclose": false,
+        "onbeforemaximize": false,
+        "onbeforeminimize": false,
+        "onbeforenormalize": false,
+        "onclosed": false,
+        "oncmaximized": false,
+        "onminimized": false,
+        "onnormalized": false,
+        "overflow": 'hidden',
         "panelstatus": false,
         "paneltype": false,
-        "overflow": 'hidden',
         "position": 'auto',
         "removeHeader": false,
         "resizable": {

@@ -104,7 +104,6 @@
 }
 .jsPanel{
     box-sizing: border-box;
-    /*display: none;  // check bolg entry for jQuery 3.0.0 !! */
     overflow: hidden;
     position: absolute;
     border-radius: 3px;

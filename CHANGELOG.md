@@ -1,5 +1,18 @@
 ## CHANGELOG
 
+### Version 2.6.0
+
++ **new option.onbeforeclose** takes a function to execute before the jsPanel closes. If function returns *false* panel will not close.
++ **new option.onbeforemaximize** takes a function to execute before the jsPanel maximizes. If function returns *false* panel will not maximize.
++ **new option.onbeforeminimize** takes a function to execute before the jsPanel minimizes. If function returns *false* panel will not minimize.
++ **new option.onbeforenormalize** takes a function to execute before the jsPanel normalizes. If function returns *false* panel will not normalize.
++ **new option.onclosed** takes a function to execute after the jsPanel closed.
++ **new option.onmaximized** takes a function to execute after the jsPanel maximized.
++ **new option.onminimized** takes a function to execute after the jsPanel minimized.
++ **new option.onnormalized** takes a function to execute after the jsPanel normalized.
+
+---
+
 ### Version 2.5.5
 
 + bugfix **option.ajax** (causing unnecesary get requests whenever a jsPanel is created)
