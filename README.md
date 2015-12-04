@@ -1,4 +1,4 @@
-## [jsPanel 2.6.0 released 2015-12-14](#)
+## [jsPanel 2.6.0 released 2015-12-04](#)
 
 **A jQuery plugin to create multifunctional floating panels.**
 
