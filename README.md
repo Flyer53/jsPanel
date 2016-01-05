@@ -15,7 +15,7 @@ jsPanel version 3 is in developement. It uses some ES6 features, css flexbox for
 system and a lot more improvements. The preview version incorporates a few polyfills and is transpiled to ES5 using BABEL. So
 it should work with the current versions of EDGE, FF, Chrome, Opera and with IE11/IE10.
 
-Take a look at the alpha preview at [http://beta.jspanel.de](http://beta.jspanel.de/)
+Take a look at the beta preview at [http://beta.jspanel.de](http://beta.jspanel.de/)
 
 ![jsPanel jQuery Plugin](https://github.com/Flyer53/jsPanel/raw/master/jsPanel-comp.png)
 
