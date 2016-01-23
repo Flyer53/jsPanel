@@ -27,11 +27,8 @@
 
     <http://opensource.org/licenses/MIT>.
 
-    CHANGES IN 2.6.0:
-    + new options onbeforeclose, onclosed
-    + new options onbeforemaximize, onmaximized
-    + new options onbeforeminimize, onminimized
-    + new options onbefornormalize, onnormalized
+    CHANGES IN 2.6.1:
+    + bugfix in positioning when using left or top with 0
  */
 
 "use strict";
@@ -45,7 +42,7 @@ if (!$.fn.jquery || !$.fn.uniqueId || !$.widget || !$.ui.mouse || !$.ui.draggabl
 }
 
 var jsPanel = {
-    version: '2.6.0 2015-12-04 14:15',
+    version: '2.6.1 2016-01-22 16:57',
     device: (function(){
         try {
             // requires "mobile-detect.js" to be loaded
@@ -197,12 +194,12 @@ var jsPanel = {
                 panelpos.left = this.calcPos('left', jsP);  // change in 2.5.4
             }
         }
-        if (jsP.option.position.top) {
+        if (jsP.option.position.top || jsP.option.position.top === 0) {                         // bugfix in 2.6.1
             panelpos.top = parseInt(jsP.option.position.top, 10) + jsP.option.offset.top;
         } else {
             panelpos.bottom = parseInt(jsP.option.position.bottom, 10) + jsP.option.offset.top;
         }
-        if (jsP.option.position.left) {
+        if (jsP.option.position.left || jsP.option.position.left === 0) {                       // bugfix in 2.6.1
             panelpos.left = parseInt(jsP.option.position.left, 10) + jsP.option.offset.left;
         } else {
             panelpos.right = parseInt(jsP.option.position.right, 10) + jsP.option.offset.left;

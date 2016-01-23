@@ -1,5 +1,11 @@
 ## CHANGELOG
 
+### Version 2.6.1
+
++ **bugfix in option.position** when using the number **0** as value for either left or top
+
+---
+
 ### Version 2.6.0
 
 + **new option.onbeforeclose** takes a function to execute before the jsPanel closes. If function returns *false* panel will not close.
