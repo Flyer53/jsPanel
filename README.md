@@ -1,3 +1,4 @@
+![travis.ci build](https://travis-ci.org/Flyer53/jsPanel.svg?branch=master)
 ## [jsPanel 2.6.1 released 2016-01-22](#)
 
 **A jQuery plugin to create multifunctional floating panels.**
