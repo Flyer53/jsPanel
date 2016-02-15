@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>jsPanel basic example</title>
+    <link rel="stylesheet" href="resources/normalize.css">
+    <link rel="stylesheet" href="resources/foundation/foundation.css">
+    <link rel="stylesheet" href="resources/foundation/foundation-icons.css">
+    <link rel="stylesheet" href="resources/jquery-ui/jquery-ui.complete.min.css"/>
+    <link rel="stylesheet" href="resources/jspanel/jquery.jspanel.css"/>
+    <style>
+        body{
+            padding: 10px;
+        }
+        button{
+            margin: 5px 0;
+        }
+        pre{
+            color: blue;
+            padding: 10px 20px;
+            margin: 0;
+            width: 40%;
+        }
+        .testcontainer{
+            position: absolute;
+            right: 10px;
+            top: 400px;
+            width: 700px;
+            height: 500px;
+            border: 3px solid red;
+        }
+        .para-example{
+            margin-top: 30px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="testcontainer">.testcontainer</div>
+
+    <h1>Basic example using jsPanel and Zurb Foundation</h1>
+    <h3>Loaded resources: jquery, jquery ui, jquery-ui-touch-punch (only needed to support touch actions for jquery ui), jsPanel and Zurb Foundation (js and css).<br>
+        This file does not load third party icon fonts and third party css animations since they are not necessary to use jsPanel.</h3>
+    <h4>jsPanel Home: <a href="http://jspanel.de/" target="_blank">http://jspanel.de/</a></h4>
+    <h4>jsPanel API: <a href="http://jspanel.de/api/" target="_blank">http://jspanel.de/api/</a></h4>
+    <h4>jsPanel GitHub: <a href="https://github.com/Flyer53/jsPanel" target="_blank">https://github.com/Flyer53/jsPanel</a></h4>
+
+    <p class="para-example">Example 1 creates a naked jsPanel with defaults only:</p>
+    <pre>$.jsPanel();</pre>
+    <button id="btn1" class="button small" type="button">Example 1</button>
+
+    <p class="para-example">Example 2 creates a jsPanel with positioning, title and theme:</p>
+    <pre>$.jsPanel({
+    position: {
+        left: 200,
+        top:  100
+    },
+    title:    'jsPanel theme info',
+    theme:    'info'
+});
+</pre>
+    <button id="btn2" class="button small" type="button">Example 2</button>
+
+    <p class="para-example">Example 3 creates a jsPanel with a header toolbar:</p>
+    <button id="btn3" class="button small" type="button">Example 3</button>
+
+    <p class="para-example">Example 4 creates a jsPanel within <code>.testcontainer</code> and restricts dragging to within <code>.testcontainer</code>:</p>
+    <pre>$.jsPanel({
+    selector:  '.testcontainer',
+    theme:     'success',
+    position:  'center',
+    draggable: {
+        containment: "parent"
+    }
+});
+</pre>
+    <button id="btn4" class="button small" type="button">Example 4</button>
+
+
+
+
+
+    <script src="resources/jquery/jquery-2.1.4.min.js"></script>
+    <script src="resources/jquery-ui/jquery-ui-complete.min.js"></script>
+    <script src="resources/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"></script>
+    <script src="resources/foundation/foundation.min.js"></script>
+    <script src="resources/jspanel/jquery.jspanel.min.js"></script>
+    <script>
+        "use strict";
+        $(document).foundation();
+
+        $('#btn1').click(function(){
+            $.jsPanel();
+        });
+
+        $('#btn2').click(function(){
+            $.jsPanel({
+                position: {left: 200, top: 100},
+                title: 'jsPanel theme info',
+                theme: 'info'
+            });
+        });
+
+        $('#btn3').click(function(){
+            $.jsPanel({
+                position: {left: 300, top: 150},
+                title: 'jsPanel with header toolbar',
+                theme: 'warning',
+                size:  {width: 800, height: 400},
+                content: '<p>Click toolbar icon to load a file showing the code for this example.</p>',
+                toolbarHeader: [
+                    {
+                        item:     "<span class='jsglyph jsglyph-edit' style='cursor: pointer'></span>",
+                        event:    "click",
+                        callback: function (event) {event.data.content.load('files/code-foundation-sample-3.html'); }
+                    }
+                ],
+                callback: function () {
+                    this.content.css('padding', '10px');
+                }
+            });
+        });
+
+        $('#btn4').click(function(){
+            $.jsPanel({
+                selector: '.testcontainer',
+                theme: 'success',
+                position: 'center',
+                draggable: {
+                    containment: "parent"
+                }
+            });
+        });
+    </script>
+</body>
+</html>

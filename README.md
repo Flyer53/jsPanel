@@ -35,7 +35,6 @@ Take a look at the beta preview at [http://beta.jspanel.de](http://beta.jspanel.
 ### NOTES:
 
 #### Bower
-Using bower don't use the camelcase spelling of jsPanel. Use only lower case **jspanel**
 
 `bower install jspanel`
 

@@ -1,0 +1,20 @@
+<pre style="width: auto; background: #F1F1F1; border: 1px solid #ccc;">$.jsPanel({
+    position:  { left: 300, top: 150 },
+    title:     'jsPanel with header toolbar',
+    bootstrap: 'warning',
+    size:      { width: 750, height: 400 },
+    content:   '&lt;p&gt;Click show code button to load a file showing the code for this example.&lt;/p&gt;',
+    toolbarHeader: [
+        {
+            item:     "&lt;button class='btn btn-danger btn-xs'&gt;show code&lt;/button&gt;",
+            event:    "click",
+            callback: function (event) {
+                event.data.content.load('files/code-sample-3.html');
+            }
+        }
+    ],
+    callback: function () {
+        this.content.css('padding', '10px');
+    }
+});
+</pre>
