@@ -1,5 +1,11 @@
 ## CHANGELOG
 
+### Version 2.6.2
+
++ **fix in jsPanel.exportPanels()** when exporting minimized jsPanels
+
+---
+
 ### Version 2.6.1
 
 + **bugfix in option.position** when using the number **0** as value for either left or top

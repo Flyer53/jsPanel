@@ -1,6 +1,6 @@
 {
   "name": "jspanel",
-  "version": "2.6.1",
+  "version": "2.6.2",
   "description": "A jQuery Plugin to create highly configurable multifunctional floating panels",
   "dependencies": {
     "jquery": ">=1.9.1",

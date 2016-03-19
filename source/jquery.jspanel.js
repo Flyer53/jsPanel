@@ -42,7 +42,7 @@ if (!$.fn.jquery || !$.fn.uniqueId || !$.widget || !$.ui.mouse || !$.ui.draggabl
 }
 
 var jsPanel = {
-    version: '2.6.1 2016-01-22 16:57',
+    version: '2.6.2 2016-03-18 08:17',
     device: (function(){
         try {
             // requires "mobile-detect.js" to be loaded
@@ -492,6 +492,16 @@ var jsPanel = {
         var elmtOffset, elmtPosition, elmtTop, elmtLeft, elmtWidth, elmtHeight, elmtStatus, panelParent,
             panelArr = [], exportedPanel,
             panels = $(".jsPanel").not(".jsPanel-tt, .jsPanel-hint, .jsPanel-modal");
+
+        // normalize minimized/maximized panels before export
+        // status to restore is saved in exportedPanel.panelstatus
+        panels.each(function(index, elmt) {
+            // for some reason this does not work properly inside the following .each() block
+            if ($(elmt).data("panelstatus") !== "normalized") {
+                $(".jsPanel-btn-norm", elmt).trigger("click");
+            }
+        });
+
         panels.each(function(index, elmt){
             exportedPanel = {
                 panelstatus: $(elmt).data("panelstatus"),
@@ -501,11 +511,7 @@ var jsPanel = {
                 offset: { top: 0, left: 0 },
                 content: $(elmt).data("content")
             };
-            // normalize minimized/maximized panels before export
-            // status to restore is saved in exportedPanel.panelstatus
-            if ($(elmt).data("panelstatus") !== "normalized") {
-                $(".jsPanel-btn-norm", elmt).trigger("click");
-            }
+
             panelParent = $(elmt).data("selector");
             elmtOffset = $(elmt).offset();
             elmtPosition = $(elmt).position();
