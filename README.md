@@ -14,7 +14,7 @@ Existing jsPanel sections and contents are easily accessed via various propertie
 ---
 
 ### NEWS:
-jsPanel version 3 now in beta status. It uses some ES6 features, css flexbox for header and footer sections, a new positioning
+**jsPanel version 3 now a release candidate.** It uses some ES6 features, css flexbox for header and footer sections, a new positioning
 system and a lot more improvements. The preview version incorporates a few polyfills and is transpiled to ES5 using BABEL. So
 it should work with the current versions of EDGE, FF, Chrome, Opera and with IE11.
 
