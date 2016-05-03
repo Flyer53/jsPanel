@@ -1,4 +1,4 @@
-![travis.ci build](https://travis-ci.org/Flyer53/jsPanel.svg?branch=master) [![npm version](https://badge.fury.io/js/jspanel.svg)](https://badge.fury.io/js/jspanel) [![Bower version](https://badge.fury.io/bo/jspanel.svg)](https://badge.fury.io/bo/jspanel) ![license MIT](https://img.shields.io/badge/license-MIT-blue.svg)
+![travis.ci build](https://travis-ci.org/Flyer53/jsPanel.svg?branch=master) [![npm version](https://badge.fury.io/js/jspanel.svg)](https://badge.fury.io/js/jspanel) ![license MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 ## [jsPanel 2.6.2 released 2016-03-19](#)
 
 **A jQuery plugin to create multifunctional floating panels.**
@@ -14,7 +14,7 @@ Existing jsPanel sections and contents are easily accessed via various propertie
 ---
 
 ### NEWS:
-**jsPanel version 3 now a release candidate.** It uses some ES6 features, css flexbox for header and footer sections, a new positioning
+jsPanel version 3 is now in beta status. It uses some ES6 features, css flexbox for header and footer sections, a new positioning
 system and a lot more improvements. The preview version incorporates a few polyfills and is transpiled to ES5 using BABEL. So
 it should work with the current versions of EDGE, FF, Chrome, Opera and with IE11.
 
