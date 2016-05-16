@@ -14,7 +14,7 @@ Existing jsPanel sections and contents are easily accessed via various propertie
 ---
 
 ### NEWS:
-**jsPanel 3.0.0-rc1 is now also available on GitHub**
+**jsPanel 3.0.0-rc1 is now also available on GitHub** https://github.com/Flyer53/jsPanel3
 
 ---
 
