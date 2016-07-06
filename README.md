@@ -13,7 +13,7 @@ Existing jsPanel sections and contents are easily accessed via various propertie
 
 ---
 
-## jsPanel 3.0.1 is now also available at [Flyer53/jsPanel3](https://github.com/Flyer53/jsPanel3)
+## Don't miss jsPanel version 3 [Flyer53/jsPanel3](https://github.com/Flyer53/jsPanel3)
 
 ---
 
