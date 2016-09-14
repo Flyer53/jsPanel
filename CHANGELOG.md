@@ -1,5 +1,13 @@
 ## CHANGELOG
 
+### Version 2.6.3
+
+This is only an update of the README.md that I wanted to be updated on npm as well.
+
+Otherwise this is exactly the same as version 2.6.2
+
+---
+
 ### Version 2.6.2
 
 + **fix in jsPanel.exportPanels()** when exporting minimized jsPanels
