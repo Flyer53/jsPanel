@@ -14,9 +14,9 @@ Existing jsPanel sections and contents are easily accessed via various propertie
 
 ---
 
-## Don't miss jsPanel version 3
-+ [GitHub](https://github.com/Flyer53/jsPanel3)
-+ [npm](https://www.npmjs.com/package/jspanel3)
+## Don't miss jsPanel version 4
++ [GitHub](https://github.com/Flyer53/jsPanel4)
++ [npm](https://www.npmjs.com/package/jspanel4)
 
 ---
 
