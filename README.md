@@ -1,4 +1,4 @@
-![travis.ci build](https://travis-ci.org/Flyer53/jsPanel.svg?branch=master) [![npm version](https://badge.fury.io/js/jspanel.svg)](https://badge.fury.io/js/jspanel) ![license MIT](https://img.shields.io/badge/license-MIT-blue.svg) [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/jsPanel/Lobby?utm_source=share-link&utm_medium=link&utm_campaign=share-link)
+[![npm version](https://badge.fury.io/js/jspanel.svg)](https://badge.fury.io/js/jspanel) ![license MIT](https://img.shields.io/badge/license-MIT-blue.svg) [![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/jsPanel/Lobby?utm_source=share-link&utm_medium=link&utm_campaign=share-link)
 
 ## [jsPanel 2.6.3 released 2016-09-14](#)
 
